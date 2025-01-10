@@ -1,0 +1,5 @@
+if(MSVC)
+    add_subdirectory(MSVC)
+else()
+    add_subdirectory(Mingw)
+endif()

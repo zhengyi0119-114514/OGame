@@ -12,5 +12,10 @@ typedef struct
     OGame_Point pCenter;
     int32_t iReadius;
 } OGame_Circle;
-ogame_api ogame_error_code init();
+typedef struct
+{
+    int32_t iWeight;
+    int32_t iHeight;
+} OGame_Rectangle;
+
 #endif // endof OGame/Modules.h

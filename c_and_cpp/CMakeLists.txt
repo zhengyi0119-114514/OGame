@@ -3,8 +3,14 @@ project(ogame_c)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
-add_library(ogame_c SHARED)
-target_sources(ogame_c PRIVATE src/main.cpp)
+add_library(ogame_c SHARED src/empty.c)
+add_subdirectory(src)
+
+enable_testing()
+add_executable(tests)
+target_sources(tests PRIVATE src/empty.c)
+add_subdirectory(tests)
+
 target_include_directories(ogame_c PUBLIC includes)
 set_target_properties(ogame_c
     PROPERTIES 
