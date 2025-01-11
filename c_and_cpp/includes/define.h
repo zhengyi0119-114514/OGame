@@ -20,6 +20,7 @@
 #endif
 
 #define null NULL
+#define var auto
 
 #ifdef ogame_export
     #define ogame_api ogmae_c_api_1 ogame_api_export
@@ -29,7 +30,7 @@
 
 typedef uint32_t OGAME_RESULT;
 
-#define OGAME_NO_ERROR ((ogame_error_code)0)
-#define OGAME_ARGUEMENT_IS_NULL ((ogame_error_code)0x0001)
+#define OGAME_ERROR_NO_ERROR ((OGAME_RESULT)0)
+#define OGAME_ERROR_ARGUEMENT_IS_NULL ((OGAME_RESULT)0x0001)
 
 #endif

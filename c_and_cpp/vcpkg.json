@@ -1,8 +1,8 @@
 {
   "dependencies": [
+    "catch2",
     "log4cplus",
-    "sdl3",
     "yaml-cpp",
-    "catch2"
+    "sdl2"
   ]
 }

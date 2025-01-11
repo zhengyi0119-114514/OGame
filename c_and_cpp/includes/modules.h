@@ -17,5 +17,10 @@ typedef struct
     int32_t iWeight;
     int32_t iHeight;
 } OGame_Rectangle;
-
+typedef struct
+{
+    void* pLogger;
+}OGame_GameInfo;
+ogame_api OGAME_RESULT OGameInit(OGame_GameInfo* pInfo);
+ogame_api OGAME_RESULT OGameFreeGameInfo(OGame_GameInfo* pInfo);
 #endif // endof OGame/Modules.h
