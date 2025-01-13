@@ -1,6 +1,6 @@
 #include "modules.h"
 int main(int argc,char** args)
 {
-    OGame_GameInfo info;
-    OGameInit(&info);
+    OGame_AppInfo info;
+    OGame_Init(&info);
 }

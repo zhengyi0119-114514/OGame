@@ -7,6 +7,7 @@
     #define ogmae_c_api_1 extern "C" 
 #else
     #define ogmae_c_api_1
+    #include <stdbool.h>
 #endif
 
 #if defined _WIN32
@@ -14,8 +15,8 @@
     #define ogame_api_private
     #define ogame_api_import __declspec(dllimport)
 #else
-    #define ogame_api_import extern
-    #define ogame_api_private __attribute__((hidden))
+    #define ogame_api_import 
+    #define ogame_api_private 
     #define ogame_api_export
 #endif
 
@@ -30,7 +31,14 @@
 
 typedef uint32_t OGAME_RESULT;
 
-#define OGAME_ERROR_NO_ERROR ((OGAME_RESULT)0)
-#define OGAME_ERROR_ARGUEMENT_IS_NULL ((OGAME_RESULT)0x0001)
+//ERROR
+#define OGAME_ERROR_NO_ERROR                    ((OGAME_RESULT)0x00000000)
+#define OGAME_ERROR_ARGUEMENT_IS_NULL           ((OGAME_RESULT)0x00000001)
+#define OGAME_ERROR_INIT_FAILD                  ((OGAME_RESULT)0x00000002)
 
-#endif
+//OS NAME
+#define OGAME_INFO_WINDOWS                      ((uint32_t)1)
+#define OGAME_INFO_LINUX                        ((uint32_t)2)
+#define OGAME_INFO_MACOS                        ((uint32_t)3)
+
+#endif 

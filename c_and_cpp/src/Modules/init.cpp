@@ -3,34 +3,38 @@
 #include "modules.h"
 #include <SDL2/SDL.h>
 
-ogame_api_private static bool bIsInit = false;
-ogame_api OGAME_RESULT OGameInit(OGame_GameInfo *pInfo)
+ogame_api_private static bool s_bIsInit = false;
+ogame_api_private static log4cplus::Logger * s_pLonger;
+static auto  OGameInitLogger()
 {
-    if (!bIsInit)
-    {
-        bIsInit = true;
-        log4cplus::Initializer();
-        SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO);
-        log4cplus::BasicConfigurator config;
-        config.configure();
-    }
-    if (pInfo == null)
-    {
-        return OGAME_ERROR_ARGUEMENT_IS_NULL;
-    }
-    var *pLogger = new log4cplus::Logger;
-    (*pLogger) = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("Main Logger"));
-    pInfo->pLogger = (void *)pLogger;
-    LOG4CPLUS_INFO((*pLogger), "OGame Init");
-    return OGAME_ERROR_NO_ERROR;
+    log4cplus::initialize();
+    log4cplus::BasicConfigurator config;
+    config.configure();
+    return new log4cplus::Logger();
 }
-ogame_api OGAME_RESULT OGameFreeGameInfo(OGame_GameInfo *pInfo)
+static void SDL2Init()
 {
-    if (pInfo == null)
+    SDL_Init(SDL_INIT_AUDIO | SDL_INIT_AUDIO);
+}
+ogame_api OGAME_RESULT OGame_Init(OGame_pAppInfo pInfo)
+{
+    if(!s_bIsInit)
+    {
+        SDL2Init();
+        s_pLonger =  OGameInitLogger();
+        if(s_pLonger == null)
+        {
+            return OGAME_ERROR_INIT_FAILD ;
+        }
+        s_bIsInit = true;
+    }
+    if(pInfo == null)
     {
         return OGAME_ERROR_ARGUEMENT_IS_NULL;
     }
-    delete (log4cplus::Logger *)pInfo->pLogger;
-    pInfo->pLogger = null;
+    else
+    {
+        pInfo->pLogger = (void*)s_pLonger;
+    }
     return OGAME_ERROR_NO_ERROR;
 }

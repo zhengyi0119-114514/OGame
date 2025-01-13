@@ -2,25 +2,24 @@
 #include <stdint.h>
 #ifndef OGAME_MODULES
 #define OGAME_MODULES 1
-typedef struct
-{
-    int32_t x;
-    int32_t y;
-} OGame_Point;
-typedef struct
-{
-    OGame_Point pCenter;
-    int32_t iReadius;
-} OGame_Circle;
-typedef struct
-{
-    int32_t iWeight;
-    int32_t iHeight;
-} OGame_Rectangle;
+#include "modules/math.h"
 typedef struct
 {
     void* pLogger;
-}OGame_GameInfo;
-ogame_api OGAME_RESULT OGameInit(OGame_GameInfo* pInfo);
-ogame_api OGAME_RESULT OGameFreeGameInfo(OGame_GameInfo* pInfo);
+    struct
+    {
+        void* pPlatformInfo;
+        uint32_t iPlatformID;
+    };
+}OGame_AppInfo;
+typedef OGame_AppInfo* OGame_pAppInfo;
+typedef const OGame_AppInfo* OGame_pcAppInfo;
+/**
+ * @brief Init the game
+ * 
+ * @param pInfo 
+ * @return OGAME_RESULT 
+ */
+ogame_api OGAME_RESULT OGame_Init(OGame_pAppInfo pInfo);
+ogame_api OGAME_RESULT OGame_PlatformInit(OGame_pcAppInfo pInfo);
 #endif // endof OGame/Modules.h

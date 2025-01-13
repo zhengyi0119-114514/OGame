@@ -1,0 +1,1 @@
+target_sources(ogame_c PRIVATE init.cpp)

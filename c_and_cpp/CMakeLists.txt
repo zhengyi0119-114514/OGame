@@ -34,21 +34,21 @@ set_target_properties(
 target_link_libraries(main PRIVATE yaml-cpp::yaml-cpp)
 
 enable_testing()
-add_executable(tests)
-target_sources(tests PRIVATE src/empty.c)
-target_link_libraries(tests PRIVATE ogame_c)
+add_executable(utests)
+target_sources(utests PRIVATE src/empty.c)
+target_link_libraries(utests PRIVATE ogame_c)
 set_target_properties(
-    tests
+    utests
     PROPERTIES
     C_STANDARD 17
     C_STANDARD_REQUIRED TRUE
     CXX_STANDARD 20
     CXX_STANDARD_REQUIRED TRUE
 )
-target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
+target_link_libraries(utests PRIVATE Catch2::Catch2WithMain)
 include(CTest)
 include(Catch)
-catch_discover_tests(tests)
+catch_discover_tests(utests)
 
 add_subdirectory(src)
-add_subdirectory(tests)
+add_subdirectory(unit_test)

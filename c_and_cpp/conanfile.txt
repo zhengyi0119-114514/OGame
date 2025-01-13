@@ -1,0 +1,9 @@
+[requires]
+catch2/3.8.0
+log4cplus/2.1.2
+sdl/2.30.9
+yaml-cpp/0.8.0
+
+[generators]
+CMakeDeps
+CMakeToolchain
