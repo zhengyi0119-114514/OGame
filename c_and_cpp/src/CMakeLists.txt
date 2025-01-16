@@ -1,5 +1,9 @@
-target_sources(ogame_c PRIVATE Modules/init.cpp)
-target_sources(main PRIVATE Main/main.cpp)
+target_sources( 
+    main
+    PRIVATE 
+    Main/Main.cpp
+)
+# target_sources(main PRIVATE Main/main.cpp)
 
 
 # https://cmake.org/cmake/help/latest/variable/CMAKE_SYSTEM_NAME.html
@@ -13,3 +17,4 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Android")
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     add_subdirectory(Platform/Mac)
 endif()
+

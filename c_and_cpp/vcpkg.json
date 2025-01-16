@@ -1,8 +1,13 @@
 {
   "dependencies": [
     "catch2",
-    "log4cplus",
-    "yaml-cpp",
-    "sdl2"
+    {
+      "name": "log4cplus",
+      "features": [
+        "unicode"
+      ]
+    },
+    "sdl2",
+    "yaml-cpp"
   ]
 }
