@@ -22,7 +22,6 @@ set_target_properties(ogame_modules
     CXX_STANDARD 20
     CXX_STANDARD_REQUIRED TRUE
 )
-target_link_libraries(ogame_modules PUBLIC log4cplus::log4cplus)
 
 if(WIN32)
     target_compile_definitions(
@@ -58,6 +57,8 @@ target_link_libraries(main
     PUBLIC
     $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
 )
+target_link_libraries(main PUBLIC log4cplus::log4cplus)
+
 
 enable_testing()
 add_executable(utests)

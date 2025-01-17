@@ -3,6 +3,11 @@ target_sources(
     PRIVATE 
     Main/Main.cpp
 )
+target_sources(ogame_modules PRIVATE 
+    Modules/Math/Point.cpp
+    Modules/Math/Circle.cpp
+    MOdules/Math/Rectangle.cpp
+)
 # target_sources(main PRIVATE Main/main.cpp)
 
 
