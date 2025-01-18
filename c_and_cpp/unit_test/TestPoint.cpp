@@ -1,7 +1,7 @@
 #include <catch.hpp>
 #include "modules/math.hpp"
 
-TEST_CASE("Module.Modules.Math.Point","[OGAME]")
+TEST_CASE("OGame.Modules.Math.Point","[OGAME]")
 {
     ogame::math::Point p(10,11);
     REQUIRE(p.X() == 10);

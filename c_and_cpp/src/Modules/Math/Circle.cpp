@@ -1,8 +1,8 @@
 #define OGAME_EXPORT
 #include "modules/math.hpp"
+#include <format>
 #include <math.h>
 #include <string>
-#include<format>
 
 namespace ogame::math
 {

@@ -3,6 +3,7 @@
 
 
 #ifndef OGAME_HEAD_MODULES
+#define OGAME_HEAD_MODULES
 namespace ogame
 {
     

@@ -36,8 +36,9 @@ if(MSVC)
         /utf-8
     )
     target_compile_definitions(
+        ogame_modules
+        PUBLIC
         _CRT_SECURE_NO_WARNINGS
-        
     )
 endif()
 
@@ -57,8 +58,7 @@ target_link_libraries(main
     PUBLIC
     $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
 )
-target_link_libraries(main PUBLIC log4cplus::log4cplus)
-
+target_link_libraries(main PRIVATE spdlog::spdlog_header_only)
 
 enable_testing()
 add_executable(utests)

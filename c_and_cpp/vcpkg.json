@@ -8,6 +8,9 @@
       ]
     },
     "sdl2",
-    "yaml-cpp"
+    "yaml-cpp",
+    {
+      "name": "spdlog"
+    }
   ]
 }

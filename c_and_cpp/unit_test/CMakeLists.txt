@@ -4,4 +4,6 @@ target_sources(utests
     TestPoint.cpp
     TestCircle.cpp
     TestRectangle.cpp
+    TestLine.cpp
+    TestCollide.cpp
 )

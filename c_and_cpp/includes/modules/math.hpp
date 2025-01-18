@@ -7,7 +7,7 @@
 #define OGAME_HEAD_MODULES_MATH
 namespace ogame::math
 {
-class Point
+class OGAME_API_WIN32 Point
 {
   private:
     int32_t m_x, m_y;
@@ -24,7 +24,7 @@ class IShape
   public:
     virtual bool IsIn(const Point &p) const noexcept = 0;
 };
-class Circle : public virtual IShape
+class OGAME_API_WIN32 Circle : public virtual IShape
 {
   private:
     Point m_center;
@@ -37,7 +37,7 @@ class Circle : public virtual IShape
     uint32_t Radius() const noexcept;
     virtual bool IsIn(const Point &p) const noexcept override;
 };
-class Rectangle : public virtual IShape
+class OGAME_API_WIN32 Rectangle : public virtual IShape
 {
   private:
     Point m_pCenter;
@@ -52,5 +52,16 @@ class Rectangle : public virtual IShape
     const Point &Center() const noexcept;
     virtual bool IsIn(const Point &p) const noexcept override;
 };
+class OGAME_API_WIN32 Line
+{
+  private:
+    const Point m_form, m_to;
+
+  public:
+    Line(const Point &form, const Point to);
+    const Point &Form() const noexcept;
+    const Point &To() const noexcept;
+};
+bool OGAME_API IsCollide(const Circle &cLeft, const Circle &cRight);
 } // namespace ogame::math
 #endif
