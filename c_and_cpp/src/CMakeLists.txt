@@ -5,6 +5,7 @@ target_sources(
     Views/sdlWindow.cpp
     Views/renderer.cpp
     Views/sdlSurface.cpp
+    Views/Controls.cpp
 )
 target_sources(ogame_modules PRIVATE
     Modules/Math/Point.cpp
@@ -12,7 +13,7 @@ target_sources(ogame_modules PRIVATE
     Modules/Math/Rectangle.cpp
     Modules/Math/Line.cpp
     Modules/Math/Collide.cpp
-
+    Modules/Config/Config.cpp
 )
 
 
@@ -20,7 +21,6 @@ target_sources(ogame_modules PRIVATE
 if(WIN32)
     add_subdirectory(Platform/Win32)
 endif()
-
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     add_subdirectory(Platform/Linux)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Android")
@@ -28,3 +28,4 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Android")
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     add_subdirectory(Platform/Mac)
 endif()
+

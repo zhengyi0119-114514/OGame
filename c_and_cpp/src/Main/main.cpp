@@ -1,14 +1,15 @@
+#include "modules/Config.hpp"
 #include "spdlog/spdlog.h"
 #include "views/renderer.hpp"
 #include "views/windows.hpp"
 #include <SDL2/SDL.h>
-#include <yaml-cpp/yaml.h>
+#include <iostream>
 
 #undef main
 [[noreturn]]
 void Quit(bool bIsFail)
 {
-    SDL_VideoQuit();
+    SDL_AudioQuit();
     SDL_VideoQuit();
     SDL_Quit();
     if (bIsFail)
@@ -22,16 +23,22 @@ void Quit(bool bIsFail)
 }
 int main(int argc, char **args)
 {
+    ogame::config::CONFIG config{720, 1280};
     // init
     spdlog::info("Hello world!");
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
     {
         spdlog::error("SDL2 init fail.");
+        spdlog::error(SDL_GetError());
+
         Quit(true);
     }
+    std::filesystem::path pConfigFilePath = ogame::config::GetConfigFilePath();
+    spdlog::info("Config file at" + pConfigFilePath.string());
     // sdl2
-    ogame::views::sdlWindow window =
-        SDL_CreateWindow("SB", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1280, 720, 0);
+    ogame::views::sdlWindow window = SDL_CreateWindow("SB", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                                                      config.iWindowHeight, config.iWindowWidth, 0);
+
     if (window == nullptr)
     {
         spdlog::error("SDL2 create window fail.");
@@ -55,8 +62,9 @@ int main(int argc, char **args)
             {
             case SDL_QUIT:
                 spdlog::info("exit");
-                Quit(false);
                 bIsRun = false;
+                ogame::config::SetConfigToFile(ogame::config::GetConfigFilePath(), config);
+                Quit(false);
                 break;
             default:
                 break;

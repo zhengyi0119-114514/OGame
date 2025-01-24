@@ -4,9 +4,9 @@ project(ogame_modules)
 # - Fixes msvc toolchain issue
 # cmake dosen't set `CMAKE_HOST_SYSTEM_PROCESSOR` before `project(...)`, which led to the failure of msvc configuration
 if(DEFINED ENV{PROCESSOR_ARCHITEW6432})
-  set(CMAKE_HOST_SYSTEM_PROCESSOR "$ENV{PROCESSOR_ARCHITEW6432}")
+    set(CMAKE_HOST_SYSTEM_PROCESSOR "$ENV{PROCESSOR_ARCHITEW6432}")
 elseif(DEFINED ENV{PROCESSOR_ARCHITECTURE})
-  set(CMAKE_HOST_SYSTEM_PROCESSOR "$ENV{PROCESSOR_ARCHITECTURE}")
+    set(CMAKE_HOST_SYSTEM_PROCESSOR "$ENV{PROCESSOR_ARCHITECTURE}")
 endif()
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" "${CMAKE_SOURCE_DIR}")
@@ -22,6 +22,7 @@ set_target_properties(ogame_modules
     CXX_STANDARD 20
     CXX_STANDARD_REQUIRED TRUE
 )
+target_link_libraries(ogame_modules PRIVATE spdlog::spdlog_header_only)
 
 if(WIN32)
     target_compile_definitions(
@@ -36,9 +37,9 @@ if(MSVC)
         /utf-8
     )
     target_compile_definitions(
-        ogame_modules
-        PUBLIC
-        _CRT_SECURE_NO_WARNINGS
+            ogame_modules
+            PUBLIC
+            _CRT_SECURE_NO_WARNINGS
     )
 endif()
 
@@ -53,12 +54,12 @@ set_target_properties(
     CXX_STANDARD 20
     CXX_STANDARD_REQUIRED TRUE
 )
-target_link_libraries(main PRIVATE yaml-cpp::yaml-cpp)
 target_link_libraries(main
     PUBLIC
     $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
 )
 target_link_libraries(main PRIVATE spdlog::spdlog_header_only)
+
 
 enable_testing()
 add_executable(utests)

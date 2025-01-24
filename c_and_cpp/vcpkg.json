@@ -1,16 +1,18 @@
 {
-  "dependencies": [
-    "catch2",
-    {
-      "name": "log4cplus",
-      "features": [
-        "unicode"
-      ]
-    },
-    "sdl2",
-    "yaml-cpp",
-    {
-      "name": "spdlog"
-    }
-  ]
+    "dependencies": [
+        "catch2",
+        {
+            "name": "log4cplus",
+            "features": [
+                "unicode"
+            ]
+        },
+        {
+            "name": "sdl2",
+            "features": [
+                "vulkan"
+            ]
+        },
+        "spdlog"
+    ]
 }

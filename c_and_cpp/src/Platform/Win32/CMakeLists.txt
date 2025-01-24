@@ -1,3 +1,4 @@
+target_sources(ogame_modules PRIVATE ./ConfigFilePath.cpp)
 if(MSVC)
     add_subdirectory(MSVC)
 else()

@@ -1,4 +1,9 @@
+#include <exception>
 #include <stdint.h>
+#include <stddef.h>
+#include <string_view>
+#include <string>
+#pragma once
 
 #ifndef OGAME_HEAD_DEFINES
 #define OGAME_HEAD_DEFINES
@@ -24,8 +29,20 @@
 #endif
 
 #define ref_this (*this)
+#define null NULL
 
 typedef uint32_t OGAME_RESULT;
-
+#define OGAME_RESULT_NO_ERROR               ((OGAME_RESULT)0x00000000)
+#define OGAME_RESULT_ARGUEMENT_IS_NULL      ((OGAME_RESULT)0x00000001)
+class OGameError : public virtual std::exception
+{
+  public:
+    explicit OGameError(std::string_view sMessage,OGAME_RESULT uErrorCode);
+    OGAME_RESULT ErrorCode() const;
+    std::string GetMessage() const;
+  private:
+    OGAME_RESULT m_uErrorCode;
+    std::string m_sErrorMessage;
+};
 
 #endif
