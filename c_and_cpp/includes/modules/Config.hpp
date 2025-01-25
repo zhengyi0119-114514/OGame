@@ -1,17 +1,8 @@
-#include "ogame_defines.hpp"
-#include <stdint.h>
+#pragma once
 #include <filesystem>
-
-#ifndef OGAME_CONFIG
-#define OGAME_CONFIG
-namespace ogame::config
+#pragma once
+namespace OGame::Config
 {
-using CONFIG = struct
-{
-    uint32_t iWindowWidth;
-    uint32_t iWindowHeight;
-};
-std::filesystem::path OGAME_API GetConfigFilePath();
-
-} // namespace ogame::config
-#endif
+    std::filesystem::path GetConfigFilePath();
+    void CreateDirectoryIfNotExists(std::filesystem::path path);
+}

@@ -26,7 +26,11 @@ target_link_libraries(ogame_modules PRIVATE spdlog::spdlog_header_only)
 
 if(WIN32)
     target_compile_definitions(
-        ogame_modules PRIVATE UNICODE
+        ogame_modules PRIVATE UNICODE _UNICODE
+    )
+    set_target_properties(ogame_modules
+        PROPERTIES
+        WINDOWS_EXPORT_ALL_SYMBOLS
     )
 endif()
 
@@ -59,7 +63,6 @@ target_link_libraries(main
     $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
 )
 target_link_libraries(main PRIVATE spdlog::spdlog_header_only)
-
 
 enable_testing()
 add_executable(utests)
