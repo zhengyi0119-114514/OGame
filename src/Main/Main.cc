@@ -1,11 +1,13 @@
 #include "Modules/Config.hpp"
 #include <SDL2/SDL.h>
+#include <SDL2pp/Renderer.hh>
 #include <SDL2pp/SDL2pp.hh>
 #include <SDL2pp/SDLTTF.hh>
 #include <SDL2pp/Window.hh>
 #include <SDL_error.h>
 #include <SDL_events.h>
 #include <SDL_image.h>
+#include <SDL_render.h>
 #include <SDL_ttf.h>
 #include <SDL_video.h>
 #include <cstdlib>
@@ -32,7 +34,14 @@ void Init()
     }
     SPDLOG_INFO("Init success");
 }
-
+[[noreturn]]
+void Quit()
+{
+    IMG_Quit();
+    TTF_Quit();
+    SDL_Quit();
+    exit(EXIT_SUCCESS);
+}
 int main(int argc, char **argv)
 {
     SPDLOG_INFO("Hello world");
@@ -50,6 +59,7 @@ int main(int argc, char **argv)
     {
         SPDLOG_ERROR(std::format("Fail to create window {:}", SDL_GetError()));
     }
+    SDL2pp::Renderer renderer{window,-1,SDL_RENDERER_ACCELERATED};
     SDL_Event event{};
     bool bIsRun{true};
     while (bIsRun)
@@ -64,7 +74,5 @@ int main(int argc, char **argv)
             }
         }
     }
-    IMG_Quit();
-    TTF_Quit();
-    SDL_Quit();
+    Quit();
 }
