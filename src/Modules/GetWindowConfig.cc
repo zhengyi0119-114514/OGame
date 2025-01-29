@@ -10,13 +10,13 @@ namespace OGame::Config
 {
 void GetWindowConfig(WINDOW_CONFIG &out)
 {
-    std::filesystem::path dateFilePath = std::filesystem::current_path() / "data" / "WindowConfig.toml";
+    std::filesystem::path dateFilePath = std::filesystem::current_path() / "data" / "config" / "WindowConfig.toml";
     std::filesystem::path filePath = GetConfigFileDirectory() / "WindowConfig.toml";
 #ifdef _DEBUG
-    if(std::filesystem::exists(filePath))
+    if (std::filesystem::exists(filePath))
     {
         std::filesystem::remove(filePath);
-        SPDLOG_INFO(std::format("Remove {:}",filePath.string()));
+        SPDLOG_INFO(std::format("Remove {:}", filePath.string()));
     }
     std::filesystem::copy_file(dateFilePath, filePath);
     SPDLOG_INFO(std::format("Copy file \"{:}\" to \"{:}\"", dateFilePath.string(), filePath.string()));

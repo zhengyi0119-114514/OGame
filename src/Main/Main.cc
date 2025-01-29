@@ -1,5 +1,6 @@
 #include "Modules/Config.hpp"
 #include <SDL2/SDL.h>
+#include <SDL2pp/Color.hh>
 #include <SDL2pp/Renderer.hh>
 #include <SDL2pp/SDL2pp.hh>
 #include <SDL2pp/SDLTTF.hh>
@@ -53,17 +54,23 @@ int main(int argc, char **argv)
     OGame::Config::WINDOW_CONFIG cfg;
     OGame::Config::GetWindowConfig(cfg);
 
-    SDL2pp::Window window{cfg.WindowTitle.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                          (int)cfg.WindowWidth,    (int)cfg.WindowHeight,   SDL_WINDOW_SHOWN | cfg.WindowFlag};
+    SDL2pp::Window window{SDL_CreateWindow(cfg.WindowTitle.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                                           (int)cfg.WindowWidth, (int)cfg.WindowHeight,
+                                           SDL_WINDOW_SHOWN | cfg.WindowFlag)};
     if (window.Get() == NULL)
     {
         SPDLOG_ERROR(std::format("Fail to create window {:}", SDL_GetError()));
     }
-    SDL2pp::Renderer renderer{window,-1,SDL_RENDERER_ACCELERATED};
+    SDL2pp::Renderer renderer{SDL_CreateRenderer(window.Get(),-1,0)};
+    if (renderer.Get()==NULL)
+    {
+        SPDLOG_ERROR(std::format("Fail to create renderer {:}", SDL_GetError()));
+    }
     SDL_Event event{};
     bool bIsRun{true};
     while (bIsRun)
     {
+        renderer.SetDrawColor(SDL2pp::Color(0,0,102));
         while (SDL_PollEvent(&event))
         {
             switch (event.type)
@@ -73,6 +80,8 @@ int main(int argc, char **argv)
                 break;
             }
         }
+        renderer.Present();
+        renderer.Clear();
     }
     Quit();
 }

@@ -1,0 +1,6 @@
+WindowHeigt = 720
+WindowWidth = 1280
+WindowTitle = "StarViewer"
+WindowUseVulkan = true
+WindowUseOpenGL = false 
+WindowAllocHeightDPI = false

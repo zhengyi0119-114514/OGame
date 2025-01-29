@@ -102,6 +102,7 @@ target_link_libraries(utests PRIVATE Catch2::Catch2WithMain)
 include(CTest)
 include(Catch)
 catch_discover_tests(utests)
+execute_process(COMMAND "${CMAKE_COMMAND}" "-E" "copy_directory" "${CMAKE_SOURCE_DIR}/data" "${CMAKE_BINARY_DIR}/data")
 
 install(TARGETS ogame_modules main)
 add_subdirectory(src)
