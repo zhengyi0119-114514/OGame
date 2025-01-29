@@ -1,0 +1,6 @@
+WindowHeigt = 720
+WindowWidth = 1280
+WindowTitle = "你就是个傻逼！！！"
+WindowUseVulkan = true
+WindowUseOpenGL = false 
+WindowAllocHeightDPI = false

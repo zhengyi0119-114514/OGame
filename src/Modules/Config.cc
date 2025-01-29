@@ -7,12 +7,11 @@ namespace OGame::Config
 {
 void CreateDirectoryIfNotExists(std::filesystem::path path)
 {
-    auto dirPath = path.parent_path();
-    if(!std::filesystem::exists(dirPath))
+;
+    if(!std::filesystem::exists(path))
     {
-
-        std::filesystem::create_directory(dirPath);
-        SPDLOG_INFO(std::format("Create directory : {:}",dirPath.string()));
+        std::filesystem::create_directory(path);
+        SPDLOG_INFO(std::format("Create directory : {:}",path.string()));
     }
 }
 } // namespace OGame::Config

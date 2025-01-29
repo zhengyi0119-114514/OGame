@@ -22,7 +22,15 @@ set_target_properties(ogame_modules
     CXX_STANDARD 20
     CXX_STANDARD_REQUIRED TRUE
 )
-target_link_libraries(ogame_modules PRIVATE spdlog::spdlog_header_only)
+target_link_libraries(ogame_modules PRIVATE spdlog::spdlog_header_only
+    $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>
+    $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>
+    $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
+    toml11::toml11
+    ${SDL2PP_LIBRARIES}
+    )
+target_include_directories(ogame_modules PRIVATE ${SDL2PP_INCLUDE_DIRS})
+message(NOTICE "SB:${SDL2PP_LIBRARIES}")
 
 if(WIN32)
     target_compile_definitions(
@@ -41,9 +49,19 @@ if(MSVC)
         /utf-8
     )
     target_compile_definitions(
-            ogame_modules
-            PUBLIC
-            _CRT_SECURE_NO_WARNINGS
+        ogame_modules
+        PUBLIC
+        _CRT_SECURE_NO_WARNINGS
+    )
+endif()
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message(NOTICE "Debug")
+    target_compile_definitions(
+        ogame_modules
+        PRIVATE
+        _DEBUG
+        DEBUG
     )
 endif()
 
@@ -60,8 +78,12 @@ set_target_properties(
 )
 target_link_libraries(main
     PUBLIC
+    $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>
+    $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>
     $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
 )
+target_include_directories(main PRIVATE ${SDL2PP_INCLUDE_DIRS})
+target_link_libraries(main PRIVATE ${SDL2PP_LIBRARIES})
 target_link_libraries(main PRIVATE spdlog::spdlog_header_only)
 
 enable_testing()

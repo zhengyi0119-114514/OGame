@@ -5,12 +5,11 @@
 #include <spdlog/spdlog.h>
 namespace OGame::Config
 {
-std::filesystem::path GetConfigFilePath()
+std::filesystem::path GetConfigFileDirectory()
 {
     auto homePath = getenv("HOME");
     spdlog::info(std::format("Home path : {:}", homePath));
-    auto result = std::filesystem::path{homePath} / ".config" / "ogame" / "config.txt";
-    CreateDirectoryIfNotExists(result);
+    auto result = std::filesystem::path{homePath} / ".config" / "ogame";
     return result;
 }
 } // namespace OGame::Config
