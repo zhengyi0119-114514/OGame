@@ -7,7 +7,6 @@ namespace OGame::Config
 {
 void CreateDirectoryIfNotExists(std::filesystem::path path)
 {
-;
     if(!std::filesystem::exists(path))
     {
         std::filesystem::create_directory(path);

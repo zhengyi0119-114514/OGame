@@ -1,30 +1,27 @@
-#include "Modules/Config.hpp"
+#include "Resource.hh"
 #include <Catch2/catch_all.hpp>
 #include <Catch2/catch_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <filesystem>
-
-TEST_CASE("OGame.Resource.Check", "[OGAME.RESOURCE]")
+namespace fs = std::filesystem;
+namespace rs = OGame::Resources;
+TEST_CASE("OGame.Resource.CheckDirectory", "[OGAME.RESOURCE]")
 {
-    std::filesystem::path imagePath{std::filesystem::current_path() / "data" / "images"};
-    std::filesystem::path fontsPath{std::filesystem::current_path() / "data" / "fonts"};
-    std::filesystem::path licensePath(std::filesystem::current_path() /"data"/"licenses");
-
-    // DIRECTORY
-    REQUIRE(std::filesystem::exists(imagePath));
-    REQUIRE(std::filesystem::exists(fontsPath));
-    REQUIRE(std::filesystem::exists(licensePath));
-    // IMAGES
-    REQUIRE(std::filesystem::exists(imagePath/"self.png"));
-    // FONT
-    REQUIRE(std::filesystem::exists(fontsPath/"CEFFontsCJK-Regular.ttf"));
-    REQUIRE(std::filesystem::exists(fontsPath/"CEFFontsCJKMono-Regular.ttf"));    
-    // LICENSE
-    REQUIRE(std::filesystem::exists(licensePath/"cef-fonts-cjk.license"));
-    REQUIRE(std::filesystem::exists(licensePath/"sdl2.license"));
-    REQUIRE(std::filesystem::exists(licensePath/"sdl2pp.license"));
-    REQUIRE(std::filesystem::exists(licensePath/"sdl-image.license"));
-    REQUIRE(std::filesystem::exists(licensePath/"sdl-ttf.license"));
-    REQUIRE(std::filesystem::exists(licensePath/"spdlog.license"));
-    REQUIRE(std::filesystem::exists(licensePath/"toml11.license"));
+    REQUIRE(fs::exists(rs::DataDirectory));
+    REQUIRE(fs::exists(rs::ImageDirectory));
+    REQUIRE(fs::exists(rs::FontsDirectory));
+    REQUIRE(fs::exists(rs::LicenseDirectory));
+}
+TEST_CASE("OGame.Resource.CheckFile","[OGAME.RESOURCE]")
+{
+    REQUIRE(fs::exists(rs::SelfImage));
+    REQUIRE(fs::exists(rs::CEFFontsCJK));
+    REQUIRE(fs::exists(rs::CEFFontsCJKMono));
+    REQUIRE(fs::exists(rs::FontsDirectory));
+    REQUIRE(fs::exists(rs::SDL_imageLicense));
+    REQUIRE(fs::exists(rs::SDL_ttfLicense));
+    REQUIRE(fs::exists(rs::SDL2License));
+    REQUIRE(fs::exists(rs::SDL2ppLicense));
+    REQUIRE(fs::exists(rs::SpdlogLicense));
+    REQUIRE(fs::exists(rs::Toml11License));
 }

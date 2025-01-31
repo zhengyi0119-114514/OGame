@@ -1,4 +1,11 @@
-target_sources(ogame_modules PRIVATE Modules/Config.cc Modules/GetWindowConfig.cc)
+target_sources(ogame_modules PRIVATE 
+    Modules/Config.cc 
+    Modules/GetWindowConfig.cc
+    Views/LoadingPage.cpp
+    Views/BasicPage.cxx
+    Views/Page.cc
+    Resource.cc
+)
 target_sources(main PRIVATE Main/Main.cc)
 
 # https://cmake.org/cmake/help/latest/variable/CMAKE_SYSTEM_NAME.html

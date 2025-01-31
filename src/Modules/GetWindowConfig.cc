@@ -1,6 +1,7 @@
 #include "Errors.hpp"
 #include "Modules/Config.hpp"
 #include <SDL_video.h>
+#include <cstring>
 #include <filesystem>
 #include <format>
 #include <spdlog/spdlog.h>
@@ -45,25 +46,20 @@ void GetWindowConfig(WINDOW_CONFIG &out)
     {
         out.WindowTitle = tomlDoc["WindowTitle"].as_string();
     }
-    if (tomlDoc.contains("WindowUseVulkan"))
+    out.WindowFlag = 0;
+    if (tomlDoc.contains("WindowRenderer") && tomlDoc.at("WindowRenderer").is_string())
     {
-        if (tomlDoc["WindowUseVulkan"].as_boolean())
+        auto renderer = tomlDoc["WindowRenderer"].as_string();
+        if (strcmp(renderer.c_str(), "Vulkan") == 0)
         {
             out.WindowFlag |= SDL_WINDOW_VULKAN;
         }
-    }
-    if (tomlDoc.contains("WindowUseOpenGL"))
-    {
-        if (tomlDoc["WindowUseOpenGL"].as_boolean())
+        else if (strcmp(renderer.c_str(), "OpenGL") == 0)
         {
             out.WindowFlag |= SDL_WINDOW_OPENGL;
         }
-    }
-    if (tomlDoc.contains("WindowAllocHeightDPI"))
-    {
-        if (tomlDoc["WindowAllocHeightDPI"].as_boolean())
+        else if (strcmp(renderer.c_str(), "NULL") == 0)
         {
-            out.WindowFlag |= SDL_WINDOW_ALLOW_HIGHDPI;
         }
     }
 }

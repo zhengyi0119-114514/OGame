@@ -1,0 +1,48 @@
+#include "Base.hxx"
+#include "Views/Controls.hxx"
+#include <SDL2pp/Color.hh>
+#include <SDL_events.h>
+#include <SDL_render.h>
+#include <SDL_surface.h>
+#include <SDL_video.h>
+#include <cstddef>
+#include <utility>
+#include <vector>
+namespace OGame::Views::Pages
+{
+class Page : public virtual OGame::OGameObject
+{
+  public:
+    virtual void EnterMainLoop()  =0;
+    virtual ~Page() noexcept;
+};
+class BasicPage : public virtual Page
+{
+  private:
+    SDL_Surface* m_WindowSurface;
+    SDL_Window* m_Window;
+    SDL2pp::Color m_BackGroundColor;
+    std::vector<Controls::ControlRIIA> m_Controls;
+  public:
+    BasicPage(SDL_Window*const& window);
+    virtual void EnterMainLoop() override;
+    virtual ~BasicPage() noexcept;
+    void SetBackgroungColor(Uint8 r,Uint8 g, Uint8 b);
+    static void Wait(double fps);
+};
+class LoadingPage : public virtual BasicPage{};
+class PageRIIA final: public virtual OGameObject
+{
+  private:
+    Page* m_Page;
+  public:
+    PageRIIA(Page* page) { this->m_Page= page;}
+    PageRIIA(const PageRIIA& p) = delete;
+    PageRIIA(PageRIIA&& p) {std::swap(this->m_Page,p.m_Page);}
+    PageRIIA& operator=(const PageRIIA& rsh) = delete;
+    PageRIIA& operator=(PageRIIA&& rsh) {std::swap(this->m_Page,rsh.m_Page); return *this;}
+    virtual ~PageRIIA() noexcept {delete this->m_Page;}
+    Page* Get() const {return this->m_Page;}
+    bool IsNull() const {return this->m_Page == NULL;}
+};
+} // namespace OGame::Views::Pages
