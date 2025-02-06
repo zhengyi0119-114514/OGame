@@ -1,5 +1,6 @@
 #pragma once
 #include "Math.hh"
+#include <SDL_surface.h>
 
 namespace OGame::Modules
 {
@@ -7,6 +8,7 @@ class SelfPlane
 {
   private:
     Math::Point m_Position;
+    SDL_Surface m_SelfPlaneSuface;
 
   public:
     SelfPlane(Math::Point position):m_Position(position) {}

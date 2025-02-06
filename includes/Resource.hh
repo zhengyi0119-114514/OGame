@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL2/SDL_surface.h>
+#include <SDL_ttf.h>
 #include <filesystem>
 
 namespace OGame::Resources
@@ -9,6 +10,7 @@ const std::filesystem::path DataDirectory{std::filesystem::current_path() / "dat
 const std::filesystem::path FontsDirectory{DataDirectory / "fonts"};
 const std::filesystem::path ImageDirectory{DataDirectory / "images"};
 const std::filesystem::path LicenseDirectory(DataDirectory / "licenses");
+const std::filesystem::path ConfigFileDirectory{DataDirectory/"config"};
 
 // files
 const std::filesystem::path SelfImage{ImageDirectory / "self.png"};
@@ -23,9 +25,13 @@ const std::filesystem::path SDL_imageLicense{LicenseDirectory / "sdl-image.licen
 const std::filesystem::path SDL_ttfLicense{LicenseDirectory / "sdl-ttf.license"};
 const std::filesystem::path SpdlogLicense{LicenseDirectory / "spdlog.license"};
 const std::filesystem::path Toml11License{LicenseDirectory / "toml11.license"};
-using IMAGE_RESOURCE = struct
+using GAME_RESOURCE = struct
 {
     SDL_Surface* Self;
+    TTF_Font* CEFFontsCJKFont;
+    TTF_Font* CEFFontsCJKMonoFont;
 };
-void GetImageResource(IMAGE_RESOURCE& resource);
+void GetResources(GAME_RESOURCE& resource);
+GAME_RESOURCE GetResources();
+void FreeResource();
 } // namespace OGame::Resources

@@ -23,7 +23,7 @@ using OGame::Config::GetConfigFileDirectory;
 
 void Init()
 {
-    if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO) < 0)
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
     {
         SPDLOG_ERROR(std::format("SDL2 init fail ,{:}", SDL_GetError()));
         exit(EXIT_FAILURE);
@@ -43,6 +43,7 @@ void Init()
 [[noreturn]]
 void Quit()
 {
+    OGame::Resources::FreeResource();
     IMG_Quit();
     TTF_Quit();
     SDL_Quit();
@@ -59,19 +60,16 @@ int main(int argc, char **argv)
     OGame::Config::WINDOW_CONFIG cfg{};
     OGame::Config::GetWindowConfig(cfg);
 
-    SDL_Window* pWindow{SDL_CreateWindow(cfg.WindowTitle.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                                           (int)cfg.WindowWidth, (int)cfg.WindowHeight,
-                                           SDL_WINDOW_SHOWN)};
-    OGame::Resources::IMAGE_RESOURCE imgResource;
-    OGame::Resources::GetImageResource(imgResource);
+    SDL_Window *pWindow{SDL_CreateWindow(cfg.WindowTitle.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                                         (int)cfg.WindowWidth, (int)cfg.WindowHeight, SDL_WINDOW_SHOWN)};
+    OGame::Resources::GetResources();
     if (pWindow == NULL)
     {
         SPDLOG_ERROR(std::format("Fail to create window :{:}", SDL_GetError()));
     }
     SDL2pp::Window window{pWindow};
-    SDL2pp::Surface windowSurface{SDL_GetWindowSurface(window.Get())};
     OGame::Views::Pages::BasicPage page{window.Get()};
-    page.SetBackgroungColor(0,0,102);
+    page.SetBackgroungColor(0, 0, 102);
     page.EnterMainLoop();
     Quit();
 }

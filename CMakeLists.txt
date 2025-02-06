@@ -9,6 +9,7 @@ elseif(DEFINED ENV{PROCESSOR_ARCHITECTURE})
     set(CMAKE_HOST_SYSTEM_PROCESSOR "$ENV{PROCESSOR_ARCHITECTURE}")
 endif()
 
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" "${CMAKE_SOURCE_DIR}")
 include(FindPackage)
 include(GNUInstallDirs)
@@ -22,7 +23,7 @@ set_target_properties(ogame_modules
     CXX_STANDARD 20
     CXX_STANDARD_REQUIRED TRUE
 )
-target_link_libraries(ogame_modules PRIVATE spdlog::spdlog_header_only
+target_link_libraries(ogame_modules PUBLIC spdlog::spdlog_header_only
     $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>
     $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>
     $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>

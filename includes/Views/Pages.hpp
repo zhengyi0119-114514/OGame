@@ -19,7 +19,6 @@ class Page : public virtual OGame::OGameObject
 class BasicPage : public virtual Page
 {
   private:
-    SDL_Surface* m_WindowSurface;
     SDL_Window* m_Window;
     SDL2pp::Color m_BackGroundColor;
     std::vector<Controls::ControlRIIA> m_Controls;

@@ -1,16 +1,21 @@
-#include "Resource.hh"
+#include "Modules/Math.hh"
+#include "Views/Controls.hxx"
 #include "Views/Pages.hpp"
 #include <SDL2pp/Color.hh>
+#include <SDL2pp/Renderer.hh>
 #include <SDL2pp/SDL.hh>
 #include <SDL2pp/SDL2pp.hh>
 #include <SDL2pp/Surface.hh>
+#include <SDL_error.h>
 #include <SDL_events.h>
+#include <SDL_render.h>
 #include <SDL_stdinc.h>
 #include <SDL_surface.h>
 #include <SDL_timer.h>
 #include <SDL_video.h>
 #include <cmath>
 #include <cstdint>
+#include <format>
 #include <spdlog/spdlog.h>
 
 namespace OGame::Views::Pages
@@ -18,10 +23,8 @@ namespace OGame::Views::Pages
 static Uint64 s_PreFrameTime;
 void BasicPage::EnterMainLoop()
 {
-    using namespace OGame::Resources;
-    IMAGE_RESOURCE ir{};
-    GetImageResource(ir);
     bool isExit = false;
+    SDL_Surface* windowSurface = SDL_GetWindowSurface(m_Window);
     while (!isExit)
     {
         SDL_Event event;
@@ -34,12 +37,14 @@ void BasicPage::EnterMainLoop()
                 break;
             }
         }
-        SDL2pp::Surface windowSurface{SDL_GetWindowSurface(m_Window)};
-        SDL_BlitSurface(ir.Self,NULL,windowSurface.Get(),NULL);
+        OGame::Views::Controls::Text text{OGame::Modules::Math::Point{10,10}, "Test",
+                                          OGame::Modules::Math::Rectangle{100, 100}};
+        text.Display(windowSurface);
         SDL_UpdateWindowSurface(m_Window);
         BasicPage::Wait(30.0);
     }
 }
+
 BasicPage::~BasicPage() noexcept
 {
 }

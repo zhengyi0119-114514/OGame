@@ -4,6 +4,8 @@ target_sources(ogame_modules PRIVATE
     Views/LoadingPage.cpp
     Views/BasicPage.cxx
     Views/Page.cc
+    views/Controls/Text.cpp
+    Views/Controls/Button.cpp
     Resource.cc
 )
 target_sources(main PRIVATE Main/Main.cc)
