@@ -1,6 +1,7 @@
 #include "Base.hxx"
 #include "Views/Controls.hxx"
 #include <SDL2pp/Color.hh>
+#include <SDL2pp/Renderer.hh>
 #include <SDL_events.h>
 #include <SDL_render.h>
 #include <SDL_surface.h>
@@ -21,12 +22,12 @@ class BasicPage : public virtual Page
 {
   protected:
     std::vector<std::shared_ptr<Controls::ControlRIIA>> m_ControlList;
-    SDL_Window* m_Window;
     SDL2pp::Color m_BackGroundColor;
-    SDL2pp::Surface m_BaseSurface{SDL_GetWindowSurface(m_Window)};
+    std::shared_ptr<SDL2pp::Renderer> mp_ShareRenderer;
 
   public:
-    BasicPage(SDL_Window*const& window);
+    BasicPage(std::shared_ptr<SDL2pp::Renderer> r);
+    BasicPage(SDL_Window *const &window);
     virtual void EnterMainLoop() override;
     virtual ~BasicPage() noexcept;
     void SetBackgroungColor(Uint8 r,Uint8 g, Uint8 b);
@@ -34,6 +35,7 @@ class BasicPage : public virtual Page
     static void Wait(double fps);
 };
 class LoadingPage : public virtual BasicPage{};
+class GamePage : BasicPage{};
 class PageRIIA final: public virtual OGameObject
 {
   private:

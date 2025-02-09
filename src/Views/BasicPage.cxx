@@ -15,6 +15,7 @@
 #include <SDL_video.h>
 #include <cmath>
 #include <cstdint>
+#include <memory>
 #include <spdlog/spdlog.h>
 
 namespace OGame::Views::Pages
@@ -26,6 +27,8 @@ void BasicPage::EnterMainLoop()
     OGame::Views::Controls::Text text{OGame::Modules::Math::Point{10, 10}, "～文本～"};
     while (!isExit)
     {
+        SDL_RenderClear(mp_ShareRenderer.get()->Get());
+        
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
@@ -36,21 +39,28 @@ void BasicPage::EnterMainLoop()
                 break;
             }
         }
-        for(const auto& control :m_ControlList)
+        for (const auto &control : m_ControlList)
         {
-            (*control).Get()->Display(m_BaseSurface.Get());
+            (*control).Get()->Display(mp_ShareRenderer->Get());
         }
-        SDL_UpdateWindowSurface(m_Window);
         BasicPage::Wait(30.0);
+        mp_ShareRenderer->Present();
     }
 }
 
 BasicPage::~BasicPage() noexcept
 {
 }
-BasicPage::BasicPage(SDL_Window *const &window) : m_Window(window)
+BasicPage::BasicPage(std::shared_ptr<SDL2pp::Renderer> r)
 {
+    mp_ShareRenderer = std::move(r);
 }
+BasicPage::BasicPage(SDL_Window *const &window)
+{
+    mp_ShareRenderer = std::shared_ptr<SDL2pp::Renderer>(
+        new SDL2pp::Renderer(SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED)));
+}
+
 void BasicPage::Wait(double maxFps)
 {
     // 当前时间 (ms)

@@ -12,13 +12,12 @@
 #include <cstdint>
 #include <string>
 #include <string_view>
-#include <vector>
 namespace OGame::Views::Controls
 {
 class IControl : public virtual OGame::OGameObject
 {
   public:
-    virtual void Display(SDL_Surface *const &surface) = 0;
+    virtual void Display(SDL_Renderer *const &renderer) = 0;
     virtual void HandleEvent(const SDL_Event& event)  = 0;
     virtual const Modules::Math::Point& Position() const = 0;
     virtual const Modules::Math::Rectangle& Size() const =0;
@@ -52,7 +51,7 @@ class Button : public virtual OGameObject, public virtual IControl
         std::string text
     );
     virtual void HandleEvent(const SDL_Event& event) override;
-    virtual void Display(SDL_Surface *const &surface) override;
+    virtual void Display(SDL_Renderer *const &renderer) override;
     virtual const Modules::Math::Point& Position() const override {return this->m_Position;};
     Modules::Math::Point& Position() {return this->m_Position;}
     virtual const Modules::Math::Rectangle& Size() const override {return this->m_Size;};
@@ -83,7 +82,7 @@ class Text : public virtual OGameObject,public virtual IControl
     const OGame::Modules::Math::Point& Position() const override {return this->m_Position;};
     Modules::Math::Point& Position() noexcept {return this->m_Position;};
     virtual void HandleEvent(const SDL_Event& event) override {};
-    virtual void Display(SDL_Surface *const &surface) override;
+    virtual void Display(SDL_Renderer *const &renderer) override;
     virtual ~Text() noexcept = default;
     virtual const Modules::Math::Rectangle& Size() const override {return m_Size;};
 };
@@ -91,6 +90,6 @@ class FormatText: public virtual Text
 {
   public:
     using Text::Text;
-    virtual void Display(SDL_Surface *const &surface) override;
+    virtual void Display(SDL_Renderer *const &renderer) override;
 };
 } // namespace OGame::Views::Controls
