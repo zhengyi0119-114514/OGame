@@ -24,7 +24,6 @@ const std::filesystem::path SDL2ppLicense{LicenseDirectory / "sdl2pp.license"};
 const std::filesystem::path SDL_imageLicense{LicenseDirectory / "sdl-image.license"};
 const std::filesystem::path SDL_ttfLicense{LicenseDirectory / "sdl-ttf.license"};
 const std::filesystem::path SpdlogLicense{LicenseDirectory / "spdlog.license"};
-const std::filesystem::path TinyXML2License(LicenseDirectory / "tinyxml2.license");
 using GAME_RESOURCE = struct
 {
     SDL_Surface* Self;

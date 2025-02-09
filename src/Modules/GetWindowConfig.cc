@@ -1,4 +1,3 @@
-#include "Errors.hpp"
 #include "Modules/Config.hpp"
 #include <SDL_video.h>
 #include <cstdint>
@@ -21,7 +20,7 @@ void InitWindowConfig()
     }
     catch (const lcfg::FileIOException& e)
     {
-        SPDLOG_ERROR(std::format("File io excepthion ,{:}", e.what()));
+        SPDLOG_ERROR(std::format("File io excepthion ,{:}",WindowConfigFile.string()));
         throw;
     }
     catch (const lcfg::ParseException& e)

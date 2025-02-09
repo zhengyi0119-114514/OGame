@@ -21,6 +21,7 @@
 #include <format>
 #include <memory>
 #include <spdlog/spdlog.h>
+#include <utility>
 
 void Init()
 {
@@ -79,7 +80,7 @@ int main(int argc, char **argv)
         new OGame::Views::Controls::ControlRIIA{new OGame::Views::Controls::FormatText(
             OGame::Modules::Math::Point{10, 10}, "杂鱼～～～\n杂鱼～～～~~~\n傻逼")});
 
-    page.AddControl(formatText);
+    page.AddControl(std::move(formatText));
     page.SetBackgroungColor(0, 0, 102);
 
     page.EnterMainLoop();

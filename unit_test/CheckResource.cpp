@@ -24,5 +24,4 @@ TEST_CASE("OGame.Resource.CheckFile", "[OGAME.RESOURCE]")
     REQUIRE(fs::exists(rs::SDL2License));
     REQUIRE(fs::exists(rs::SDL2ppLicense));
     REQUIRE(fs::exists(rs::SpdlogLicense));
-    REQUIRE(fs::exists(rs::TinyXML2License));
 }
