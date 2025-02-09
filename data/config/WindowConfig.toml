@@ -1,4 +1,0 @@
-WindowHeigt = 720
-WindowWidth = 1280
-WindowTitle = "StarViewer"
-WindowRenderer = "Vulkan"

@@ -9,7 +9,6 @@ elseif(DEFINED ENV{PROCESSOR_ARCHITECTURE})
     set(CMAKE_HOST_SYSTEM_PROCESSOR "$ENV{PROCESSOR_ARCHITECTURE}")
 endif()
 
-
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" "${CMAKE_SOURCE_DIR}")
 include(FindPackage)
 include(GNUInstallDirs)
@@ -27,9 +26,11 @@ target_link_libraries(ogame_modules PUBLIC spdlog::spdlog_header_only
     $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>
     $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>
     $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
-    toml11::toml11
+    Boost::program_options
+    libconfig::config
+    libconfig::config++
     ${SDL2PP_LIBRARIES}
-    )
+)
 target_include_directories(ogame_modules PRIVATE ${SDL2PP_INCLUDE_DIRS})
 message(NOTICE "SB:${SDL2PP_LIBRARIES}")
 
@@ -103,6 +104,7 @@ target_link_libraries(utests PRIVATE Catch2::Catch2WithMain)
 include(CTest)
 include(Catch)
 catch_discover_tests(utests)
+MESSAGE(NOTICE "COPY ${CMAKE_SOURCE_DIR}/data TO ${CMAKE_BINARY_DIR}/data")
 execute_process(COMMAND "${CMAKE_COMMAND}" "-E" "copy_directory" "${CMAKE_SOURCE_DIR}/data" "${CMAKE_BINARY_DIR}/data")
 
 install(TARGETS ogame_modules main)

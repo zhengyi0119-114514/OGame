@@ -15,7 +15,6 @@
 #include <SDL_video.h>
 #include <cmath>
 #include <cstdint>
-#include <format>
 #include <spdlog/spdlog.h>
 
 namespace OGame::Views::Pages
@@ -24,7 +23,7 @@ static Uint64 s_PreFrameTime;
 void BasicPage::EnterMainLoop()
 {
     bool isExit = false;
-    SDL_Surface* windowSurface = SDL_GetWindowSurface(m_Window);
+    OGame::Views::Controls::Text text{OGame::Modules::Math::Point{10, 10}, "～文本～"};
     while (!isExit)
     {
         SDL_Event event;
@@ -37,9 +36,10 @@ void BasicPage::EnterMainLoop()
                 break;
             }
         }
-        OGame::Views::Controls::Text text{OGame::Modules::Math::Point{10,10}, "Test",
-                                          OGame::Modules::Math::Rectangle{100, 100}};
-        text.Display(windowSurface);
+        for(const auto& control :m_ControlList)
+        {
+            (*control).Get()->Display(m_BaseSurface.Get());
+        }
         SDL_UpdateWindowSurface(m_Window);
         BasicPage::Wait(30.0);
     }
@@ -70,5 +70,9 @@ void BasicPage::Wait(double maxFps)
 void BasicPage::SetBackgroungColor(Uint8 r, Uint8 g, Uint8 b)
 {
     this->m_BackGroundColor = SDL2pp::Color{r, g, b};
+}
+void BasicPage::AddControl(std::shared_ptr<OGame::Views::Controls::ControlRIIA> control)
+{
+    m_ControlList.push_back(control);
 }
 } // namespace OGame::Views::Pages

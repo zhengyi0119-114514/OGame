@@ -1,66 +1,48 @@
 #include "Errors.hpp"
 #include "Modules/Config.hpp"
 #include <SDL_video.h>
+#include <cstdint>
 #include <cstring>
-#include <filesystem>
 #include <format>
+#include <libconfig.h++>
+#include <libconfig.hh>
 #include <spdlog/spdlog.h>
-#include <toml.hpp>
-#include <toml11/parser.hpp>
+namespace lcfg = libconfig;
 namespace OGame::Config
 {
-void GetWindowConfig(WINDOW_CONFIG &out)
+static WINDOW_CONFIG s_WindowConfig;
+void InitWindowConfig()
 {
-    std::filesystem::path dateFilePath = std::filesystem::current_path() / "data" / "config" / "WindowConfig.toml";
-    std::filesystem::path filePath = GetConfigFileDirectory() / "WindowConfig.toml";
-#ifdef _DEBUG
-    if (std::filesystem::exists(filePath))
+    s_WindowConfig = WINDOW_CONFIG{};
+    lcfg::Config windowCfgFile{};
+    try
     {
-        std::filesystem::remove(filePath);
-        SPDLOG_INFO(std::format("Remove {:}", filePath.string()));
+        windowCfgFile.readFile(WindowConfigFile.string());
     }
-    std::filesystem::copy_file(dateFilePath, filePath);
-    SPDLOG_INFO(std::format("Copy file \"{:}\" to \"{:}\"", dateFilePath.string(), filePath.string()));
-#else
-    if (!std::filesystem::exists(filePath))
+    catch (const lcfg::FileIOException& e)
     {
-        std::filesystem::copy_file(dateFilePath, filePath);
-        SPDLOG_INFO(std::format("Copy file form {:} to {:}", dateFilePath.string(), filePath.string()));
+        SPDLOG_ERROR(std::format("File io excepthion ,{:}", e.what()));
+        throw;
     }
-#endif
-    if (!std::filesystem::exists(filePath))
+    catch (const lcfg::ParseException& e)
     {
-        throw OGame::Errors::FileNotFoundException{filePath};
+        SPDLOG_ERROR(std::format("Parse exception at {:} - {:}", e.getFile(), e.getError()));
+        throw;
     }
-    auto tomlDoc = toml::parse(filePath.string().c_str());
-
-    if (tomlDoc.contains("WindowHeigt"))
+    try
     {
-        out.WindowHeight = tomlDoc["WindowHeigt"].as_integer();
+        uint32_t width = windowCfgFile.lookup("Width");
+        s_WindowConfig.WindowWidth = width;
+        uint32_t height = windowCfgFile.lookup("Height");
+        s_WindowConfig.WindowHeight = height;
     }
-    if (tomlDoc.contains("WindowWidth"))
+    catch (lcfg::SettingNotFoundException e)
     {
-        out.WindowWidth = tomlDoc["WindowWidth"].as_integer();
+        SPDLOG_ERROR(std::format("Setting '{:}' not found.", e.getPath()));
     }
-    if (tomlDoc.contains("WindowTitle"))
-    {
-        out.WindowTitle = tomlDoc["WindowTitle"].as_string();
-    }
-    out.WindowFlag = 0;
-    if (tomlDoc.contains("WindowRenderer") && tomlDoc.at("WindowRenderer").is_string())
-    {
-        auto renderer = tomlDoc["WindowRenderer"].as_string();
-        if (strcmp(renderer.c_str(), "Vulkan") == 0)
-        {
-            out.WindowFlag |= SDL_WINDOW_VULKAN;
-        }
-        else if (strcmp(renderer.c_str(), "OpenGL") == 0)
-        {
-            out.WindowFlag |= SDL_WINDOW_OPENGL;
-        }
-        else if (strcmp(renderer.c_str(), "NULL") == 0)
-        {
-        }
-    }
+}
+const WINDOW_CONFIG &WindowConfig()
+{
+    return s_WindowConfig;
 }
 } // namespace OGame::Config

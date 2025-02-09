@@ -1,11 +1,13 @@
 target_sources(ogame_modules PRIVATE 
     Modules/Config.cc 
     Modules/GetWindowConfig.cc
+    Modules/GetText.cpp
     Views/LoadingPage.cpp
     Views/BasicPage.cxx
     Views/Page.cc
     views/Controls/Text.cpp
     Views/Controls/Button.cpp
+    Views/Controls/FormatText.cc
     Resource.cc
 )
 target_sources(main PRIVATE Main/Main.cc)

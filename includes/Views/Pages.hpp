@@ -6,6 +6,7 @@
 #include <SDL_surface.h>
 #include <SDL_video.h>
 #include <cstddef>
+#include <memory>
 #include <utility>
 #include <vector>
 namespace OGame::Views::Pages
@@ -18,15 +19,18 @@ class Page : public virtual OGame::OGameObject
 };
 class BasicPage : public virtual Page
 {
-  private:
+  protected:
+    std::vector<std::shared_ptr<Controls::ControlRIIA>> m_ControlList;
     SDL_Window* m_Window;
     SDL2pp::Color m_BackGroundColor;
-    std::vector<Controls::ControlRIIA> m_Controls;
+    SDL2pp::Surface m_BaseSurface{SDL_GetWindowSurface(m_Window)};
+
   public:
     BasicPage(SDL_Window*const& window);
     virtual void EnterMainLoop() override;
     virtual ~BasicPage() noexcept;
     void SetBackgroungColor(Uint8 r,Uint8 g, Uint8 b);
+    void AddControl(std::shared_ptr<OGame::Views::Controls::ControlRIIA> control);
     static void Wait(double fps);
 };
 class LoadingPage : public virtual BasicPage{};

@@ -1,5 +1,8 @@
 #include "Modules/Config.hpp"
+#include "Modules/Math.hh"
+#include "Modules/Text.hxx"
 #include "Resource.hh"
+#include "Views/Controls.hxx"
 #include "Views/Pages.hpp"
 #include <SDL2/SDL.h>
 #include <SDL2pp/Color.hh>
@@ -15,14 +18,13 @@
 #include <SDL_ttf.h>
 #include <SDL_video.h>
 #include <cstdlib>
-#include <filesystem>
 #include <format>
+#include <memory>
 #include <spdlog/spdlog.h>
-
-using OGame::Config::GetConfigFileDirectory;
 
 void Init()
 {
+    OGame::Resources::Text::GetText();
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
     {
         SPDLOG_ERROR(std::format("SDL2 init fail ,{:}", SDL_GetError()));
@@ -38,6 +40,9 @@ void Init()
         SPDLOG_ERROR(std::format("SDL2_image init fail ,{:}", IMG_GetError()));
         exit(EXIT_FAILURE);
     }
+    OGame::Config::InitWindowConfig();
+    OGame::Resources::Text::InitText();
+
     SPDLOG_INFO("Init success");
 }
 [[noreturn]]
@@ -51,17 +56,18 @@ void Quit()
 }
 int main(int argc, char **argv)
 {
-    SPDLOG_INFO("Hello world");
-    auto path = GetConfigFileDirectory();
-    SPDLOG_INFO(std::format("Config file at {:}.", path.string()));
+    SPDLOG_INFO("Hello world.");
     Init();
-    OGame::Config::CreateDirectoryIfNotExists(path);
 
-    OGame::Config::WINDOW_CONFIG cfg{};
-    OGame::Config::GetWindowConfig(cfg);
+    SPDLOG_DEBUG(std::format("Current directory at {:}", std::filesystem::current_path().string()));
+    SPDLOG_DEBUG(std::format("Config file at {:}.", path.string()));
 
-    SDL_Window *pWindow{SDL_CreateWindow(cfg.WindowTitle.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                                         (int)cfg.WindowWidth, (int)cfg.WindowHeight, SDL_WINDOW_SHOWN)};
+    OGame::Config::WINDOW_CONFIG cfg = OGame::Config::WindowConfig();
+    SPDLOG_INFO(std::format("Window width:{:},height:{:}", cfg.WindowWidth, cfg.WindowHeight));
+
+    SDL_Window *pWindow{SDL_CreateWindow(OGame::Resources::Text::GetText().Title.c_str(), SDL_WINDOWPOS_UNDEFINED,
+                                         SDL_WINDOWPOS_UNDEFINED, (int)cfg.WindowWidth, (int)cfg.WindowHeight,
+                                         SDL_WINDOW_SHOWN)};
     OGame::Resources::GetResources();
     if (pWindow == NULL)
     {
@@ -69,7 +75,13 @@ int main(int argc, char **argv)
     }
     SDL2pp::Window window{pWindow};
     OGame::Views::Pages::BasicPage page{window.Get()};
+    std::shared_ptr<OGame::Views::Controls::ControlRIIA> formatText(
+        new OGame::Views::Controls::ControlRIIA{new OGame::Views::Controls::FormatText(
+            OGame::Modules::Math::Point{10, 10}, "杂鱼～～～\n杂鱼～～～~~~\n傻逼")});
+
+    page.AddControl(formatText);
     page.SetBackgroungColor(0, 0, 102);
+
     page.EnterMainLoop();
     Quit();
 }
