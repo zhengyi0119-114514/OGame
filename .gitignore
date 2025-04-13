@@ -1,5 +1,6 @@
 # Build directories and binary files
 build/
+build*/
 out/
 cmake-build-*/
 conan-cache/
@@ -46,3 +47,4 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 .cache/
+vcpkg_installed/

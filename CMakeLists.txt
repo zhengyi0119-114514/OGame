@@ -1,112 +1,74 @@
-cmake_minimum_required(VERSION 3.20.1)
-project(ogame_modules)
-
-# - Fixes msvc toolchain issue
-# cmake dosen't set `CMAKE_HOST_SYSTEM_PROCESSOR` before `project(...)`, which led to the failure of msvc configuration
-if(DEFINED ENV{PROCESSOR_ARCHITEW6432})
-    set(CMAKE_HOST_SYSTEM_PROCESSOR "$ENV{PROCESSOR_ARCHITEW6432}")
-elseif(DEFINED ENV{PROCESSOR_ARCHITECTURE})
-    set(CMAKE_HOST_SYSTEM_PROCESSOR "$ENV{PROCESSOR_ARCHITECTURE}")
-endif()
+cmake_minimum_required(VERSION 3.28)
+project(open_stg)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" "${CMAKE_SOURCE_DIR}")
 include(FindPackage)
 include(GNUInstallDirs)
 
-add_library(ogame_modules SHARED src/empty.c)
-target_include_directories(ogame_modules PUBLIC includes)
-set_target_properties(ogame_modules
-    PROPERTIES
-    C_STANDARD 17
-    C_STANDARD_REQUIRED TRUE
-    CXX_STANDARD 20
-    CXX_STANDARD_REQUIRED TRUE
-)
-target_link_libraries(ogame_modules PUBLIC spdlog::spdlog_header_only
-    $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>
-    $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>
-    $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
-    Boost::program_options
-    libconfig::config
-    libconfig::config++
-    ${SDL2PP_LIBRARIES}
-)
-target_include_directories(ogame_modules PRIVATE ${SDL2PP_INCLUDE_DIRS})
-message(NOTICE "SB:${SDL2PP_LIBRARIES}")
+add_library(open_stg_lib SHARED)
+target_sources(open_stg_lib PRIVATE src/empty.c)
 
+add_executable(abs_game)
+target_sources(abs_game PRIVATE src/empty.c)
+target_link_libraries(abs_game PRIVATE open_stg_lib)
+add_executable(tests)
+target_sources(tests PRIVATE src/empty.c)
+target_link_libraries(tests PRIVATE open_stg_lib)
+
+target_compile_definitions(
+    open_stg_lib PRIVATE UNICODE _UNICODE
+)
 if(WIN32)
-    target_compile_definitions(
-        ogame_modules PRIVATE UNICODE _UNICODE
-    )
-    set_target_properties(ogame_modules
+    set_target_properties(open_stg_lib
         PROPERTIES
-        WINDOWS_EXPORT_ALL_SYMBOLS
+        WINDOWS_EXPORT_ALL_SYMBOLS TRUE
     )
-endif()
 
-if(MSVC)
-    target_compile_options(
-        ogame_modules
-        PUBLIC
-        /utf-8
-    )
+    if(MSVC)
+        # - Fixes msvc toolchain issue
+        # cmake dosen't set `CMAKE_HOST_SYSTEM_PROCESSOR` before `project(...)`, which led to the failure of msvc configuration
+        if(DEFINED ENV{PROCESSOR_ARCHITEW6432})
+            set(CMAKE_HOST_SYSTEM_PROCESSOR "$ENV{PROCESSOR_ARCHITEW6432}")
+        elseif(DEFINED ENV{PROCESSOR_ARCHITECTURE})
+            set(CMAKE_HOST_SYSTEM_PROCESSOR "$ENV{PROCESSOR_ARCHITECTURE}")
+        endif()
+
+        target_compile_options(
+            open_stg_lib
+            PUBLIC
+            /utf-8
+        )
+        target_compile_definitions(
+            open_stg_lib
+            PUBLIC
+            _CRT_SECURE_NO_WARNINGS
+        )
+    endif()
+endif()
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     target_compile_definitions(
-        ogame_modules
-        PUBLIC
-        _CRT_SECURE_NO_WARNINGS
+        open_stg_lib 
+        PUBLIC 
+        LINUX=true
     )
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(NOTICE "Debug")
     target_compile_definitions(
-        ogame_modules
+        open_stg_lib
         PRIVATE
         _DEBUG
         DEBUG
     )
 endif()
 
-add_executable(main)
-target_sources(main PRIVATE src/empty.c)
-target_link_libraries(main PRIVATE ogame_modules)
-set_target_properties(
-    main
-    PROPERTIES
-    C_STANDARD 17
-    C_STANDARD_REQUIRED TRUE
-    CXX_STANDARD 20
-    CXX_STANDARD_REQUIRED TRUE
-)
-target_link_libraries(main
-    PUBLIC
-    $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>
-    $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>
-    $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
-)
-target_include_directories(main PRIVATE ${SDL2PP_INCLUDE_DIRS})
-target_link_libraries(main PRIVATE ${SDL2PP_LIBRARIES})
-target_link_libraries(main PRIVATE spdlog::spdlog_header_only)
-
 enable_testing()
-add_executable(utests)
-target_sources(utests PRIVATE src/empty.c)
-target_link_libraries(utests PRIVATE ogame_modules)
-set_target_properties(
-    utests
-    PROPERTIES
-    C_STANDARD 17
-    C_STANDARD_REQUIRED TRUE
-    CXX_STANDARD 20
-    CXX_STANDARD_REQUIRED TRUE
-)
-target_link_libraries(utests PRIVATE Catch2::Catch2WithMain)
 include(CTest)
 include(Catch)
-catch_discover_tests(utests)
-MESSAGE(NOTICE "COPY ${CMAKE_SOURCE_DIR}/data TO ${CMAKE_BINARY_DIR}/data")
-execute_process(COMMAND "${CMAKE_COMMAND}" "-E" "copy_directory" "${CMAKE_SOURCE_DIR}/data" "${CMAKE_BINARY_DIR}/data")
+add_subdirectory(src/stg_lib)
+add_subdirectory(src/abs_game)
+include(LinkLibrary)
+include(SetTargetProperties)
 
-install(TARGETS ogame_modules main)
-add_subdirectory(src)
-add_subdirectory(unit_test)
+

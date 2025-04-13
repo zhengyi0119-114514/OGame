@@ -34,7 +34,31 @@
                 "CMAKE_C_COMPILER": "clang",
                 "CMAKE_CXX_COMPILER": "clang++",
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-                "CMAKE_EXPORT_COMPILE_COMMANDS":true,
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true,
+                "CMAKE_INSTALL_PREFIX": " ${sourceDir}/build/install"
+            }
+        },
+        {
+            "name": "vcpkg-gnu-release",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++",
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+            }
+        },
+        {
+            "name": "vcpkg-gnu-clang-release",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true,
                 "CMAKE_INSTALL_PREFIX": " ${sourceDir}/build/install"
             }
         }
