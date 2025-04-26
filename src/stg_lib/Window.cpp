@@ -1,4 +1,5 @@
-#include "sdl2.hpp"
+#include "sdl.hpp"
+#include <SDL2/SDL.h>
 #include <SDL_video.h>
 #include <utility>
 
@@ -11,6 +12,10 @@ open_stg::sdl2_h::PtrWindow::~PtrWindow() noexcept
     {
         SDL_DestroyWindow(m_pWin);
     }
+}
+SDL_Window* open_stg::sdl2_h::ptr_window::Get() const
+{
+    return m_pWin;
 }
 open_stg::sdl2_h::PtrWindow::PtrWindow(open_stg::sdl2_h::PtrWindow &&ref)
 {

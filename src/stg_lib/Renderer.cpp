@@ -1,4 +1,5 @@
-#include <sdl2.hpp>
+#include "sdl.hpp"
+#include <SDL2/SDL.h>
 #include <utility>
 
 namespace open_stg::sdl2_h
@@ -11,13 +12,49 @@ PtrRenderer::PtrRenderer(PtrRenderer &&r)
 {
     std::swap(this->m_pRend, r.m_pRend);
 }
-PtrRenderer& PtrRenderer::operator=(PtrRenderer&& rsh)
+PtrRenderer &PtrRenderer::operator=(PtrRenderer &&rsh)
 {
-    PtrRenderer rend {std::move(rsh)};
+    PtrRenderer rend{std::move(rsh)};
     this->Swap(rsh);
+    return *this;
 }
-void PtrRenderer::Swap(PtrRenderer& ref)
+void PtrRenderer::Swap(PtrRenderer &ref)
 {
-    std::swap(this->m_pRend,ref.m_pRend);
+    std::swap(this->m_pRend, ref.m_pRend);
+}
+PtrRenderer::~PtrRenderer() noexcept
+{
+    if (this->m_pRend != nullptr)
+    {
+        SDL_DestroyRenderer(this->m_pRend);
+    }
+}
+SDL_Renderer **PtrRenderer::operator&()
+{
+    return &m_pRend;
+}
+SDL_Renderer *const *ptr_renderer::operator&() const
+{
+    return &m_pRend;
+}
+SDL_Renderer &ptr_renderer::operator*()
+{
+    return *m_pRend;
+}
+const SDL_Renderer &ptr_renderer::operator*() const
+{
+    return *m_pRend;
+}
+SDL_Renderer* ptr_renderer::operator->()
+{
+    return m_pRend;
+}
+const SDL_Renderer * ptr_renderer::operator->() const
+{
+    return m_pRend;
+}
+SDL_Renderer *ptr_renderer::Get() const
+{
+    return m_pRend;
 }
 } // namespace open_stg::sdl2_h

@@ -1,7 +1,5 @@
 module;
-#include "sdl2.hpp"
-#include <SDL.h>
-#include <SDL_video.h>
+#include "sdl.hpp"
 #include <utility>
 export module open_stg.sdl2;
 export namespace open_stg::sdl2

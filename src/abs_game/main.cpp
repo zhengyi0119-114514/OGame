@@ -4,8 +4,10 @@
 #define __STDC_WAND_LIB_EXT1__ 1
 #include <stdio.h>
 #include <stdlib.h>
+#include "open_game.hpp"
 
 int main()
 {
-    printf_s("%s", "HelloWorld form safec api");
+    bool bOk = false;
+    InitOG(bOk);
 }

@@ -1,8 +1,7 @@
 #ifndef OGAME_STGLIB_SDL2_H
 #define OGAME_STGLIB_SDL2_H
 #include <SDL2/SDL.h>
-#include <SDL_render.h>
-#include <SDL_video.h>
+
 namespace open_stg::sdl2_h
 {
 class PtrWindow
@@ -29,8 +28,10 @@ class PtrWindow
     SDL_Window *const *operator&() const;
     SDL_Window **operator&();
     operator SDL_Window *() const noexcept;
+    SDL_Window *Get() const;
 };
 using ptr_window = PtrWindow;
+
 class PtrRenderer
 {
   private:
@@ -48,7 +49,41 @@ class PtrRenderer
         this->Swap(ref);
     }
     ~PtrRenderer() noexcept;
+    SDL_Renderer **operator&();
+    SDL_Renderer *const *operator&() const;
+    SDL_Renderer &operator*();
+    const SDL_Renderer &operator*() const;
+    SDL_Renderer *operator->();
+    const SDL_Renderer *operator->() const;
+    operator SDL_Renderer *() const noexcept;
+    SDL_Renderer *Get() const;
 };
 using ptr_renderer = PtrRenderer;
+class PtrSurface
+{
+  public:
+    PtrSurface(SDL_Surface *pSurf);
+    PtrSurface(PtrSurface &&);
+    PtrSurface(const PtrSurface &) = delete;
+    PtrSurface &operator=(PtrSurface &&);
+    PtrSurface &operator=(const PtrSurface &) = delete;
+    ~PtrSurface() noexcept;
+    void Swap(PtrSurface &ref);
+    void swap(PtrSurface &ref)
+    {
+        this->Swap(ref);
+    }
+    SDL_Surface **operator&();
+    SDL_Surface *const *operator&() const;
+    SDL_Surface &operator*();
+    const SDL_Surface &operator*() const;
+    SDL_Surface *operator->();
+    const SDL_Surface *operator->() const;
+    SDL_Surface *Get() const;
+
+  private:
+    SDL_Surface *m_pSurf = nullptr;
+};
+using ptr_surface = PtrSurface;
 } // namespace open_stg::sdl2_h
 #endif
