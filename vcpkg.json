@@ -1,40 +1,39 @@
 {
-    "dependencies": [
-        "boost-charconv",
-        "boost-filesystem",
-        "boost-json",
-        "boost-program-options",
-        "boost-property-tree",
-        "boost-thread",
-        "boost-asio",
-        "catch2",
-        "pthread",
-        {
-            "name": "sdl2",
-            "features": [
-                "vulkan"
-            ],
-            "version>=": "2.32.4"
-        },
-        {
-            "name": "sdl2-image",
-            "features": [
-                "libjpeg-turbo",
-                "libwebp",
-                "tiff"
-            ]
-        },
-        {
-            "name": "sdl2-mixer",
-            "features": [
-                "libflac",
-                "libmodplug",
-                "mpg123",
-                "opusfile",
-                "wavpack"
-            ]
-        },
-        "sdl2-ttf",
-        "asio"
-    ]
+  "dependencies": [
+    "boost-charconv",
+    "boost-filesystem",
+    "boost-json",
+    "boost-program-options",
+    "gtest",
+    "lua",
+    "pthreads",
+    {
+      "name": "sdl2",
+      "features": [
+        "vulkan"
+      ],
+      "version>=": "2.32.4"
+    },
+    "sdl2-gfx",
+    {
+      "name": "sdl2-image",
+      "features": [
+        "libjpeg-turbo",
+        "libwebp",
+        "tiff"
+      ]
+    },
+    {
+      "name": "sdl2-mixer",
+      "features": [
+        "libflac",
+        "libmodplug",
+        "mpg123",
+        "opusfile",
+        "wavpack"
+      ]
+    },
+    "sdl2-ttf",
+    "ftxui"
+  ]
 }

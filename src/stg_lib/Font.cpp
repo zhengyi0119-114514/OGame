@@ -74,8 +74,53 @@ PtrTtfFont &ptr_ttf_font::operator=(ptr_ttf_font &&rsh)
     this->swap(obj);
     return *this;
 }
-TTF_Font* ptr_ttf_font::Get() const
+TTF_Font *ptr_ttf_font::Get() const
 {
     return m_pFont;
+}
+} // namespace open_stg::sdl2_h
+
+namespace open_stg::sdl2_h
+{
+// SharedPtrTtfFont 实现
+SharedPtrTtfFont::SharedPtrTtfFont(TTF_Font *pFont) : m_ptr(std::make_shared<PtrTtfFont>(pFont))
+{
+}
+
+SharedPtrTtfFont::SharedPtrTtfFont(PtrTtfFont *p) : m_ptr(p)
+{
+}
+
+TTF_Font *SharedPtrTtfFont::operator->()
+{
+    return m_ptr->operator->();
+}
+const TTF_Font *SharedPtrTtfFont::operator->() const
+{
+    return m_ptr->operator->();
+}
+TTF_Font &SharedPtrTtfFont::operator*()
+{
+    return m_ptr->operator*();
+}
+const TTF_Font &SharedPtrTtfFont::operator*() const
+{
+    return m_ptr->operator*();
+}
+TTF_Font **SharedPtrTtfFont::operator&()
+{
+    return m_ptr->operator&();
+}
+TTF_Font *const *SharedPtrTtfFont::operator&() const
+{
+    return m_ptr->operator&();
+}
+SharedPtrTtfFont::operator TTF_Font *() const
+{
+    return *m_ptr;
+}
+TTF_Font *SharedPtrTtfFont::Get() const
+{
+    return m_ptr->Get();
 }
 } // namespace open_stg::sdl2_h

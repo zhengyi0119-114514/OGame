@@ -29,6 +29,10 @@ PtrRenderer::~PtrRenderer() noexcept
         SDL_DestroyRenderer(this->m_pRend);
     }
 }
+PtrRenderer::operator SDL_Renderer *() const noexcept
+{
+    return this->Get();
+}
 SDL_Renderer **PtrRenderer::operator&()
 {
     return &m_pRend;
@@ -45,11 +49,11 @@ const SDL_Renderer &ptr_renderer::operator*() const
 {
     return *m_pRend;
 }
-SDL_Renderer* ptr_renderer::operator->()
+SDL_Renderer *ptr_renderer::operator->()
 {
     return m_pRend;
 }
-const SDL_Renderer * ptr_renderer::operator->() const
+const SDL_Renderer *ptr_renderer::operator->() const
 {
     return m_pRend;
 }

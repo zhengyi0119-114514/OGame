@@ -13,3 +13,8 @@ target_compile_features(
     cxx_nullptr
     c_std_17
 )
+set_target_properties(
+    open_stg_launcher PROPERTIES
+    CXX_STANDARD 20
+    CXX_STANDARD_REQUIRED TRUE
+)

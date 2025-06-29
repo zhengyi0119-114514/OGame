@@ -2,27 +2,47 @@ if(POLICY CMP0167)
     cmake_policy(SET CMP0167 NEW)
 endif()
 
-find_package(asio CONFIG REQUIRED)
-find_package(spdlog CONFIG REQUIRED)
-find_package(Catch2 CONFIG REQUIRED)
-find_package(Boost REQUIRED CONFIG COMPONENTS 
-    thread program_options charconv 
-    json property_tree filesystem asio
+include(FetchContent)
+
+find_package(Boost REQUIRED CONFIG COMPONENTS
+    charconv json filesystem program_options
 )
 find_package(SDL2 CONFIG REQUIRED)
 find_package(SDL2_image CONFIG REQUIRED)
 find_package(SDL2_mixer CONFIG REQUIRED)
 find_package(SDL2_ttf CONFIG REQUIRED)
+find_package(SDL_gfx 1 REQUIRED)
 find_package(Lua REQUIRED)
 
 find_package(PkgConfig QUIET)
 
-if(NOT UNIX)
-    find_package(PThreads4W REQUIRED)
-    target_link_libraries(main PRIVATE PThreads4W::PThreads4W)
+if(MSVC)
+    find_package(PThreads4W QUIET CONFIG)
 endif()
 
 if(PkgConfig_FOUND)
     pkg_check_modules(LIBSAFEC QUIET IMPORTED_TARGET libsafec)
     message(STATUS "LIBSAFEC_FOUND: ${LIBSAFEC_FOUND}")
+endif()
+
+find_package(GTest QUIET CONFIG)
+find_package(ftxui CONFIG QUIET)
+
+if(NOT ftxui_FOUND)
+    FetchContent_Declare(
+        ftxui
+        GIT_REPOSITORY https://github.com/ArthurSonzogni/FTXUI
+        GIT_TAG v6.1.9 # Replace with the version you want
+    )
+
+    FetchContent_MakeAvailable(ftxui)
+endif()
+
+if(NOT GTest_FOUND)
+    FetchContent_Declare(
+        GTest
+        GIT_REPOSITORY https://github.com/google/googletest.git
+        GIT_TAG v1.17.0
+    )
+    FetchContent_MakeAvailable(GTest)
 endif()
