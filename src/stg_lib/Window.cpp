@@ -48,14 +48,6 @@ SDL_Window &open_stg::sdl2_h::PtrWindow::operator*()
 {
     return *m_pWin;
 }
-SDL_Window **open_stg::sdl2_h::PtrWindow::operator&()
-{
-    return &this->m_pWin;
-}
-SDL_Window *const *open_stg::sdl2_h::PtrWindow::operator&() const
-{
-    return &this->m_pWin;
-}
 open_stg::sdl2_h::PtrWindow::operator SDL_Window *() const noexcept
 {
     return m_pWin;

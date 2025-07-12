@@ -56,14 +56,6 @@ const TTF_Font &ptr_ttf_font::operator*() const noexcept
 {
     return *m_pFont;
 }
-TTF_Font **ptr_ttf_font::operator&()
-{
-    return &m_pFont;
-}
-TTF_Font *const *ptr_ttf_font::operator&() const noexcept
-{
-    return &m_pFont;
-}
 ptr_ttf_font::operator TTF_Font *() const
 {
     return m_pFont;
@@ -77,6 +69,16 @@ PtrTtfFont &ptr_ttf_font::operator=(ptr_ttf_font &&rsh)
 TTF_Font *ptr_ttf_font::Get() const
 {
     return m_pFont;
+}
+
+TTF_Font *ptr_ttf_font::data() const
+{
+    return Get();
+}
+
+TTF_Font *ptr_ttf_font::get() const
+{
+    return Get();
 }
 } // namespace open_stg::sdl2_h
 
@@ -106,14 +108,6 @@ TTF_Font &SharedPtrTtfFont::operator*()
 const TTF_Font &SharedPtrTtfFont::operator*() const
 {
     return m_ptr->operator*();
-}
-TTF_Font **SharedPtrTtfFont::operator&()
-{
-    return m_ptr->operator&();
-}
-TTF_Font *const *SharedPtrTtfFont::operator&() const
-{
-    return m_ptr->operator&();
 }
 SharedPtrTtfFont::operator TTF_Font *() const
 {

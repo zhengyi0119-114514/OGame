@@ -32,6 +32,7 @@ class view_obj_pool
 class view_obj
 {
   public:
+  
     virtual void print_to_renderer(SDL_Renderer *rend) = 0;
 };
 

@@ -55,6 +55,14 @@ SDL_Renderer* SharedPtrRenderer::Get() const {
     return m_renderer->Get();
 }
 
+SDL_Renderer* SharedPtrRenderer::data() const {
+    return Get();
+}
+
+SDL_Renderer* SharedPtrRenderer::get() const {
+    return Get();
+}
+
 SharedPtrSurface::SharedPtrSurface(SDL_Surface *pSurf) : 
     m_surface(std::make_shared<PtrSurface>(pSurf)) {}
 

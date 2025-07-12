@@ -33,14 +33,6 @@ PtrRenderer::operator SDL_Renderer *() const noexcept
 {
     return this->Get();
 }
-SDL_Renderer **PtrRenderer::operator&()
-{
-    return &m_pRend;
-}
-SDL_Renderer *const *ptr_renderer::operator&() const
-{
-    return &m_pRend;
-}
 SDL_Renderer &ptr_renderer::operator*()
 {
     return *m_pRend;
@@ -60,5 +52,15 @@ const SDL_Renderer *ptr_renderer::operator->() const
 SDL_Renderer *ptr_renderer::Get() const
 {
     return m_pRend;
+}
+
+SDL_Renderer *ptr_renderer::data() const
+{
+    return Get();
+}
+
+SDL_Renderer *ptr_renderer::get() const
+{
+    return Get();
 }
 } // namespace open_stg::sdl2_h

@@ -30,14 +30,6 @@ void ptr_surface::Swap(PtrSurface &ref)
 {
     std::swap(this->m_pSurf, ref.m_pSurf);
 }
-SDL_Surface **ptr_surface::operator&()
-{
-    return &m_pSurf;
-}
-SDL_Surface *const *ptr_surface::operator&() const
-{
-    return &m_pSurf;
-}
 SDL_Surface &ptr_surface::operator*()
 {
     return *m_pSurf;

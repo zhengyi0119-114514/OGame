@@ -33,7 +33,6 @@
         "wavpack"
       ]
     },
-    "sdl2-ttf",
-    "ftxui"
+    "sdl2-ttf"
   ]
 }

@@ -49,14 +49,6 @@ pthread_t* ptr_pthread::Get()
 {
     return m_hThread;
 }
-pthread_t** ptr_pthread::operator&()
-{
-    return &m_hThread;
-}
-pthread_t*const* ptr_pthread::operator&() const
-{
-    return &m_hThread;
-}
 pthread_t ptr_pthread::operator*() const
 {
     return *m_hThread;

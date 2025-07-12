@@ -27,10 +27,10 @@ class PtrWindow
     SDL_Window *operator->();
     const SDL_Window &operator*() const;
     SDL_Window &operator*();
-    SDL_Window *const *operator&() const;
-    SDL_Window **operator&();
     operator SDL_Window *() const noexcept;
     SDL_Window *Get() const;
+    SDL_Window *data() const;
+    SDL_Window *get() const;
 };
 using ptr_window = PtrWindow;
 
@@ -51,14 +51,14 @@ class PtrRenderer
         this->Swap(ref);
     }
     ~PtrRenderer() noexcept;
-    SDL_Renderer **operator&();
-    SDL_Renderer *const *operator&() const;
     SDL_Renderer &operator*();
     const SDL_Renderer &operator*() const;
     SDL_Renderer *operator->();
     const SDL_Renderer *operator->() const;
     operator SDL_Renderer *() const noexcept;
     SDL_Renderer *Get() const;
+    SDL_Renderer *data() const;
+    SDL_Renderer *get() const;
 };
 using ptr_renderer = PtrRenderer;
 class PtrSurface
@@ -75,13 +75,13 @@ class PtrSurface
     {
         this->Swap(ref);
     }
-    SDL_Surface **operator&();
-    SDL_Surface *const *operator&() const;
     SDL_Surface &operator*();
     const SDL_Surface &operator*() const;
     SDL_Surface *operator->();
     const SDL_Surface *operator->() const;
     SDL_Surface *Get() const;
+    SDL_Surface *data() const;
+    SDL_Surface *get() const;
 
   private:
     SDL_Surface *m_pSurf = nullptr;
@@ -106,6 +106,8 @@ class SharedPtrWindow
     SDL_Window &operator*();
     operator SDL_Window *() const noexcept;
     SDL_Window *Get() const;
+    SDL_Window *data() const;
+    SDL_Window *get() const;
 };
 using shared_ptr_window = SharedPtrWindow;
 
@@ -127,6 +129,8 @@ class SharedPtrRenderer
     SDL_Renderer &operator*();
     operator SDL_Renderer *() const noexcept;
     SDL_Renderer *Get() const;
+    SDL_Renderer *data() const;
+    SDL_Renderer *get() const;
 };
 using shared_ptr_renderer = SharedPtrRenderer;
 
@@ -148,44 +152,55 @@ class SharedPtrSurface
     SDL_Surface &operator*();
     operator SDL_Surface *() const noexcept;
     SDL_Surface *Get() const;
+    SDL_Surface *data() const;
+    SDL_Surface *get() const;
 };
 using shared_ptr_surface = SharedPtrSurface;
-class PtrTexture {
-private:
-    SDL_Texture* m_pTex = nullptr;
-public:
-    PtrTexture(SDL_Texture* pTex);
-    PtrTexture(const PtrTexture&) = delete;
-    PtrTexture(PtrTexture&& other);
-    PtrTexture& operator=(const PtrTexture&) = delete;
-    PtrTexture& operator=(PtrTexture&&);
-    void Swap(PtrTexture& ref);
-    void swap(PtrTexture& ref) { this->Swap(ref); }
+class PtrTexture
+{
+  private:
+    SDL_Texture *m_pTex = nullptr;
+
+  public:
+    PtrTexture(SDL_Texture *pTex);
+    PtrTexture(const PtrTexture &) = delete;
+    PtrTexture(PtrTexture &&other);
+    PtrTexture &operator=(const PtrTexture &) = delete;
+    PtrTexture &operator=(PtrTexture &&);
+    void Swap(PtrTexture &ref);
+    void swap(PtrTexture &ref)
+    {
+        this->Swap(ref);
+    }
     ~PtrTexture() noexcept;
-    const SDL_Texture& operator*() const;
-    SDL_Texture& operator*();
-    SDL_Texture* const* operator&() const;
-    SDL_Texture** operator&();
-    operator SDL_Texture*() const noexcept;
-    SDL_Texture* Get() const;
+    const SDL_Texture &operator*() const;
+    SDL_Texture &operator*();
+    operator SDL_Texture *() const noexcept;
+    SDL_Texture *Get() const;
+    SDL_Texture *data() const;
+    SDL_Texture *get() const;
 };
 using ptr_texture = PtrTexture;
-class SharedPtrTexture {
-private:
+class SharedPtrTexture
+{
+  private:
     std::shared_ptr<PtrTexture> m_texture;
-public:
-    SharedPtrTexture(SDL_Texture* pTex);
-    SharedPtrTexture(const SharedPtrTexture&) = default;
-    SharedPtrTexture(SharedPtrTexture&&) = default;
-    SharedPtrTexture& operator=(const SharedPtrTexture&) = default;
-    SharedPtrTexture& operator=(SharedPtrTexture&&) = default;
 
-    const SDL_Texture* operator->() const;
-    SDL_Texture* operator->();
-    const SDL_Texture& operator*() const;
-    SDL_Texture& operator*();
-    operator SDL_Texture*() const noexcept;
-    SDL_Texture* Get() const;
+  public:
+    SharedPtrTexture(SDL_Texture *pTex);
+    SharedPtrTexture(const SharedPtrTexture &) = default;
+    SharedPtrTexture(SharedPtrTexture &&) = default;
+    SharedPtrTexture &operator=(const SharedPtrTexture &) = default;
+    SharedPtrTexture &operator=(SharedPtrTexture &&) = default;
+
+    const SDL_Texture *operator->() const;
+    SDL_Texture *operator->();
+    const SDL_Texture &operator*() const;
+    SDL_Texture &operator*();
+    operator SDL_Texture *() const noexcept;
+    SDL_Texture *Get() const;
+    SDL_Texture *data() const;
+    SDL_Texture *get() const;
 };
 using shared_ptr_texture = SharedPtrTexture;
 } // namespace open_stg::sdl2_h

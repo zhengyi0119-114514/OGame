@@ -24,12 +24,12 @@ class PtrTtfFont
     const TTF_Font *operator->() const;
     TTF_Font &operator*();
     const TTF_Font &operator*() const noexcept;
-    TTF_Font **operator&();
-    TTF_Font *const *operator&() const noexcept;
     operator TTF_Font *() const;
     PtrTtfFont &operator=(const PtrTtfFont &) = delete;
     PtrTtfFont &operator=(PtrTtfFont &&rsh);
     TTF_Font *Get() const;
+    TTF_Font *data() const;
+    TTF_Font *get() const;
 };
 using ptr_ttf_font = PtrTtfFont;
 
@@ -56,8 +56,6 @@ class SharedPtrTtfFont
     const TTF_Font *operator->() const;
     TTF_Font &operator*();
     const TTF_Font &operator*() const;
-    TTF_Font **operator&();
-    TTF_Font *const *operator&() const;
     operator TTF_Font *() const;
     TTF_Font *Get() const;
 };

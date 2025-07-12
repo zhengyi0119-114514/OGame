@@ -29,14 +29,6 @@ namespace open_stg::sdl2_h
     {
         return *m_pTex;
     }
-    SDL_Texture* const* PtrTexture::operator&() const
-    {
-        return &m_pTex;
-    }
-    SDL_Texture** PtrTexture::operator&()
-    {
-        return &m_pTex;
-    }
     PtrTexture::operator SDL_Texture* ()const noexcept
     {
         return m_pTex;

@@ -5,6 +5,9 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" "${CMAKE_SOURCE_DIR}")
 include(FindPackage)
 include(GNUInstallDirs)
 
+add_library(open_stg_launcher_lib SHARED)
+target_sources(open_stg_launcher_lib PRIVATE src/empty.c)
+
 add_executable(open_stg_launcher)
 target_sources(open_stg_launcher PRIVATE src/empty.c)
 
@@ -21,12 +24,13 @@ target_sources(tests PRIVATE src/empty.c)
 target_compile_definitions(
     open_stg_lib PRIVATE UNICODE _UNICODE
 )
-
+if(GTK3_FOUND)
+    add_executable(open_stg_launcher_gtk3)
+    target_sources(open_stg_launcher_gtk3 PRIVATE src/empty.c)
+endif()
 if(WIN32)
-    set_target_properties(open_stg_lib
-        PROPERTIES
-        WINDOWS_EXPORT_ALL_SYMBOLS TRUE
-    )
+    add_executable(open_stg_launcher_win32 WIN32)
+    target_sources(open_stg_launcher_win32 PRIVATE src/empty.c)
 
     if(MSVC)
         # - Fixes msvc toolchain issue
@@ -92,6 +96,7 @@ include(SetTargetProperties)
 include(GoogleTest)
 
 gtest_discover_tests(tests)
+
 # 定义资源文件路径
 set(RESOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/resources")
 

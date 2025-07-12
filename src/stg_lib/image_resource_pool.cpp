@@ -14,7 +14,7 @@ uint32_t image_resource_pool::add_surface(std::string_view name, open_stg::sdl2_
     m_writeLock.lock();
     auto id = m_surfacePool.size();
     m_surfacePool.push_back(surf);
-    m_nameIdMap.insert(std::pair<std::string, uint32_t>{std::string{name},id});
+    m_nameIdMap.insert(std::pair<std::string, uint32_t>{std::string{name},(uint32_t)id});
     m_writeLock.unlock();
     return id;
 }
