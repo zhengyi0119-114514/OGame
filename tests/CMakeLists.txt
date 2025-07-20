@@ -1,1 +1,1 @@
-target_sources(tests PRIVATE GTestMain.cpp)
+target_sources(unit_test PRIVATE GTestMain.cpp)

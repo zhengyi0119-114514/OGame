@@ -8,9 +8,9 @@ Input variables:
   SDL2_gfx_DIR - Alternative directory to look for
 
 Output variables:
-  SDL2_gfx_FOUND - True if the package was found
-  SDL2_gfx_INCLUDE_DIRS - Include directories
-  SDL2_gfx_LIBRARY - Libraries to link against
+    SDL2_gfx_FOUND - True if the package was found
+    SDL2_gfx_INCLUDE_DIRS - Include directories
+    SDL2_gfx_LIBRARY - Libraries to link against
 ]]
 # if using vcpkg to install SDL2_gfx
 set(SDL2_gfx_FOUND FALSE)
@@ -37,14 +37,17 @@ if(NOT SDL2_gfx_FOUND)
             set(SDL2_gfx_FOUND TRUE)
             set(__SDL2_GFX_TARGET PkgConfig::SDL2GFX)
             set(SDL2_gfx_INCLUDE_DIR ${SDL2GFX_INCLUDE_DIR})
-            set(SDL2_gfx_LIBRARY ${SDL2GFX_LIBRARIES})
+
+            if(UNIX)
+                set(SDL2_gfx_LIBRARY ${SDL2GFX_LINK_LIBRARY})
+            endif()
         endif()
     endif()
 endif()
 
 if(NOT SDL2_gfx_FOUND)
     if(UNIX)
-        find_path(SDL2_gfx_INCLUDE_DIR SDL2_gfxPrimitives.h
+        find_path(SDL2_gfx_INCLUDE_DIR "SDL2_gfxPrimitives.h"
             PATHS
             /usr/include
             /usr/local/include
@@ -70,27 +73,19 @@ if(NOT SDL2_gfx_FOUND)
 endif()
 
 if(SDL2_gfx_FOUND)
-    add_library(SDL2_gfx::SDL2_gfx UNKNOWN IMPORTED)
-
-    if(DEFINED VCPKG_TARGET_TRIPLET) # vcpkg
-        set_property(TARGET SDL2_gfx::SDL2_gfx PROPERTY IMPORTED_LOCATION "${sdl2-gfx_DIR}/../../bin/SDL2_gfx.dll")
-    else() #PkgConfig
-        set_property(TARGET SDL2_gfx::SDL2_gfx PROPERTY IMPORTED_LOCATION "${SDL2_gfx_LIBRARY}")
-    endif()
+    add_library(SDL2_gfx INTERFACE)
 
     if(DEFINED __SDL2_GFX_TARGET)
-        target_link_libraries(SDL2_gfx::SDL2_gfx INTERFACE ${__SDL2_GFX_TARGET})
-
+        target_link_libraries(SDL2_gfx INTERFACE ${__SDL2_GFX_TARGET})
     else()
-        target_include_directories(SDL2_gfx::SDL2_gfx INTERFACE ${SDL2_gfx_INCLUDE_DIR})
-        target_link_libraries(SDL2_gfx::SDL2_gfx INTERFACE ${SDL2_gfx_LIBRARY})
-        set_property(TARGET SDL2_gfx::SDL2_gfx PROPERTY IMPORTED_LOCATION "${SDL2_gfx_LIBRARY}")
+        target_include_directories(SDL2_gfx INTERFACE ${SDL2_gfx_INCLUDE_DIR})
+        target_link_libraries(SDL2_gfx INTERFACE ${SDL2_gfx_LIBRARY})
     endif()
 elseif()
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(
-    FOUND_VAR SDL2_gfx_FOUND
-    REQUIRED_VARS
-    SDL2_gfx_INCLUDE_DIR
-    SDL2_gfx_LIBRARY
-)
+    FIND_PACKAGE_HANDLE_STANDARD_ARGS(
+        FOUND_VAR SDL2_gfx_FOUND
+        REQUIRED_VARS
+        SDL2_gfx_INCLUDE_DIR
+        SDL2_gfx_LIBRARY
+    )
 endif()

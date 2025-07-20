@@ -7,4 +7,5 @@
 #undef main
 std::vector<SDL_DisplayMode> GetAndSelectDisplayMode();
 std::vector<std::string> DisplayModeToStringVectoy(std::span<SDL_DisplayMode> dms);
+std::string ReadOGameInformationFromFile();
 #endif

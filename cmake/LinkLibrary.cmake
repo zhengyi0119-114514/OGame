@@ -9,27 +9,32 @@ target_link_libraries(open_stg_launcher_lib
 target_link_libraries(
     abs_game PUBLIC open_stg_lib
 )
-target_link_libraries(
-    open_stg_launcher PRIVATE
-    open_stg_launcher_lib
-    ftxui::screen ftxui::dom ftxui::component
-    Boost::json
-)
+
+if(ftxui_FOUND)
+    target_link_libraries(
+        open_stg_launcher PRIVATE
+        open_stg_launcher_lib
+        ftxui::screen ftxui::dom ftxui::component
+        Boost::json
+    )
+endif()
+
 target_link_libraries(open_stg_lib PUBLIC
     Boost::charconv Boost::json Boost::filesystem Boost::program_options
     $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
     $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>
     $<IF:$<TARGET_EXISTS:SDL2_mixer::SDL2_mixer>,SDL2_mixer::SDL2_mixer,SDL2_mixer::SDL2_mixer-static>
     $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>
-    SDL2_gfx::SDL2_gfx
+    SDL2_gfx
     ${LUA_LIBRARIES}
 )
 target_include_directories(open_stg_lib PUBLIC
     ${LUA_INCLUDE_DIR}
 )
 target_link_libraries(
-    tests PRIVATE GTest::gtest open_stg_lib
+    unit_test PRIVATE GTest::gtest open_stg_lib
 )
+
 
 if(GTK3_FOUND)
     target_link_libraries(open_stg_launcher_gtk3

@@ -28,7 +28,7 @@ ptr_ttf_font::PtrTtfFont(std::string_view file, int fontSize)
 {
     m_pFont = TTF_OpenFont(file.data(), fontSize);
 }
-ptr_ttf_font::PtrTtfFont(ptr_ttf_font &&ref)
+ptr_ttf_font::PtrTtfFont(ptr_ttf_font &&ref) noexcept
 {
     this->swap(ref);
 }
@@ -60,7 +60,7 @@ ptr_ttf_font::operator TTF_Font *() const
 {
     return m_pFont;
 }
-PtrTtfFont &ptr_ttf_font::operator=(ptr_ttf_font &&rsh)
+PtrTtfFont &ptr_ttf_font::operator=(ptr_ttf_font &&rsh) noexcept
 {
     ptr_ttf_font obj{std::move(rsh)};
     this->swap(obj);
@@ -116,5 +116,13 @@ SharedPtrTtfFont::operator TTF_Font *() const
 TTF_Font *SharedPtrTtfFont::Get() const
 {
     return m_ptr->Get();
+}
+TTF_Font *shared_ttf_font::get() const
+{
+    return Get();
+}
+TTF_Font *shared_ttf_font::data() const
+{
+    return Get();
 }
 } // namespace open_stg::sdl2_h

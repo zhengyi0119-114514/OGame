@@ -1,12 +1,15 @@
+#include "sdl.hpp"
+#include <SDL_ttf.h>
 #include <filesystem>
 #include <memory>
 #include <string_view>
+
 #ifndef OGAME_STGLIB_SDL2_TTF_H
 #define OGAME_STGLIB_SDL2_TTF_H 1
-#include <SDL_ttf.h>
 namespace open_stg::sdl2_h
 {
-class PtrTtfFont
+
+class PtrTtfFont : public PtrSDLObject
 {
   private:
     TTF_Font *m_pFont = nullptr;
@@ -16,7 +19,7 @@ class PtrTtfFont
     PtrTtfFont(std::filesystem::path file, int fontSize = 10);
     PtrTtfFont(std::string_view file, int fontSize = 10);
     PtrTtfFont(const PtrTtfFont &) = delete;
-    PtrTtfFont(PtrTtfFont &&ref);
+    PtrTtfFont(PtrTtfFont &&ref) noexcept;
     void Swap(PtrTtfFont &ref);
     void swap(PtrTtfFont &ref);
     ~PtrTtfFont() noexcept;
@@ -26,14 +29,14 @@ class PtrTtfFont
     const TTF_Font &operator*() const noexcept;
     operator TTF_Font *() const;
     PtrTtfFont &operator=(const PtrTtfFont &) = delete;
-    PtrTtfFont &operator=(PtrTtfFont &&rsh);
+    PtrTtfFont &operator=(PtrTtfFont &&rsh) noexcept;
     TTF_Font *Get() const;
     TTF_Font *data() const;
     TTF_Font *get() const;
 };
 using ptr_ttf_font = PtrTtfFont;
 
-class SharedPtrTtfFont
+class SharedPtrTtfFont : public PtrSDLObject
 {
   private:
     std::shared_ptr<PtrTtfFont> m_ptr;
@@ -58,7 +61,11 @@ class SharedPtrTtfFont
     const TTF_Font &operator*() const;
     operator TTF_Font *() const;
     TTF_Font *Get() const;
-};
+    TTF_Font *data() const;
+    TTF_Font *get() const;
 
+    ~SharedPtrTtfFont() noexcept = default;
+};
+using shared_ttf_font = SharedPtrTtfFont;
 } // namespace open_stg::sdl2_h
 #endif

@@ -15,11 +15,10 @@ find_package(SDL2_gfx REQUIRED)
 find_package(Lua REQUIRED)
 
 find_package(PkgConfig QUIET)
-
+find_package(Qt6 COMPONENTS Core Widgets Gui Quick)
 if(MSVC)
     find_package(PThreads4W QUIET CONFIG)
 endif()
-
 if(PkgConfig_FOUND)
     pkg_check_modules(LIBSAFEC QUIET IMPORTED_TARGET libsafec)
 
@@ -37,19 +36,18 @@ if(PkgConfig_FOUND)
     endif()
 endif()
 
+# find_package(ftxui CONFIG QUIET)
+# if(NOT ftxui_FOUND)
+#     FetchContent_Declare(
+#         ftxui
+#         GIT_REPOSITORY https://ghproxy.net/github.com/ArthurSonzogni/FTXUI
+#         GIT_TAG v6.1.9 # Replace with the version you want
+#     )
+
+#     FetchContent_MakeAvailable(ftxui)
+# endif()
+
 find_package(GTest QUIET CONFIG)
-find_package(ftxui CONFIG QUIET)
-
-if(NOT ftxui_FOUND)
-    FetchContent_Declare(
-        ftxui
-        GIT_REPOSITORY https://ghproxy.net/github.com/ArthurSonzogni/FTXUI
-        GIT_TAG v6.1.9 # Replace with the version you want
-    )
-
-    FetchContent_MakeAvailable(ftxui)
-endif()
-
 if(NOT GTest_FOUND)
     FetchContent_Declare(
         GTest

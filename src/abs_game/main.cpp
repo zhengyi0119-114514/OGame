@@ -24,8 +24,8 @@ int main(int argc, char **args)
     rectangles windowSize = {{}};
     options_description opt_doc{};
     opt_doc.add_options()("help", "")
-        ("width", value<uint32_t>()->required(), "set window width")
-        ("height", value<uint32_t>()->required(),"set window height")
+        ("width", value<uint32_t>()->default_value(1600), "set window width")
+        ("height", value<uint32_t>()->default_value(900),"set window height")
         ("name",value<std::string>()->default_value(std::string("Alex")),"player name");
     variables_map vm{};
     store(parse_command_line(argc, args, opt_doc), vm);
@@ -53,8 +53,7 @@ int main(int argc, char **args)
         exit(EXIT_FAILURE);
     }
     open_stg::opt_h::image_resource_pool pool;
-    SDL_Surface *s = IMG_Load("./resources/img/eye.png");
-    uint32_t eyeId = pool.add_surface("ogame.test.eye", shared_ptr_surface{s});
+    uint32_t eyeId = pool.add_surface("ogame.test.eye", shared_ptr_surface{IMG_Load("./resources/img/eye.png")});
     open_stg::view_h::image img{pool, eyeId};
     while (true)
     {

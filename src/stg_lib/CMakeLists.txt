@@ -23,6 +23,7 @@ target_sources(
     include/open_game.hpp
     include/options.hpp
     include/error_h.hpp
+    include/templates_h.hpp
 )
 target_sources(
     open_stg_lib PRIVATE
@@ -31,7 +32,6 @@ target_sources(
     Window.cpp
     Renderer.cpp
     Surface.cpp
-    SharedPtr.cpp
     point.cpp
     task.cpp
     pthread.cpp
@@ -43,7 +43,11 @@ target_sources(
     ./src-view/image.cpp
     ./static_wallpeaper.cpp
 )
-target_sources(tests PRIVATE tests/TestSurfacePool.cpp)
+target_sources(unit_test 
+    PRIVATE 
+    tests/TestSurfacePool.cpp 
+    tests/TestViewObjectPool.cpp
+)
 if(WIN32)
     target_link_libraries(open_stg_lib PRIVATE ws2_32)
     target_sources(

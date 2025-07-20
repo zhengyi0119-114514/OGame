@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.28)
-project(open_stg)
+project(open_stg VERSION 0.1.0)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" "${CMAKE_SOURCE_DIR}")
 include(FindPackage)
@@ -8,9 +8,6 @@ include(GNUInstallDirs)
 add_library(open_stg_launcher_lib SHARED)
 target_sources(open_stg_launcher_lib PRIVATE src/empty.c)
 
-add_executable(open_stg_launcher)
-target_sources(open_stg_launcher PRIVATE src/empty.c)
-
 add_library(open_stg_lib SHARED)
 target_sources(open_stg_lib PRIVATE src/empty.c)
 
@@ -18,12 +15,18 @@ add_executable(abs_game)
 target_sources(abs_game PRIVATE src/empty.c)
 target_link_libraries(abs_game PRIVATE open_stg_lib)
 
-add_executable(tests)
-target_sources(tests PRIVATE src/empty.c)
+add_executable(unit_test)
+target_sources(unit_test PRIVATE src/empty.c)
 
 target_compile_definitions(
     open_stg_lib PRIVATE UNICODE _UNICODE
 )
+
+if(ftxui_FOUND)
+    add_executable(open_stg_launcher)
+    target_sources(open_stg_launcher PRIVATE src/empty.c)
+endif()
+
 if(GTK3_FOUND)
     add_executable(open_stg_launcher_gtk3)
     target_sources(open_stg_launcher_gtk3 PRIVATE src/empty.c)
@@ -95,15 +98,15 @@ include(LinkLibrary)
 include(SetTargetProperties)
 include(GoogleTest)
 
-gtest_discover_tests(tests)
+gtest_discover_tests(unit_test)
 
 # 定义资源文件路径
 set(RESOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/resources")
 
 # 如果是 Windows/MSVC，使用 copy_directory
 add_custom_command(
-        TARGET abs_game POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
+    TARGET abs_game POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
     "${RESOURCE_DIR}"
     "$<TARGET_FILE_DIR:abs_game>/resources"
 )
