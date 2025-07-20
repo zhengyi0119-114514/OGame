@@ -43,7 +43,7 @@ class view_obj
 class graphs_object :public view_obj
 {
     public:
-    virtual void print_to_renderer(SDL_Renderer*rend) =0;
+    virtual void print_to_renderer(SDL_Renderer*rend){}
 };
 class image : public graphs_object
 {
