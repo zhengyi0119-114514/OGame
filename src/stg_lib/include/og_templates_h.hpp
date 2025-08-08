@@ -3,21 +3,23 @@
  * @author IcEtHoRn
  * @brief Thread-safe view object pool implementation[线程安全的视图对象池实现] \n
  * [你不会心甘情愿地看着你的项目变成一坨屎山。] \n
- * ["_ts后缀代表线程安全(抛出异常时状态将会损坏，无法使用，但运行速度快)，“_es"代表异常时安全]
+ * ["_ts后缀代表线程安全，“_es"代表异常时安全，非异常安全版本抛出异常时状态将会损坏，无法使用] \n
+ * []
  * @version Ciallo～(∠・ω< )⌒★
  * @date 2025-07-19
  *
  */
 #ifndef OGAME_STGLIB_TEMPLATE_H
 #define OGAME_STGLIB_TEMPLATE_H 1
-#include "error_h.hpp"
-#include "open_game.hpp"
+#include "og_error_h.hpp"
+#include <cassert>
+#include <map>
+#include <memory>
 #include <mutex>
 #include <ranges>
 #include <utility>
 #include <vector>
-
-namespace open_stg::view_h
+namespace open_stg
 {
 struct mutex_helper
 {
@@ -32,42 +34,48 @@ struct mutex_helper
     }
 };
 /**
- * @brief [视图对象的线程安全池，不包含删除功能] \n
+ * @brief [视图对象的线程安全池，不包含删除功能，用来处理留用对象，如图片，动画等资源] \n
+ * [对象池中的对象将长期存在，生命周期将大于或等于对象池的生命周期] \n
  * [构造函数非线程安全]
- * @tparam TViewObj Type of view object, must derive from view_obj[视图对象类型，必须继承自view_obj]
  */
-template <typename TViewObj>
-    requires std::derived_from<TViewObj, open_stg::view_h::view_obj> && std::destructible<TViewObj> &&
-             (std::movable<TViewObj> || std::copyable<TViewObj>)
-class view_obj_pool
+template <typename TObj>
+    requires std::destructible<TObj> && (std::movable<TObj> || std::copyable<TObj>)
+class object_pool
 {
   public:
-    using name_obj_pair = std::pair<std::string, TViewObj>;
+    using name_obj_pair = std::pair<std::string, TObj>;
     using handle = uint32_t;
     using handle_vector = std::vector<handle>;
     using name_obj_initlist = std::initializer_list<name_obj_pair>;
     using iterator_category = std::forward_iterator_tag;
-    using value_type = TViewObj;
-    using difference_type = std::ptrdiff_t;
-    using pointer = TViewObj *;
-    using reference = TViewObj &;
+    using value_type = TObj;
+    using pointer = TObj *;
+    using reference = TObj &;
+    using shared_value = std::shared_ptr<value_type>;
+    void throw_exception_if_name_exists(const std::string &sName)
+    {
+        if (m_mNameHandleMap.contains(sName))
+        {
+            throw std::out_of_range(sName);
+        }
+    }
 
   private:
     mutable std::mutex m_lock{};                      ///< Mutex for thread safety[线程安全互斥锁]
-    std::vector<TViewObj> m_vObjects{};               ///< Storage for view objects[视图对象存储]
+    std::vector<shared_value> m_vObjects{};           ///< Storage for view objects[视图对象存储]
     std::map<std::string, handle> m_mNameHandleMap{}; ///< Name to handle mapping[名称到句柄的映射]
 
   public:
     /**
      * @brief Default constructor[默认构造函数]
      */
-    view_obj_pool() = default;
+    object_pool() = default;
     /**
      * @brief Copy constructor[拷贝构造函数]
      * @param o Object to copy[要拷贝的对象]
      */
-    view_obj_pool(const view_obj_pool &o)
-        requires std::copyable<std::vector<TViewObj>> && std::copyable<TViewObj>
+    object_pool(const object_pool &o)
+        requires std::copyable<std::vector<TObj>> && std::copyable<TObj>
     {
         m_mNameHandleMap = o.m_mNameHandleMap;
         m_vObjects = o.m_vObjects;
@@ -76,8 +84,8 @@ class view_obj_pool
      * @brief Move constructor[移动构造函数]
      * @param rr Object to move[要移动的对象]
      */
-    view_obj_pool(view_obj_pool &&rr)
-        requires std::movable<TViewObj>
+    object_pool(object_pool &&rr)
+        requires std::movable<TObj>
     {
         m_mNameHandleMap = std::move(rr.m_mNameHandleMap);
         m_vObjects = std::move(rr.m_vObjects);
@@ -86,7 +94,7 @@ class view_obj_pool
      * @brief Swap contents with another pool[与另一个对象池交换内容]
      * @param o Pool to swap with[要交换的对象池]
      */
-    void swap(view_obj_pool &o) noexcept
+    inline void swap(object_pool &o) noexcept
     {
         std::swap(m_mNameHandleMap, o.m_mNameHandleMap);
         std::swap(m_vObjects, o.m_vObjects);
@@ -95,11 +103,57 @@ class view_obj_pool
      * @brief Thread-safe swap[线程安全的交换操作]
      * @param o Pool to swap with[要交换的对象池]
      */
-    void swap_ts(view_obj_pool &o) noexcept
+    inline void swap_ts(object_pool &o) noexcept
     {
         mutex_helper l{m_lock};
         mutex_helper l2{o.m_lock};
         swap(o);
+    }
+    /**
+     * @brief [把shared_ptr塞入对象池]
+     *
+     * @param svName
+     * @param ptr
+     * @return handle
+     */
+    handle add_object_shared_ptr(std::string_view svName, std::shared_ptr<TObj> ptr)
+    {
+        std::string sName{svName};
+        throw_exception_if_name_exists(sName);
+        handle hObj = m_vObjects.size();
+        m_vObjects.push_back(ptr);
+        m_mNameHandleMap.insert(std::pair<std::string, handle>(std::move(sName), hObj));
+        return hObj;
+    }
+    template <typename TDerivedType>
+        requires std::derived_from<TDerivedType, TObj>
+    handle add_derived_object_ptr(std::string_view svName, std::shared_ptr<TDerivedType> ptr)
+    {
+        return add_derived_object_ptr(svName, std::dynamic_pointer_cast<TObj>(ptr));
+    }
+    /**
+     * @brief [在对象池中直接构造对象]
+     * @tparam TArgs
+     * @param svName
+     * @param args
+     * @return handle
+     */
+    template <typename... TArgs> inline handle emplace_object(std::string_view svName, TArgs... args)
+    {
+        return add_object_shared_ptr(svName, std::make_shared<TObj>(std::forward<TArgs>(args)...));
+    }
+    template <typename... TArgs> inline handle emplace_object_ts(std::string_view svName, TArgs &&...args)
+    {
+        mutex_helper l{m_lock};
+        return emplace_object(svName, std::forward<TArgs>(args)...);
+    }
+    //[内存：你不要过来啊！！！]
+    template <typename... TArgs> inline handle emplace_object_es(std::string_view svName, TArgs... args)
+    {
+        object_pool copy{*this};
+        handle h = copy.emplace_object(svName, std::forward(args)...);
+        this->swap(copy);
+        return h;
     }
     /**
      * @brief Add object to pool[添加对象到对象池]
@@ -108,19 +162,10 @@ class view_obj_pool
      * @return handle Object handle[对象句柄]
      * @exception name_exist_error
      */
-    handle add_object(std::string_view svName, const TViewObj &crViewObj)
+    inline handle add_object(std::string_view svName, const TObj &crViewObj)
+        requires std::copyable<TObj>
     {
-        if (std::string sName{svName}; m_mNameHandleMap.contains(sName))
-        {
-            throw error_h::name_exist_error(sName);
-        }
-        else
-        {
-            handle hObj = m_vObjects.size();
-            m_vObjects.push_back(crViewObj);
-            m_mNameHandleMap.insert(std::pair<std::string, handle>(std::move(sName), hObj));
-            return hObj;
-        }
+        return emplace_object(svName, crViewObj);
     }
     /**
      * @brief Add movable object to pool[添加可移动对象到对象池]
@@ -129,20 +174,10 @@ class view_obj_pool
      * @return handle Object handle[对象句柄]
      * @exception name_exist_error
      */
-    handle add_object(std::string_view svName, TViewObj &&rrViewObj)
-        requires std::movable<TViewObj>
+    inline handle add_object(std::string_view svName, TObj &&rrViewObj)
+        requires std::movable<TObj>
     {
-        if (std::string sName{svName}; m_mNameHandleMap.contains(sName))
-        {
-            throw error_h::name_exist_error(sName);
-        }
-        else
-        {
-            handle hObj = m_vObjects.size();
-            m_vObjects.push_back(std::move(rrViewObj));
-            m_mNameHandleMap.insert(std::pair<std::string, handle>(std::move(sName), hObj));
-            return hObj;
-        }
+        return emplace_object(svName, rrViewObj);
     }
     /**
      * @brief Thread-safe object addition[线程安全的对象添加]
@@ -151,8 +186,8 @@ class view_obj_pool
      * @return handle Object handle[对象句柄]
      * @exception name_exist_error
      */
-    handle add_object_ts(std::string_view svName, const TViewObj &crViewObj)
-        requires std::copyable<TViewObj>
+    inline handle add_object_ts(std::string_view svName, const TObj &crViewObj)
+        requires std::copyable<TObj>
     {
         mutex_helper l{m_lock};
         return add_object(svName, crViewObj);
@@ -164,8 +199,8 @@ class view_obj_pool
      * @return handle Object handle[对象句柄]
      * @exception name_exist_error
      */
-    handle add_object_ts(std::string_view svName, TViewObj &&rrViewObj)
-        requires std::movable<TViewObj>
+    inline handle add_object_ts(std::string_view svName, TObj &&rrViewObj)
+        requires std::movable<TObj>
     {
         mutex_helper l{m_lock};
         return add_object(svName, std::move(rrViewObj));
@@ -178,10 +213,10 @@ class view_obj_pool
      * @return handle Object handle[对象句柄]
      * @exception name_exist_error
      */
-    handle add_object_es(std::string_view svName, const TViewObj &rcViewObj)
-        requires std::copyable<TViewObj>
+    inline handle add_object_es(std::string_view svName, const TObj &rcViewObj)
+        requires std::copyable<TObj>
     {
-        view_obj_pool copy{*this};
+        object_pool copy{*this};
         handle h = copy.add_object(svName, rcViewObj);
         swap(copy);
         return h;
@@ -194,10 +229,10 @@ class view_obj_pool
      * @return handle Object handle[对象句柄]
      * @exception name_exist_error
      */
-    handle add_object_es(std::string_view svName, TViewObj &&rrViewObj)
-        requires std::movable<TViewObj>
+    inline handle add_object_es(std::string_view svName, TObj &&rrViewObj)
+        requires std::movable<TObj>
     {
-        view_obj_pool copy{*this};
+        object_pool copy{*this};
         auto h = copy.add_object(svName, std::move(rrViewObj));
         swap(copy);
         return h;
@@ -209,14 +244,14 @@ class view_obj_pool
      */
     template <std::ranges::range TRange>
         requires std::same_as<std::ranges::range_value_t<TRange>, name_obj_pair> &&
-                 (std::movable<TViewObj> || std::copyable<TViewObj>)
+                 (std::movable<TObj> || std::copyable<TObj>)
     handle_vector add_multiple_object(const TRange &range)
     {
         handle_vector hs{};
         for (const auto &p : range)
         {
             // constexpr
-            if constexpr (auto pair(p); std::copyable<TViewObj>)
+            if constexpr (auto pair(p); std::copyable<TObj>)
             {
                 hs.push_back(add_object(pair.first, pair.second));
             }
@@ -232,7 +267,7 @@ class view_obj_pool
      * @param list Initializer list[初始化列表]
      * @return handle_vector Vector of handles[句柄向量]
      */
-    handle_vector add_multiple_object(name_obj_initlist list)
+    inline handle_vector add_multiple_object(name_obj_initlist list)
     {
         return add_multiple_object<name_obj_initlist>(list);
     }
@@ -242,9 +277,9 @@ class view_obj_pool
      */
     template <std::ranges::range TRange>
         requires std::convertible_to<std::ranges::range_value_t<TRange>, name_obj_pair> &&
-                 (std::movable<TViewObj> || std::copyable<TViewObj>)
-                 handle_vector add_multiple_object_ts(TRange range)
-                     requires std::movable<TViewObj> || std::copyable<TViewObj>
+                 (std::movable<TObj> || std::copyable<TObj>)
+                 inline handle_vector add_multiple_object_ts(TRange range)
+                     requires std::movable<TObj> || std::copyable<TObj>
     {
         mutex_helper l{m_lock};
         add_multiple_object(range);
@@ -254,7 +289,7 @@ class view_obj_pool
      * @param list Initializer list[初始化列表]
      * @return handle_vector Vector of handles[句柄向量]
      */
-    handle_vector add_multiple_object_ts(name_obj_initlist list)
+    inline handle_vector add_multiple_object_ts(name_obj_initlist list)
     {
         mutex_helper l{m_lock};
         return add_multiple_object(list);
@@ -265,10 +300,10 @@ class view_obj_pool
      */
     template <std::ranges::range TRange>
         requires std::convertible_to<std::ranges::range_value_t<TRange>, name_obj_pair> &&
-                 (std::movable<TViewObj> || std::copyable<TViewObj>)
-    handle_vector add_multiple_object_es(TRange range)
+                 (std::movable<TObj> || std::copyable<TObj>)
+    inline handle_vector add_multiple_object_es(TRange range)
     {
-        view_obj_pool copy{*this};
+        object_pool copy{*this};
         auto r = copy.add_multiple_object(range);
         swap(copy);
         return r;
@@ -278,8 +313,8 @@ class view_obj_pool
      * @param list Initializer list[初始化列表]
      * @return handle_vector Vector of handles[句柄向量]
      */
-    handle_vector add_multiple_object_es(name_obj_initlist list)
-        requires std::movable<TViewObj> || std::copyable<TViewObj>
+    inline handle_vector add_multiple_object_es(name_obj_initlist list)
+        requires std::movable<TObj> || std::copyable<TObj>
     {
         return add_multiple_object_es<name_obj_initlist>(list);
     }
@@ -289,14 +324,14 @@ class view_obj_pool
      */
     template <std::ranges::range TRange>
         requires std::convertible_to<std::ranges::range_value_t<TRange>, name_obj_pair> &&
-                 (std::movable<TViewObj> || std::copyable<TViewObj>)
-                 view_obj_pool(TRange range)
-                     requires std::movable<TViewObj> || std::copyable<TViewObj>
-        : view_obj_pool()
+                 (std::movable<TObj> || std::copyable<TObj>)
+                 object_pool(TRange range)
+                     requires std::movable<TObj> || std::copyable<TObj>
+        : object_pool()
     {
         add_multiple_object(range);
     }
-    view_obj_pool(name_obj_initlist list) : view_obj_pool()
+    object_pool(name_obj_initlist list) : object_pool()
     {
         add_multiple_object(list);
     }
@@ -305,17 +340,17 @@ class view_obj_pool
      * @param svName Object name[对象名称]
      * @return std::pair<handle, const TViewObj &> Handle and object reference[句柄和对象引用]
      */
-    std::pair<handle, const TViewObj &> at(std::string_view svName) const
+    std::pair<handle, const TObj &> at(std::string_view svName) const
     {
         if (std::string sName{svName}; m_mNameHandleMap.contains(sName))
         {
             handle h = m_mNameHandleMap.at(sName);
             auto &o = m_vObjects.at(h);
-            return {h, o};
+            return {h, *o};
         }
         else
         {
-            throw error_h::name_exist_error(sName);
+            throw std::out_of_range(sName);
         }
     }
     /**
@@ -323,35 +358,35 @@ class view_obj_pool
      * @param svName Object name[对象名称]
      * @return std::pair<handle, TViewObj &> Handle and object reference[句柄和对象引用]
      */
-    std::pair<handle, TViewObj &> at(std::string_view svName)
+    std::pair<handle, TObj &> at(std::string_view svName)
     {
         auto p = std::as_const(*this).at(svName);
-        return {p.first, const_cast<TViewObj &>(p.second)};
+        return {p.first, const_cast<TObj &>(p.second)};
     }
     /**
      * @brief Get object by handle[通过句柄获取对象]
      * @param h Object handle[对象句柄]
      * @return const TViewObj& Reference to object[对象引用]
      */
-    const TViewObj &at(handle h) const
+    const TObj &at(handle h) const
     {
-        return m_vObjects.at(h);
+        return *m_vObjects.at(h);
     }
     /**
      * @brief Get mutable object by handle[通过句柄获取可变对象]
      * @param h Object handle[对象句柄]
      * @return TViewObj& Reference to object[对象引用]
      */
-    TViewObj &at(handle h)
+    TObj &at(handle h)
     {
-        return const_cast<TViewObj &>(std::as_const(*this).at(h));
+        return const_cast<TObj &>(std::as_const(*this).at(h));
     }
     /**
      * @brief Subscript operator for const access[下标操作符(常量访问)]
      * @param svName Object name[对象名称]
      * @return std::pair<handle, const TViewObj &> Handle and object reference[句柄和对象引用]
      */
-    std::pair<handle, const TViewObj &> operator[](std::string_view svName) const
+    std::pair<handle, const TObj &> operator[](std::string_view svName) const
     {
         return at(svName);
     }
@@ -360,81 +395,70 @@ class view_obj_pool
      * @param svName Object name[对象名称]
      * @return std::pair<handle, TViewObj &> Handle and object reference[句柄和对象引用]
      */
-    std::pair<handle, TViewObj &> operator[](std::string_view svName)
+    std::pair<handle, TObj &> operator[](std::string_view svName)
     {
         return at(svName);
     }
-    template <typename TIterator, std::ranges::range TContainer>
-        requires std::input_or_output_iterator<TIterator>
-    struct iter_t
+    size_t size() const
     {
-        using iterator_category = std::forward_iterator_tag;
-        using value_type = typename TContainer::value_type;
-        using difference_type = std::ptrdiff_t;
-        using pointer = value_type *;
-        using reference = value_type &;
-
-        TIterator iter;
-        TContainer *cont;
-
-        iter_t() = default;
-        iter_t(TIterator i, TContainer *c) : iter(i), cont(c)
+#if defined DEBUG || defined _DEBUG
+        if (m_vObjects.size() != m_mNameHandleMap.size())
         {
+            assert(true);
         }
-
-        iter_t &operator++()
-        {
-            ++iter;
-            return *this;
-        }
-        iter_t operator++(int)
-        {
-            auto copy{*this};
-            ++iter;
-            return copy;
-        }
-        reference operator*()
-        {
-            return cont->at(iter->second);
-        }
-        const reference operator*() const
-        {
-            return cont->at(iter->second);
-        }
-        pointer operator->()
-        {
-            return &cont->at(iter->second);
-        }
-        const pointer operator->() const
-        {
-            return &cont->at(iter->second);
-        }
-        bool operator!=(const iter_t &rsh) const = default;
-        bool operator==(const iter_t &rsh) const = default;
-    };
-    using iterator = iter_t<std::map<std::string, handle>::iterator, std::vector<TViewObj>>;
-    iterator begin()
-    {
-        return {m_mNameHandleMap.begin(), &m_vObjects};
+#endif
+        return m_vObjects.size();
     }
-    iterator end()
+    using iterator = std::vector<std::shared_ptr<TObj>>::iterator;
+    inline iterator begin()
     {
-        return {m_mNameHandleMap.end(), &m_vObjects};
+        return m_vObjects.begin();
     }
-    using const_iterator = iter_t<std::map<std::string, handle>::const_iterator, const std::vector<TViewObj>>;
-    const_iterator begin() const
+    inline iterator end()
     {
-        return {m_mNameHandleMap.cbegin(), &m_vObjects};
+        return m_vObjects.end();
     }
-    const_iterator end() const
+    using const_iterator = std::vector<std::shared_ptr<TObj>>::const_iterator;
+
+    inline const_iterator cbegin() const
     {
-        return {m_mNameHandleMap.cend(), &m_vObjects};
+        return m_vObjects.cbegin();
+    }
+    inline const_iterator cend() const
+    {
+        return m_vObjects.cend();
     }
     static_assert(std::forward_iterator<iterator>);
     static_assert(std::forward_iterator<const_iterator>);
-    static_assert(std::ranges::range<view_obj_pool>);
 };
-template class view_obj_pool<open_stg::view_h::graphs_object>;
+template <typename T> using ObjectPool = object_pool<T>;
+using Boolean = uint8_t;
+template <typename TObject> class CircularListIterator
+{
+  private:
+    size_t m_currentIndex = 0;
+    const size_t m_cMaxSize = 0;
+    std::span<TObject> m_containerSpan;
 
-} // namespace open_stg::view_h
+  public:
+    CircularListIterator(std::span<TObject> containerSpan)
+        : m_currentIndex(0), m_cMaxSize(containerSpan.size()), m_containerSpan(containerSpan)
+    {
+        if (!m_cMaxSize)
+        {
+            throw std::invalid_argument(
+                ":( 传入的span大小为零会无法运作的，亲！ || The incoming span with zero size won't work, dear!");
+        }
+    }
+    TObject &next()
+    {
+        auto &cache = m_containerSpan[m_currentIndex];
+        if (m_currentIndex++; m_currentIndex >= m_cMaxSize)
+        {
+            m_currentIndex = 0;
+        }
+    }
+};
+template <typename T> using circular_list_iterator = CircularListIterator<T>;
+} // namespace open_stg
 #endif

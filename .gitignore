@@ -49,4 +49,5 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 .cache/
+.ccls-cache/
 vcpkg_installed/

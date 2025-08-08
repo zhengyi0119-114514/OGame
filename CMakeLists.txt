@@ -5,6 +5,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" "${CMAKE_SOURCE_DIR}")
 include(FindPackage)
 include(GNUInstallDirs)
 
+option(USE_SDL_CLOCK "Use SDL2's clock instead of system clock" FALSE)
+
 add_library(open_stg_launcher_lib SHARED)
 target_sources(open_stg_launcher_lib PRIVATE src/empty.c)
 
@@ -21,11 +23,6 @@ target_sources(unit_test PRIVATE src/empty.c)
 target_compile_definitions(
     open_stg_lib PRIVATE UNICODE _UNICODE
 )
-
-if(ftxui_FOUND)
-    add_executable(open_stg_launcher)
-    target_sources(open_stg_launcher PRIVATE src/empty.c)
-endif()
 
 if(GTK3_FOUND)
     add_executable(open_stg_launcher_gtk3)

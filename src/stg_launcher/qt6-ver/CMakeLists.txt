@@ -11,17 +11,7 @@ if(Qt6_FOUND)
         MACOSX_BUNDLE TRUE
         WIN32_EXECUTABLE TRUE
     )
-    target_link_libraries(open_stg_launcher_qt6
-        PUBLIC
-        open_stg_launcher_lib Qt6::Quick
-    )
     target_sources(open_stg_launcher_qt6 PRIVATE
         qt.cpp
-    )
-    qt_add_qml_module(open_stg_launcher_qt6 
-        URI main
-        VERSION 1.0
-        QML_FILES 
-            qmlLauncher.qml
     )
 endif()

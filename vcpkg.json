@@ -7,6 +7,7 @@
     "gtest",
     "lua",
     "pthreads",
+    "qt",
     {
       "name": "sdl2",
       "features": [
@@ -34,6 +35,36 @@
       ]
     },
     "sdl2-ttf",
-    "qt"
+    {
+      "name": "sdl3",
+      "features": [
+        "alsa",
+        "ibus",
+        "vulkan"
+      ]
+    },
+    {
+      "name": "sdl3-image",
+      "features": [
+        "jpeg",
+        "png",
+        "tiff",
+        "webp"
+      ]
+    },
+    {
+      "name": "sdl3-ttf",
+      "features": [
+        "harfbuzz",
+        "svg"
+      ]
+    },
+    {
+      "name": "spdlog",
+      "features": [
+        "wchar",
+        "benchmark"
+      ]
+    }
   ]
 }

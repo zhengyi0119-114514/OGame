@@ -5,6 +5,7 @@
 #ifndef OGAME_STGLIB_TASK
 #define OGAME_STGLIB_TASK
 #include <pthread.h>
+#include <functional>
 namespace open_stg::thread_h
 {
 class ptr_pthread
@@ -27,34 +28,12 @@ class ptr_pthread
     pthread_t *m_hThread{};
     void free();
 };
-template <typename TResult> class func
+using PtrThread = ptr_pthread;
+template<typename TReturn,typename ...TArgs>
+class Function
 {
-  public:
-    using func_ptr = TResult (*)();
-    func(typename func<TResult>::func_ptr func);
-    TResult &&run();
-    TResult &&operator()();
-
-  private:
-    func_ptr m_func;
+    operator std::function<TReturn(TArgs...)>();
 };
-template <typename TResult, typename TArg1> class func_1a
-{
-  public:
-    using func_ptr = TResult (*)(TArg1);
-    func_1a(typename func_1a<TResult, TArg1>::func_ptr func);
-    TResult &&run(TArg1 arg1);
-    TResult &&operator()(TArg1 arg1);
-
-  private:
-    typename func_1a<TResult, TArg1>::func_ptr m_func;
-};
-// template <typename TResult> class task
-// {
-//   public:
-//     using func_ptr = func_1a<TResult,std::any>;
-//     static task<TResult> Run(std::any arg);
-// };
 } // namespace open_stg::thread_h
 
 #endif // OGAME_STGLIB_TASK

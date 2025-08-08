@@ -4,29 +4,18 @@ if(${LIBSAFEC_FOUND})
 endif()
 
 target_link_libraries(open_stg_launcher_lib
-    PUBLIC $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static> Boost::json
+    PUBLIC ${__SDL3_TARGETS} Boost::json
 )
 target_link_libraries(
     abs_game PUBLIC open_stg_lib
 )
 
-if(ftxui_FOUND)
-    target_link_libraries(
-        open_stg_launcher PRIVATE
-        open_stg_launcher_lib
-        ftxui::screen ftxui::dom ftxui::component
-        Boost::json
-    )
-endif()
-
 target_link_libraries(open_stg_lib PUBLIC
-    Boost::charconv Boost::json Boost::filesystem Boost::program_options
-    $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
-    $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>
-    $<IF:$<TARGET_EXISTS:SDL2_mixer::SDL2_mixer>,SDL2_mixer::SDL2_mixer,SDL2_mixer::SDL2_mixer-static>
-    $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>
-    SDL2_gfx
+    Boost::charconv Boost::json 
+    Boost::filesystem Boost::program_options
     ${LUA_LIBRARIES}
+    ${__SDL3_TARGETS}
+    spdlog::spdlog
 )
 target_include_directories(open_stg_lib PUBLIC
     ${LUA_INCLUDE_DIR}

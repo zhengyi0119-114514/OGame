@@ -2,14 +2,6 @@ target_include_directories(open_stg_launcher_lib
     PUBLIC
     include
 )
-
-if(ftxui_FOUND)
-    target_sources(open_stg_launcher
-        PRIVATE
-        ftxui/main.cpp
-        ftxui/tabs.cpp
-    )
-endif()
 if(WIN32)
     target_include_directories(open_stg_launcher_win32 PRIVATE win32/include)
     target_sources(open_stg_launcher_win32 PRIVATE
