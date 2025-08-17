@@ -75,7 +75,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    message(NOTICE "Debug")
     target_compile_definitions(
         open_stg_lib
         PRIVATE

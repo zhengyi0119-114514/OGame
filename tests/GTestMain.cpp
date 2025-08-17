@@ -2,8 +2,7 @@
 #include "og.hpp"
 int main(int argc, char** args)
 {
-    bool bOk{false};
-    ::testing::InitGoogleTest(&argc,args);
     ::open_stg::InitOpenGame();
+    ::testing::InitGoogleTest(&argc,args);
     return RUN_ALL_TESTS();
 }

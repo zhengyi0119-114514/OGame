@@ -25,19 +25,21 @@ target_sources(
     include/og_templates_h.hpp
     include/og_sdl3_h.hpp
     include/og_interface.hpp
+    include/og_stg_h.hpp
+    include/og_module_view_h.hpp
 )
 target_sources(
     open_stg_lib PRIVATE
     ./InitAndQuit.cpp
     ./pthread.cpp
-    ./StgScenePosix.cpp
-    ./CrashDetection.cpp
+    ./StgScene.cpp
     ./math.cpp
     ./src-view/image.cpp
-    ./static_wallpeaper.cpp
+    ./src-view/WindowScreen.cpp
     ./runAsRootError.cpp
     ./InitException.cpp
-
+    ./Quit.cpp
+    ./Program.cpp
 )
 target_sources(unit_test 
     PRIVATE 

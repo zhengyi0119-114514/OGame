@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "string": "cpp",
+        "windows" :"cpp",
         "cstdint": "cpp",
         "array": "cpp",
         "atomic": "cpp",

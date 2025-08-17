@@ -7,10 +7,15 @@
  */
 #ifndef OGAME_STGLIB_OPT_H
 #define OGAME_STGLIB_OPT_H
+#include "og_templates_h.hpp"
+#include "og_view.hpp"
 #include <filesystem>
 
 namespace open_stg::opt_h
 {
 std::filesystem::path GetProgramOptionFileDirectory();
+using SurfacePool = ObjectPool<sdl3_h::SharedPtrSurface>;
+using TexturePool = ObjectPool<sdl3_h::SharedPtrTexture>;
+using TtfFontPool = ObjectPool<sdl3_h::SharedPtrTtfFont>;
 } // namespace open_stg::opt_h
 #endif

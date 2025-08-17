@@ -21,4 +21,12 @@ int main(int argc, char **args)
     InitOpenGame();
     std::filesystem::path configFileDirectory{opt_h::GetProgramOptionFileDirectory()};
     SPDLOG_INFO(std::format("config file at {0:}",configFileDirectory.string()));
+    Clock<100> c;
+    c.Init();
+    for(size_t i = 0 ;i<61;i++)
+    {
+        SPDLOG_INFO(std::format("{:}",i));
+        c.WaitToClockRing();
+    }
+    QuitOpenGame();
 }

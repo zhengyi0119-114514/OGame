@@ -5,13 +5,17 @@
 #else
 // Mac Or Linux
 #include <sys/socket.h>
-#if defined LINUX || defined linux
+#if defined unix || defined POSIX
 #include "unistd.h"
 #endif
 #endif
 
 #if __has_include("safec.h")
 #include <safec.h>
+#endif
+
+#if __has_include("unistd.h")
+#include <unistd.h>
 #endif
 
 #include "og.hpp"
@@ -30,6 +34,13 @@ void InitOpenGame()
         SPDLOG_ERROR(e.what());
         throw;
     }
+#ifdef POSIX 
+    uid_t uUserId = geteuid();
+    if(uUserId == 0)
+    {
+        throw error_h::RunAsRootAtException{};
+    }
+#endif
 }
 void QuitOpenGame()
 {

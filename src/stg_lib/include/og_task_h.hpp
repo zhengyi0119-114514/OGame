@@ -29,11 +29,6 @@ class ptr_pthread
     void free();
 };
 using PtrThread = ptr_pthread;
-template<typename TReturn,typename ...TArgs>
-class Function
-{
-    operator std::function<TReturn(TArgs...)>();
-};
 } // namespace open_stg::thread_h
 
 #endif // OGAME_STGLIB_TASK

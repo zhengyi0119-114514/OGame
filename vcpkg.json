@@ -1,70 +1,43 @@
 {
-  "dependencies": [
-    "boost-charconv",
-    "boost-filesystem",
-    "boost-json",
-    "boost-program-options",
-    "gtest",
-    "lua",
-    "pthreads",
-    "qt",
-    {
-      "name": "sdl2",
-      "features": [
-        "vulkan"
-      ],
-      "version>=": "2.32.4"
-    },
-    "sdl2-gfx",
-    {
-      "name": "sdl2-image",
-      "features": [
-        "libjpeg-turbo",
-        "libwebp",
-        "tiff"
-      ]
-    },
-    {
-      "name": "sdl2-mixer",
-      "features": [
-        "libflac",
-        "libmodplug",
-        "mpg123",
-        "opusfile",
-        "wavpack"
-      ]
-    },
-    "sdl2-ttf",
-    {
-      "name": "sdl3",
-      "features": [
-        "alsa",
-        "ibus",
-        "vulkan"
-      ]
-    },
-    {
-      "name": "sdl3-image",
-      "features": [
-        "jpeg",
-        "png",
-        "tiff",
-        "webp"
-      ]
-    },
-    {
-      "name": "sdl3-ttf",
-      "features": [
-        "harfbuzz",
-        "svg"
-      ]
-    },
-    {
-      "name": "spdlog",
-      "features": [
-        "wchar",
-        "benchmark"
-      ]
-    }
-  ]
+    "dependencies": [
+        "boost-charconv",
+        "boost-filesystem",
+        "boost-json",
+        "boost-program-options",
+        "gtest",
+        "lua",
+        "pthreads",
+        "qt",
+        {
+            "name": "sdl3",
+            "features": [
+                "alsa",
+                "ibus",
+                "vulkan"
+            ]
+        },
+        {
+            "name": "sdl3-image",
+            "features": [
+                "jpeg",
+                "png",
+                "tiff",
+                "webp"
+            ]
+        },
+        {
+            "name": "sdl3-ttf",
+            "features": [
+                "harfbuzz",
+                "svg"
+            ]
+        },
+        {
+            "name": "spdlog",
+            "features": [
+                "wchar",
+                "benchmark"
+            ]
+        }
+    ]
 }

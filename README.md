@@ -2,8 +2,49 @@
 
 这是一个拥有远大理想的项目，致力于打造一个可扩展，灵活的游戏引擎，  
 目前深耕于STG类型
+    by IceThorn ~~BakaTechnology~~
+
+## ℬ𝒶𝓀𝒶
+
+ᗜˬᗜ ⑨：𝓫𝓪𝓴𝓪  
+⠀⠀⠀⣠⠤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⠀⠀  
+⠀⠀⡜⠁⠀⠈⢢⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⠋⠷⠶⠱⡄  
+⠀⢸⣸⣿⠀⠀⠀⠙⢦⡀⠀⠀⠀⠀⠀⠀⠀⢀⡴⠫⢀⣖⡃⢀⣸⢹  
+⠀⡇⣿⣿⣶⣤⡀⠀⠀⠙⢆⠀⠀⠀⠀⠀⣠⡪⢀⣤⣾⣿⣿⣿⣿⣸  
+⠀⡇⠛⠛⠛⢿⣿⣷⣦⣀⠀⣳⣄⠀⢠⣾⠇⣠⣾⣿⣿⣿⣿⣿⣿⣽  
+⠀⠯⣠⣠⣤⣤⣤⣭⣭⡽⠿⠾⠞⠛⠷⠧⣾⣿⣿⣯⣿⡛⣽⣿⡿⡼  
+⠀⡇⣿⣿⣿⣿⠟⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⠻⣿⣿⣮⡛⢿⠃  
+⠀⣧⣛⣭⡾⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢿⣿⣷⣎⡇  
+⠀⡸⣿⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⢿⣷⣟⡇  
+⣜⣿⣿⡧⠀⠀⠀⠀⠀⡀⠀⠀⠀⠀⠀⠀⣄⠀⠀⠀⠀⠀⣸⣿⡜⡄  
+⠉⠉⢹⡇⠀⠀⠀⢀⣞⠡⠀⠀⠀⠀⠀⠀⡝⣦⠀⠀⠀⠀⢿⣿⣿⣹  
+⠀⠀⢸⠁⠀⠀⢠⣏⣨⣉⡃⠀⠀⠀⢀⣜⡉⢉⣇⠀⠀⠀⢹⡄⠀⠀  
+⠀⠀⡾⠄⠀⠀⢸⣾⢏⡍⡏⠑⠆⠀⢿⣻⣿⣿⣿⠀⠀⢰⠈⡇⠀⠀  
+⠀⢰⢇⢀⣆⠀⢸⠙⠾⠽⠃⠀⠀⠀⠘⠿⡿⠟⢹⠀⢀⡎⠀⡇⠀⠀  
+⠀⠘⢺⣻⡺⣦⣫⡀⠀⠀⠀⣄⣀⣀⠀⠀⠀⠀⢜⣠⣾⡙⣆⡇⠀⠀  
+⠀⠀⠀⠙⢿⡿⡝⠿⢧⡢⣠⣤⣍⣀⣤⡄⢀⣞⣿⡿⣻⣿⠞⠀⠀⠀  
+⠀⠀⠀⢠⠏⠄⠐⠀⣼⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠳⢤⣉⢳⠀⠀⠀  
+⢀⡠⠖⠉⠀⠀⣠⠇⣿⡿⣿⡿⢹⣿⣿⣿⣿⣧⣠⡀⠀⠈⠉⢢⡀⠀  
+⢿⠀⠀⣠⠴⣋⡤⠚⠛⠛⠛⠛⠛⠛⠛⠛⠙⠛⠛⢿⣦⣄⠀⢈⡇⠀  
+⠈⢓⣤⣵⣾⠁⣀⣀⠤⣤⣀⠀⠀⠀⠀⢀⡤⠶⠤⢌⡹⠿⠷⠻⢤⡀  
+⢰⠋⠈⠉⠘⠋⠁⠀⠀⠈⠙⠳⢄⣀⡴⠉⠀⠀⠀⠀⠙⠂⠀⠀⢀⡇  
+⢸⡠⡀⠀⠒⠂⠐⠢⠀⣀⠀⠀⠀⠀⠀⢀⠤⠚⠀⠀⢸⣔⢄⠀⢾⠀  
+⠀⠑⠸⢿⠀⠀⠀⠀⢈⡗⠭⣖⡒⠒⢊⣱⠀⠀⠀⠀⢨⠟⠂⠚⠋⠀  
+⠀⠀⠀⠘⠦⣄⣀⣠⠞⠀⠀⠀⠈⠉⠉⠀⠳⠤⠤⡤⠞⠀⠀⠀⠀⠀  
 
 ## 配置开发环境
+
+### ~~成为**BAKA**~~
+
+~~大喊“我要琪露诺的智慧！”~~  
+~~然后静待当前Linux发行版官方更新~~
+
+### 使用**VCPKG**
+
+[棺方文档](https://learn.microsoft.com/vcpkg/get_started/get-started)  
+确保PATH环境变量中存在vcpkg(.exe)以及VCPKG_ROOT环境变量被正确设置即可开罐即食  
+~~我不能保证你要等多久~~  
+如果你在中国大陆地区不开(反向)代理的话还是算了
 
 ### ArchLinux / Manjaro
 
@@ -15,11 +56,11 @@
 sudo pacman -S gtest qt6 boost lua
 ```
 
-SDL3 :**若要添加测试性的SDL3支持，请安装包 sdl3_image(AUR),sdl3_ttf(AUR),sdl3**
+SDL3 :**若要添加~~测试性~~必须的SDL3支持，请安装包 sdl3_image(AUR),sdl3_ttf(AUR),sdl3**
 
 ``` bash
-sudo pacman -S sdl3
-yay -S sdl3_image sdl3_ttf
+sudo pacman -S sdl3 vulkan-devel #vulkan-devel Optional
+yay -S sdl3_image sdl3_ttf  
 ```
 
 ### OpenSUSE Tumbleweed
@@ -28,18 +69,16 @@ yay -S sdl3_image sdl3_ttf
 [LibSafeC on Build Service](https://build.opensuse.org/package/show/home:PerryWerneck/libsafec)
 
 ```bash
-sudo zypper install sdl2-compat-devel SDL2_image-devel SDL2_mixer-devel gtest qt6-base-common-devel lua boost-devel
+sudo zypper install gtest qt6-base-common-devel lua boost-devel
 ```
 
 SDL3 : OpenSUSE Tumbleweed对新的SDL3及其附加组建支持良好  
-**要不是OpenSUSE的中文支持（尤其是输入法）跟狗屎一样，我可能就要离开Arch的怀抱了**
 
 ```bash
 sudo zypper install SDL3-devel SDL3_image-devel SDL3_ttf-devel
 ```
 
-## 开发小记
+## 待定目标
 
-英文不好，注释先用中文了
-
-:**MD，GTK3贼TM复杂，不干了**
+> Stg基础功能  
+> 使用Lua对项目进行拓展  

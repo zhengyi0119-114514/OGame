@@ -11,14 +11,21 @@
  */
 #ifndef OGAME_STGLIB_TEMPLATE_H
 #define OGAME_STGLIB_TEMPLATE_H 1
-#include "og_error_h.hpp"
+#include <algorithm>
 #include <cassert>
+#include <format>
+#include <functional>
 #include <map>
 #include <memory>
 #include <mutex>
 #include <ranges>
+#include <time.h>
 #include <utility>
 #include <vector>
+#include "og_error_h.hpp"
+#if __has_include("windows.h")
+#include <windows.h>
+#endif
 namespace open_stg
 {
 struct mutex_helper
@@ -436,29 +443,189 @@ using Boolean = uint8_t;
 template <typename TObject> class CircularListIterator
 {
   private:
-    size_t m_currentIndex = 0;
-    const size_t m_cMaxSize = 0;
+    size_t m_sCurrentIndex = 0;
+    const size_t m_csMaxSize = 0;
     std::span<TObject> m_containerSpan;
 
   public:
-    CircularListIterator(std::span<TObject> containerSpan)
-        : m_currentIndex(0), m_cMaxSize(containerSpan.size()), m_containerSpan(containerSpan)
+    CircularListIterator(std::span<TObject> containerSpan, size_t maxSize = 0)
+        : m_sCurrentIndex(0), m_csMaxSize(maxSize != 0 ? maxSize : containerSpan.size()), m_containerSpan(containerSpan)
     {
-        if (!m_cMaxSize)
+        if (!m_csMaxSize)
         {
             throw std::invalid_argument(
                 ":( 传入的span大小为零会无法运作的，亲！ || The incoming span with zero size won't work, dear!");
         }
     }
-    TObject &next()
+    void next()
     {
-        auto &cache = m_containerSpan[m_currentIndex];
-        if (m_currentIndex++; m_currentIndex >= m_cMaxSize)
+        if (m_sCurrentIndex++; m_sCurrentIndex >= m_csMaxSize)
         {
-            m_currentIndex = 0;
+            m_sCurrentIndex = 0;
         }
+    }
+    size_t GetIndex()
+    {
+        return m_sCurrentIndex;
     }
 };
 template <typename T> using circular_list_iterator = CircularListIterator<T>;
+template class CircularListIterator<int>;
+
+// 什么神奇游戏需要每秒运算超过256次？
+template <size_t ringTimesPreSecond>
+    requires(ringTimesPreSecond <= std::numeric_limits<uint8_t>::max() && ringTimesPreSecond > 0)
+class Clock
+{
+  private:
+    std::array<int64_t, ringTimesPreSecond + 1> m_timeTable{};
+    std::function<void(size_t)> m_fOnTimePass{};
+    int64_t m_iOffset{};
+    CircularListIterator<int64_t> m_iterator{m_timeTable, ringTimesPreSecond};
+
+  public:
+    void SetPassCallBack(std::function<void(size_t)> f)
+    {
+        m_fOnTimePass = f;
+    }
+#if defined LINUX
+
+  private:
+    constexpr const static inline int64_t NS_PER_SEC = 1'000'000'000;
+    int64_t timespecToInt64(const struct timespec &ts)
+    {
+        return ts.tv_sec * NS_PER_SEC + ts.tv_nsec;
+    }
+    struct timespec int64ToTimespec(int64_t i)
+    {
+        struct timespec ts;
+        ts.tv_sec = i / NS_PER_SEC;
+        ts.tv_nsec = i % NS_PER_SEC;
+        return ts;
+    }
+
+  public:
+    constexpr Clock()
+    {
+        for (size_t i = 0; i < ringTimesPreSecond + 1; i++)
+        {
+            m_timeTable[i] = static_cast<int64_t>(i * NS_PER_SEC / 60.0l);
+        }
+    }
+    inline void Init()
+    {
+        struct timespec ts;
+        clock_gettime(CLOCK_MONOTONIC, &ts);
+        m_iOffset = timespecToInt64(ts);
+    }
+    void WaitToClockRing()
+    {
+        uint32_t uTriggeredCycles = 0;
+        struct timespec tsNow{};
+        clock_gettime(CLOCK_MONOTONIC, &tsNow);
+        int64_t iNow{timespecToInt64(tsNow)};
+
+        int64_t iTimeDifference = iNow - m_iOffset;
+        int64_t iSecondPassed = iTimeDifference / NS_PER_SEC;
+        uTriggeredCycles += iSecondPassed * ringTimesPreSecond;
+        int64_t iRemainingNs = iTimeDifference % NS_PER_SEC;
+        int64_t iNSToWait{};
+        int64_t iTargetTimespec{};
+        while (1'145'141'919'810ll)
+        {
+            size_t sCurrentIndex{m_iterator.GetIndex()};
+            if (m_timeTable[sCurrentIndex] <= iRemainingNs && m_timeTable[sCurrentIndex + 1] > iRemainingNs)
+            {
+                iNSToWait = m_timeTable[sCurrentIndex + 1] - iRemainingNs;
+                m_iterator.next();
+                break;
+            }
+            m_iterator.next();
+            ++uTriggeredCycles;
+            continue;
+        }
+        if (iNSToWait > 0)
+        {
+            struct timespec tsTimeToWait = int64ToTimespec(iNSToWait);
+            clock_nanosleep(CLOCK_MONOTONIC, 0, &tsTimeToWait, nullptr);
+        }
+        else
+        {
+            if (m_fOnTimePass != nullptr)
+            {
+                m_fOnTimePass(++uTriggeredCycles);
+            }
+        }
+    }
+#endif
+#if defined WIN32
+  private:
+    LARGE_INTEGER m_liFrequency{};
+    uint64_t m_uPerformanceCountingUnit{};
+
+  public:
+    Clock()
+    {
+        if (!QueryPerformanceFrequency(&m_liFrequency))
+        {
+            throw error_h::InitException("Template Clock<size_t>", std::format("{:x}", GetLastError()));
+        }
+        m_uPerformanceCountingUnit = m_liFrequency.QuadPart;
+        for (size_t i = 0; i < ringTimesPreSecond + 1; ++i)
+        {
+            m_timeTable[i] = m_uPerformanceCountingUnit * i / ringTimesPreSecond;
+        }
+    }
+    void Init()
+    {
+        LARGE_INTEGER liPerformceCount{};
+        QueryPerformanceCounter(&liPerformceCount);
+        m_iOffset = liPerformceCount.QuadPart;
+    }
+    void WaitToClockRing()
+    {
+        uint32_t uTriggeredCycles{};
+        LARGE_INTEGER liNow{};
+        LARGE_INTEGER targetTime{};
+        QueryPerformanceCounter(&liNow);
+        int64_t iTimeDifference = liNow.QuadPart - m_iOffset;
+        int64_t iRemainingTime = iTimeDifference % m_uPerformanceCountingUnit;
+        int64_t iTimeToWait{};
+        uTriggeredCycles += iTimeDifference / m_uPerformanceCountingUnit * ringTimesPreSecond;
+        while (114'514'191'981ll * 2'233)
+        {
+            size_t sCurrentIndex{m_iterator.GetIndex()};
+            if (m_timeTable[sCurrentIndex] <= iRemainingTime && m_timeTable[sCurrentIndex + 1] > iRemainingTime)
+            {
+                iTimeToWait = m_timeTable[sCurrentIndex + 1] - iRemainingTime;
+                m_iterator.next();
+                break;
+            }
+            else
+            {
+                m_iterator.next();
+                ++uTriggeredCycles;
+                continue;
+            }
+        }
+        targetTime.QuadPart = liNow.QuadPart + iTimeToWait;
+        BOOLEAN bUnmeaningBooleanVariable = TRUE;
+        while (bUnmeaningBooleanVariable) {
+            // Windows没有高精度的睡眠函数，所以使用自旋锁代替
+            QueryPerformanceCounter(&liNow);
+            if(liNow.QuadPart >= targetTime.QuadPart)
+            {
+                bUnmeaningBooleanVariable = FALSE;
+            }
+        }
+        if(m_fOnTimePass != nullptr)
+        {
+            m_fOnTimePass(uTriggeredCycles);
+        }
+    }
+#endif
+};
+template <size_t sR> using NanoClock = Clock<sR>;
+using StandardClock = Clock<30>;
 } // namespace open_stg
 #endif

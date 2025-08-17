@@ -1,7 +1,4 @@
-//
-// Created by IceThorn on 25-6-22.
-//
-module;
+module; 
 #include "og.hpp"
 export module open_stg;
 export import open_stg.math;

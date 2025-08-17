@@ -1,48 +1,174 @@
+/**
+ * @file og_math_h.hpp
+ * @author zhengyi0119
+ * @brief Math utilities and geometric structures[数学工具和几何结构]
+ * @version Ciallo～(∠・ω< )⌒★
+ * @date 2025-08-10
+ *
+ * Contains:
+ * - Factorial and power calculations[阶乘和幂运算]
+ * - Trigonometric functions[三角函数]
+ * - Geometric shapes (Point, Circle, Rectangle)[几何图形(点、圆、矩形)]
+ * - Collision detection utilities[碰撞检测工具]
+ */
 #ifndef OGAME_STGLIB_MATH_H
 #define OGAME_STGLIB_MATH_H 1
+#include <SDL3/SDL.h>
+#include <array>
+#include <concepts>
+#include <math.h>
 #include <stdint.h>
 
 namespace open_stg::math_h
 {
-constexpr static inline const uint32_t SIZE_UNDEFINED{114514};
-constexpr static inline const uint32_t SIZE_POINTLESS{1919810};
-struct point
+// Compile-time trigonometric functions[编译时三角函数]
+// Factorial calculation (!VALUE)[阶乘计算]
+template <uint32_t N, typename TType = uint64_t>
+    requires std::signed_integral<TType> || std::unsigned_integral<TType> || std::integral<TType> ||
+             std::floating_point<TType>
+struct Factorial
 {
-    uint32_t x;
-    uint32_t y;
+    static constexpr const inline TType VALUE = N * Factorial<N - 1, TType>::VALUE;
 };
-struct vector
-{
-    uint32_t x;
-    uint32_t y;
-};
-struct circle
-{
-    point center;
-    uint32_t radius;
-};
-struct rectangles
-{
-    point top_left;
-    uint32_t width;
-    uint32_t height;
-};
-struct size
-{
-    uint32_t width;
-    uint32_t height;
-};
+//(!0 = 1)
+template <typename TType>
+    requires std::signed_integral<TType> || std::unsigned_integral<TType> || std::integral<TType> ||
+             std::floating_point<TType>
+struct Factorial<0, TType>
 
-// 碰撞检测函数声明
-bool collide(const point &a, const point &b);
-bool collide(const point &p, const circle &c);
-bool collide(const circle &c, const point &p);
-bool collide(const point &p, const rectangles &r);
-bool collide(const rectangles &r, const point &p);
-bool collide(const circle &a, const circle &b);
-bool collide(const circle &c, const rectangles &r);
-bool collide(const rectangles &r, const circle &c);
-bool collide(const rectangles &a, const rectangles &b);
+{
+    static constexpr const inline TType VALUE = 1;
+};
+template <typename TType = uint32_t>
+    requires std::signed_integral<TType> || std::unsigned_integral<TType> || std::integral<TType> ||
+             std::floating_point<TType>
+constexpr inline TType Power(TType x, uint32_t n)
+{
+    return n == 0 ? 1.0 : x * Power<TType>(x, n - 1);
+}
+template <typename TType = double>
+    requires std::floating_point<TType>
+constexpr inline TType Taylor6Sin(TType x)
+{
+    // 使用模运算将x限制在[-π, π]范围内
+    x = x - 2 * M_PI * static_cast<int>(x / (2 * M_PI));
+    if (x > M_PI)
+        x -= 2 * M_PI;
+    if (x < -M_PI)
+        x += 2 * M_PI;
 
+    // 泰勒展开前7项
+    return x - Power<TType>(x, 3) / Factorial<3>::VALUE + Power<TType>(x, 5) / Factorial<5>::VALUE -
+           Power<TType>(x, 7) / Factorial<7>::VALUE + Power<TType>(x, 9) / Factorial<9>::VALUE -
+           Power<TType>(x, 11) / Factorial<11>::VALUE + Power<TType>(x, 13) / Factorial<13>::VALUE;
+}
+template <typename TType = double>
+    requires std::floating_point<TType>
+constexpr inline TType Taylor7Cos(TType x)
+{
+    x = x - 2 * M_PI * static_cast<int>(x / (2 * M_PI));
+    if (x > M_PI)
+        x -= 2 * M_PI;
+    if (x < -M_PI)
+        x += 2 * M_PI;
+
+    return 1 - Power<TType>(x, 2) / Factorial<2>::VALUE + Power<TType>(x, 4) / Factorial<4>::VALUE -
+           Power<TType>(x, 6) / Factorial<6>::VALUE + Power<TType>(x, 8) / Factorial<8>::VALUE -
+           Power<TType>(x, 10) / Factorial<10>::VALUE + Power<TType>(x, 12) / Factorial<12>::VALUE -
+           Power<TType>(x, 14) / Factorial<14>::VALUE;
+}
+
+constexpr static inline const int64_t SIZE_UNDEFINED{(9 * 9) * 1145141919810};
+// This literal is used to fill meaningless fields (~~This is a stinky
+// number~~)[这个字面值用于填充无意义的字段(~~这是一串散发着恶臭的数字~~)]
+constexpr static inline const int64_t SIZE_UNMEANING{1'145'141'919'810'114'514};
+// Wish you Cirno's wisdom ᗜˬᗜ ⑨：𝓫𝓪𝓴𝓪[祝你获得琪露诺的智慧]
+constexpr static inline const double BAKA_CIRNO_NUMBER{Taylor7Cos<double>(M_PI / 4)};
+
+struct Point
+{
+    double x;
+    double y;
+    constexpr inline bool IsUndefined() const
+    {
+        return x >= SIZE_UNDEFINED || y >= SIZE_UNDEFINED;
+    }
+};
+double GetDistanceBetweenTwoPoints(const Point &p1, const Point &p2);
+double GetSquareDistanceBetweenTwoPoints(const Point &p1, const Point &p2);
+int DoubleToInt(double d);
+struct TwoDimensionalVector
+{
+    double x;
+    double y;
+};
+using CollisionDetectionPoints = std::array<Point, 8>;
+struct Circle
+{
+    Point center;
+    double radius;
+    CollisionDetectionPoints GetCollisionDetectionPoints() const;
+    constexpr inline Point Center() const
+    {
+        return center;
+    }
+    bool CollisionDetection(const Point &p) const;
+};
+/**
+ * @brief Rectangle
+ *
+ */
+struct Rectangle
+{
+    Point center;
+    double width;
+    double height;
+    /**
+     * @brief Default initializer - use it and it won't make a sound[使用默认初始化器一用一个不吱声]
+     *
+     * Initializes with undefined SIZE_UNDEFINED values[使用SIZE_UNDEFINED值初始化]
+     */
+    constexpr inline Rectangle() : center(), width(SIZE_UNDEFINED), height(SIZE_UNDEFINED)
+    {
+    }
+    constexpr inline Rectangle(Point pCenter, uint64_t uWidth, uint64_t uHeight)
+        : center(pCenter), width(uWidth), height(uHeight)
+    {
+    }
+    constexpr inline Point Center() const
+    {
+        return center;
+    }
+    /**
+     * @brief Get the Collision Detection Points object
+     *
+     * @return CollisionDetectionPoints
+     */
+    CollisionDetectionPoints GetCollisionDetectionPoints() const;
+    constexpr inline bool IsUndefined() const
+    {
+        return center.IsUndefined() || (width >= SIZE_UNDEFINED || height >= SIZE_UNDEFINED);
+    };
+    bool CollisionDetection(const Point &p) const;
+    SDL_FRect ToSdlFRect() const;
+};
+struct Size
+{
+    double width;
+    double height;
+    constexpr inline bool IsUndefined() const noexcept
+    {
+        return (width >= SIZE_UNDEFINED) || (height >= SIZE_UNDEFINED);
+    }
+};
+struct FloatSize
+{
+    float width;
+    float height;
+    constexpr inline bool IsUndefined() const noexcept
+    {
+        return true;
+    }
+};
 } // namespace open_stg::math_h
 #endif // !OGAME_STGLIB_H
