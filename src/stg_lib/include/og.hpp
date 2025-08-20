@@ -29,19 +29,21 @@ void QuitOpenGame();
 [[noreturn]] void ExitProgram();
 enum class ProgramOptions
 {
+    NONE = 0x0,
     RESIZABLE = 0x1,
 };
 class Program
 {
-  private:
-    std::shared_ptr<view_h::WindowScreen> m_wsScreen;
-    std::shared_ptr<mod_h::GameScreen> m_apGameScreen;
+  protected:
+    std::shared_ptr<view_h::WindowScreen> m_spWindowScreen;
+    std::shared_ptr<mod_h::GameScreen> m_spGameScreen;
+    sdl3_h::SharedPtrRenderer m_spRenderer;
     StandardClock m_c{};
 
   public:
     ObjectPool<sdl3_h::SharedPtrSurface> SurfacePool{};
     ObjectPool<sdl3_h::SharedPtrTtfFont> TtfFontPool{};
-    explicit Program();
+    virtual void EnterMainLoop() = 0;
 };
 } // namespace open_stg
 #endif // !OGAME_STGLIB_H

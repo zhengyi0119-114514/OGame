@@ -4,7 +4,7 @@ namespace open_stg::stg
 bool CollisionDetection(const HitBoxBase &l, const HitBoxBase &r)
 {
     if (math_h::GetSquareDistanceBetweenTwoPoints(l.GetCenter(), r.GetCenter()) >
-        math_h::Power(l.GetRaduis() + r.GetRaduis(), 2))
+        math_h::Power(l.GetRadius() + r.GetRadius(), 2))
     {
         return false;
     }

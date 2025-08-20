@@ -1,13 +1,12 @@
 #include "og_view.hpp"
 namespace open_stg::view_h
 {
-Image::Image(sdl3_h::SharedPtrSurface spSurface, SDL_Renderer *pRenderer, math_h::Point location, math_h::Size sSize)
-    : m_spTexture(SDL_CreateTextureFromSurface(pRenderer, spSurface)), m_spLocation(location),
-      m_pImageSize(getTextureSize())
+Image::Image(sdl3_h::SharedPtrSurface spSurface, SDL_Renderer *pRenderer, math_h::Point location)
+    : m_spTexture(SDL_CreateTextureFromSurface(pRenderer, spSurface)), m_spLocation(location)
 {
 }
-Image::Image(sdl3_h::SharedPtrTexture spTexture, math_h::Point spLocation, math_h::Size sSize)
-    : m_spTexture(spTexture), m_spLocation(spLocation), m_pImageSize(getTextureSize())
+Image::Image(sdl3_h::SharedPtrTexture spTexture, math_h::Point spLocation)
+    : m_spTexture(spTexture), m_spLocation(spLocation)
 {
 }
 math_h::Size Image::getTextureSize()
@@ -16,13 +15,20 @@ math_h::Size Image::getTextureSize()
     SDL_GetTextureSize(m_spTexture, &width, &height);
     return {width, height};
 }
-void Image::PrintToRenderer(SDL_Renderer *pRenderer)
+void Image::PrintToRenderer(SDL_Renderer *pRenderer, math_h::Size s)
 {
-    SDL_FRect rect{static_cast<float>(m_spLocation.x), static_cast<float>(m_spLocation.y),
-                   static_cast<float>(m_pImageSize.width), static_cast<float>(m_pImageSize.height)};
+    SDL_FRect rect{static_cast<float>(m_spLocation.x), static_cast<float>(m_spLocation.y), static_cast<float>(s.width),
+                   static_cast<float>(s.height)};
+    if (s.IsUndefined())
+    {
+        float width{}, height{};
+        SDL_GetTextureSize(m_spTexture, &width, &height);
+        rect.w = width;
+        rect.h = height;
+    }
     SDL_RenderTexture(pRenderer, m_spTexture, NULL, &rect);
 }
-void Image::ResetLocation(math_h::Point spLocation)
+void Image::ResetLocation(math_h::Point spLocation) noexcept
 {
     m_spLocation = spLocation;
 }

@@ -81,7 +81,7 @@ constexpr inline TType Taylor7Cos(TType x)
 constexpr static inline const int64_t SIZE_UNDEFINED{(9 * 9) * 1145141919810};
 // This literal is used to fill meaningless fields (~~This is a stinky
 // number~~)[这个字面值用于填充无意义的字段(~~这是一串散发着恶臭的数字~~)]
-constexpr static inline const int64_t SIZE_UNMEANING{1'145'141'919'810'114'514};
+constexpr static inline const int64_t SIZE_UNMEANING{1'145'141'919'810'114};
 // Wish you Cirno's wisdom ᗜˬᗜ ⑨：𝓫𝓪𝓴𝓪[祝你获得琪露诺的智慧]
 constexpr static inline const double BAKA_CIRNO_NUMBER{Taylor7Cos<double>(M_PI / 4)};
 
@@ -150,6 +150,55 @@ struct Rectangle
         return center.IsUndefined() || (width >= SIZE_UNDEFINED || height >= SIZE_UNDEFINED);
     };
     bool CollisionDetection(const Point &p) const;
+    SDL_FRect ToSdlFRect() const;
+};
+
+/**
+ * @brief Rotatable Rectangle with angle support[可旋转矩形]
+ * 
+ * Extends basic Rectangle with rotation capability[扩展基础矩形类添加旋转功能]
+ */
+struct RotatableRectangle : public Rectangle {
+    double rotationAngle; // in radians[以弧度表示]
+    /**
+     * @brief Get rotated collision detection points[获取旋转后的碰撞检测点]
+     */
+    CollisionDetectionPoints GetCollisionDetectionPoints() const;
+    
+    /**
+     * @brief Rotate the rectangle by given angle[按给定角度旋转矩形]
+     */
+    constexpr inline void Rotate(double angle) {
+        rotationAngle += angle;
+        // Normalize angle to [0, 2π)
+        rotationAngle = fmod(rotationAngle, 2 * M_PI);
+        if (rotationAngle < 0) {
+            rotationAngle += 2 * M_PI;
+        }
+    }
+    
+    /**
+     * @brief Set absolute rotation angle[设置绝对旋转角度]
+     */
+    constexpr inline void SetRotation(double angle) {
+        rotationAngle = angle;
+        // Normalize angle to [0, 2π)
+        rotationAngle = fmod(rotationAngle, 2 * M_PI);
+        if (rotationAngle < 0) {
+            rotationAngle += 2 * M_PI;
+        }
+    }
+    
+    /**
+     * @brief Get current rotation angle[获取当前旋转角度]
+     */
+    constexpr inline double GetRotation() const {
+        return rotationAngle;
+    }
+    
+    /**
+     * @brief [该函数无法正常使用]
+     */
     SDL_FRect ToSdlFRect() const;
 };
 struct Size

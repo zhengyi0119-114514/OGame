@@ -7,6 +7,7 @@
 #include <spdlog/spdlog.h>
 #include <format>
 #include <stdlib.h>
+#include <SDL3/SDL.h>
 
 
 // import open_stg;

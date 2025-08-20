@@ -28,25 +28,33 @@ target_sources(
     include/og_stg_h.hpp
     include/og_module_view_h.hpp
 )
+
 target_sources(
     open_stg_lib PRIVATE
     ./InitAndQuit.cpp
     ./pthread.cpp
     ./StgScene.cpp
     ./math.cpp
-    ./src-view/image.cpp
-    ./src-view/WindowScreen.cpp
     ./runAsRootError.cpp
     ./InitException.cpp
     ./Quit.cpp
     ./Program.cpp
+    ./src-view/image.cpp
+    ./src-view/WindowScreen.cpp
+    ./src-view/RotatableImages.cpp
+    ./src-view/KeyboardInput.cpp
+    ./src-stg/BarrageTrajectory.cpp
+    ./src-stg/StgScreen.cpp
 )
+
 target_sources(unit_test 
     PRIVATE 
     tests/TestSurfacePool.cpp 
     tests/TestViewObjectPool.cpp
     tests/TestMath.cpp
+    tests/StaticAsserts.cpp
 )
+
 if(WIN32)
     target_link_libraries(open_stg_lib PRIVATE ws2_32)
     target_sources(

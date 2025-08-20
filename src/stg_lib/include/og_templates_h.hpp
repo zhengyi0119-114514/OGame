@@ -11,6 +11,7 @@
  */
 #ifndef OGAME_STGLIB_TEMPLATE_H
 #define OGAME_STGLIB_TEMPLATE_H 1
+#include "og_error_h.hpp"
 #include <algorithm>
 #include <cassert>
 #include <format>
@@ -22,7 +23,6 @@
 #include <time.h>
 #include <utility>
 #include <vector>
-#include "og_error_h.hpp"
 #if __has_include("windows.h")
 #include <windows.h>
 #endif
@@ -610,15 +610,16 @@ class Clock
         }
         targetTime.QuadPart = liNow.QuadPart + iTimeToWait;
         BOOLEAN bUnmeaningBooleanVariable = TRUE;
-        while (bUnmeaningBooleanVariable) {
+        while (bUnmeaningBooleanVariable)
+        {
             // Windows没有高精度的睡眠函数，所以使用自旋锁代替
             QueryPerformanceCounter(&liNow);
-            if(liNow.QuadPart >= targetTime.QuadPart)
+            if (liNow.QuadPart >= targetTime.QuadPart)
             {
                 bUnmeaningBooleanVariable = FALSE;
             }
         }
-        if(m_fOnTimePass != nullptr)
+        if (m_fOnTimePass != nullptr)
         {
             m_fOnTimePass(uTriggeredCycles);
         }

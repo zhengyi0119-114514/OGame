@@ -5,7 +5,7 @@ module;  // 全局模块片段开始
 export module open_stg.math;  // 主模块接口声明
 export namespace open_stg::math
 {
-using vector = open_stg::math_h::vector;
+using vector = open_stg::math_h::TwoDimensionalVector;
 using point = open_stg::math_h::Point;
 using circle = open_stg::math_h::Circle;
 } // namespace open_stg::math

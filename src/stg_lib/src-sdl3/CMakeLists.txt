@@ -3,4 +3,5 @@ target_sources(
     ./SDLModuleInit.cpp
     ./SDLObjectManager.cpp
     ./WindowManager.cpp
+    ./TtfManager.cpp
 )

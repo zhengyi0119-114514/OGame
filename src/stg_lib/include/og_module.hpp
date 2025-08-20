@@ -16,7 +16,7 @@ namespace open_stg::mod_h
 {
 struct IGameObject
 {
-    virtual void DoSomeThing() = 0;
+    virtual void DoOperator() = 0;
     
     virtual ~IGameObject() noexcept = default;
 };
