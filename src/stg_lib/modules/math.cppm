@@ -2,10 +2,10 @@ module;  // 全局模块片段开始
 #include "og_math_h.hpp"  // 必须在全局模块片段内
 // 全局模块片段结束
 
-export module open_stg.math;  // 主模块接口声明
-export namespace open_stg::math
+export module OpenGame.math;  // 主模块接口声明
+export namespace OpenGame::math
 {
-using vector = open_stg::math_h::TwoDimensionalVector;
-using point = open_stg::math_h::Point;
-using circle = open_stg::math_h::Circle;
-} // namespace open_stg::math
+using vector = OpenGame::Math::TwoDimensionalVector;
+using point = OpenGame::Math::Point;
+using circle = OpenGame::Math::Circle;
+} // namespace OpenGame::math

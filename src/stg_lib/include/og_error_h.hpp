@@ -16,7 +16,7 @@
 #include <string>
 #include <string_view>
 
-namespace open_stg::error_h
+namespace OpenGame::error_h
 {
 inline constexpr const static uint32_t invalid_id = 1'145'141'919; ///< Invalid ID constant[无效ID常量]
 /**
@@ -61,5 +61,5 @@ class InitException : std::exception
      */
     virtual const char *what() const noexcept override;
 };
-} // namespace open_stg::error_h
+} // namespace OpenGame::error_h
 #endif // !OPEN_STG_LIB_ERROR_H

@@ -10,6 +10,7 @@
  * - Smart pointers for SDL resources[SDL资源的智能指针]
  * - Renderer and window utilities[渲染器和窗口工具]
  */
+#include "og_macro.h"
 #include "og_math_h.hpp"
 #ifndef OGAME_STGLIB_SDL3_H
 #define OGAME_STGLIB_SDL3_H 1
@@ -18,7 +19,7 @@
 #include <concepts>
 #include <memory>
 #include <utility>
-namespace open_stg::sdl3_h
+namespace OpenGame::sdl3_h
 {
 /**
  * @brief Initialize SDL module[初始化SDL模块]
@@ -44,33 +45,33 @@ class PtrSdlObject
  */
 template <typename TSdlObject, typename TSdlObjectManager>
 concept SdlObjectManager = requires(TSdlObject *pobj) {
-    TSdlObjectManager::DestoryObject(pobj); ///< Requires destroy method[需要销毁方法]
+    {TSdlObjectManager::DestoryObject(pobj)}->std::same_as<Void>; ///< Requires destroy method[需要销毁方法]
 };
 template <typename TSdlObject, typename TSdlObjectManager>
     requires SdlObjectManager<TSdlObject, TSdlObjectManager>
-class PtrSdlObject_t : public PtrSdlObject
+class PtrSdlObjectTemplate : public PtrSdlObject
 {
   protected:
     TSdlObject *m_p = nullptr;
 
   public:
-    void swap(PtrSdlObject_t &r)
+    void swap(PtrSdlObjectTemplate &r)
     {
         std::swap(this->m_p, r.m_p);
     }
-    explicit PtrSdlObject_t(TSdlObject *p) : m_p(p)
+    explicit PtrSdlObjectTemplate(TSdlObject *p) : m_p(p)
     {
     }
-    PtrSdlObject_t(const PtrSdlObject_t &o) = delete;
-    PtrSdlObject_t(PtrSdlObject_t &&r)
+    PtrSdlObjectTemplate(const PtrSdlObjectTemplate &o) = delete;
+    PtrSdlObjectTemplate(PtrSdlObjectTemplate &&r)
     {
         m_p = r.m_p;
         r.m_p = nullptr;
     }
-    PtrSdlObject_t &operator=(const PtrSdlObject_t &rsh) = delete;
-    PtrSdlObject_t &operator=(PtrSdlObject_t &&rsh)
+    PtrSdlObjectTemplate &operator=(const PtrSdlObjectTemplate &rsh) = delete;
+    PtrSdlObjectTemplate &operator=(PtrSdlObjectTemplate &&rsh)
     {
-        PtrSdlObject_t obj{std::move(rsh)};
+        PtrSdlObjectTemplate obj{std::move(rsh)};
         swap(obj);
         return *this;
     }
@@ -90,26 +91,26 @@ class PtrSdlObject_t : public PtrSdlObject
     {
         return m_p;
     }
-    virtual ~PtrSdlObject_t() noexcept
+    virtual ~PtrSdlObjectTemplate() noexcept
     {
         TSdlObjectManager::DestoryObject(m_p);
     }
 };
 template <typename TSdlObject, typename TSdlObjectManager>
     requires SdlObjectManager<TSdlObject, TSdlObjectManager>
-class SharedPtrSdlObject_t : public PtrSdlObject
+class SharedPtrSdlObjectTemplate : public PtrSdlObject
 {
   protected:
-    std::shared_ptr<PtrSdlObject_t<TSdlObject, TSdlObjectManager>> m_ptr{nullptr};
+    std::shared_ptr<PtrSdlObjectTemplate<TSdlObject, TSdlObjectManager>> m_ptr{nullptr};
 
   public:
-    explicit SharedPtrSdlObject_t(TSdlObject *p) : m_ptr(std::make_shared<PtrSdlObject_t<TSdlObject, TSdlObjectManager>>(p))
+    explicit SharedPtrSdlObjectTemplate(TSdlObject *p) : m_ptr(std::make_shared<PtrSdlObjectTemplate<TSdlObject, TSdlObjectManager>>(p))
     {
     }
-    SharedPtrSdlObject_t(const SharedPtrSdlObject_t &) = default;
-    SharedPtrSdlObject_t(SharedPtrSdlObject_t &&) = default;
-    SharedPtrSdlObject_t &operator=(const SharedPtrSdlObject_t &rsh) = default;
-    SharedPtrSdlObject_t &operator=(SharedPtrSdlObject_t &&rsh) = default;
+    SharedPtrSdlObjectTemplate(const SharedPtrSdlObjectTemplate &) = default;
+    SharedPtrSdlObjectTemplate(SharedPtrSdlObjectTemplate &&) = default;
+    SharedPtrSdlObjectTemplate &operator=(const SharedPtrSdlObjectTemplate &rsh) = default;
+    SharedPtrSdlObjectTemplate &operator=(SharedPtrSdlObjectTemplate &&rsh) = default;
     TSdlObject &operator*() const
     {
         return *(*m_ptr);
@@ -131,42 +132,42 @@ struct SurfaceManager
 {
     static void DestoryObject(SDL_Surface *p);
 };
-template class PtrSdlObject_t<SDL_Surface, SurfaceManager>;
-template class SharedPtrSdlObject_t<SDL_Surface, SurfaceManager>;
-using PtrSurface = PtrSdlObject_t<SDL_Surface, SurfaceManager>;
-using SharedPtrSurface = SharedPtrSdlObject_t<SDL_Surface, SurfaceManager>;
+template class PtrSdlObjectTemplate<SDL_Surface, SurfaceManager>;
+template class SharedPtrSdlObjectTemplate<SDL_Surface, SurfaceManager>;
+using PtrSurface = PtrSdlObjectTemplate<SDL_Surface, SurfaceManager>;
+using SharedPtrSurface = SharedPtrSdlObjectTemplate<SDL_Surface, SurfaceManager>;
 static_assert(std::copyable<SharedPtrSurface> && std::movable<SharedPtrSurface>);
 struct TextureManager
 {
     static void DestoryObject(SDL_Texture *p);
 };
-template class PtrSdlObject_t<SDL_Texture, TextureManager>;
-template class SharedPtrSdlObject_t<SDL_Texture, TextureManager>;
-using PtrTexture = PtrSdlObject_t<SDL_Texture, TextureManager>;
-using SharedPtrTexture = SharedPtrSdlObject_t<SDL_Texture, TextureManager>;
+template class PtrSdlObjectTemplate<SDL_Texture, TextureManager>;
+template class SharedPtrSdlObjectTemplate<SDL_Texture, TextureManager>;
+using PtrTexture = PtrSdlObjectTemplate<SDL_Texture, TextureManager>;
+using SharedPtrTexture = SharedPtrSdlObjectTemplate<SDL_Texture, TextureManager>;
 struct RendererManager
 {
     static void DestoryObject(SDL_Renderer *p);
 };
-template class PtrSdlObject_t<SDL_Renderer, RendererManager>;
-template class SharedPtrSdlObject_t<SDL_Renderer, RendererManager>;
-using PtrRenderer = PtrSdlObject_t<SDL_Renderer, RendererManager>;
-using SharedPtrRenderer = SharedPtrSdlObject_t<SDL_Renderer, RendererManager>;
+template class PtrSdlObjectTemplate<SDL_Renderer, RendererManager>;
+template class SharedPtrSdlObjectTemplate<SDL_Renderer, RendererManager>;
+using PtrRenderer = PtrSdlObjectTemplate<SDL_Renderer, RendererManager>;
+using SharedPtrRenderer = SharedPtrSdlObjectTemplate<SDL_Renderer, RendererManager>;
 struct WindowManager
 {
     static void DestoryObject(SDL_Window *p);
 };
-template class PtrSdlObject_t<SDL_Window, WindowManager>;
-template class SharedPtrSdlObject_t<SDL_Window, WindowManager>;
-using PtrWindow = PtrSdlObject_t<SDL_Window, WindowManager>;
-using SharedPtrWindow = SharedPtrSdlObject_t<SDL_Window, WindowManager>;
+template class PtrSdlObjectTemplate<SDL_Window, WindowManager>;
+template class SharedPtrSdlObjectTemplate<SDL_Window, WindowManager>;
+using PtrWindow = PtrSdlObjectTemplate<SDL_Window, WindowManager>;
+using SharedPtrWindow = SharedPtrSdlObjectTemplate<SDL_Window, WindowManager>;
 struct TtfFontManager
 {
     static void DestoryObject(TTF_Font *p);
 };
-template class PtrSdlObject_t<TTF_Font, TtfFontManager>;
-template class SharedPtrSdlObject_t<TTF_Font, TtfFontManager>;
-using PtrTtfFont = PtrSdlObject_t<TTF_Font, TtfFontManager>;
-using SharedPtrTtfFont = SharedPtrSdlObject_t<TTF_Font, TtfFontManager>;
-} // namespace open_stg::sdl3_h
+template class PtrSdlObjectTemplate<TTF_Font, TtfFontManager>;
+template class SharedPtrSdlObjectTemplate<TTF_Font, TtfFontManager>;
+using PtrTtfFont = PtrSdlObjectTemplate<TTF_Font, TtfFontManager>;
+using SharedPtrTtfFont = SharedPtrSdlObjectTemplate<TTF_Font, TtfFontManager>;
+} // namespace OpenGame::sdl3_h
 #endif

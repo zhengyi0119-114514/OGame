@@ -11,13 +11,11 @@
  */
 #ifndef OGAME_STGLIB_TEMPLATE_H
 #define OGAME_STGLIB_TEMPLATE_H 1
-#include "og_error_h.hpp"
+#include "og_macro.h"
 #include <algorithm>
 #include <cassert>
-#include <format>
 #include <functional>
 #include <map>
-#include <memory>
 #include <mutex>
 #include <ranges>
 #include <time.h>
@@ -26,7 +24,7 @@
 #if __has_include("windows.h")
 #include <windows.h>
 #endif
-namespace open_stg
+namespace OpenGame
 {
 struct mutex_helper
 {
@@ -58,7 +56,7 @@ class object_pool
     using value_type = TObj;
     using pointer = TObj *;
     using reference = TObj &;
-    using shared_value = std::shared_ptr<value_type>;
+    // using shared_value = std::shared_ptr<value_type>;
     void throw_exception_if_name_exists(const std::string &sName)
     {
         if (m_mNameHandleMap.contains(sName))
@@ -69,7 +67,7 @@ class object_pool
 
   private:
     mutable std::mutex m_lock{};                      ///< Mutex for thread safety[线程安全互斥锁]
-    std::vector<shared_value> m_vObjects{};           ///< Storage for view objects[视图对象存储]
+    std::vector<TObj> m_vObjects{};                   ///< Storage for view objects[视图对象存储]
     std::map<std::string, handle> m_mNameHandleMap{}; ///< Name to handle mapping[名称到句柄的映射]
 
   public:
@@ -116,28 +114,28 @@ class object_pool
         mutex_helper l2{o.m_lock};
         swap(o);
     }
-    /**
-     * @brief [把shared_ptr塞入对象池]
-     *
-     * @param svName
-     * @param ptr
-     * @return handle
-     */
-    handle add_object_shared_ptr(std::string_view svName, std::shared_ptr<TObj> ptr)
-    {
-        std::string sName{svName};
-        throw_exception_if_name_exists(sName);
-        handle hObj = m_vObjects.size();
-        m_vObjects.push_back(ptr);
-        m_mNameHandleMap.insert(std::pair<std::string, handle>(std::move(sName), hObj));
-        return hObj;
-    }
-    template <typename TDerivedType>
-        requires std::derived_from<TDerivedType, TObj>
-    handle add_derived_object_ptr(std::string_view svName, std::shared_ptr<TDerivedType> ptr)
-    {
-        return add_derived_object_ptr(svName, std::dynamic_pointer_cast<TObj>(ptr));
-    }
+    // /**
+    //  * @brief [把shared_ptr塞入对象池]
+    //  *
+    //  * @param svName
+    //  * @param ptr
+    //  * @return handle
+    //  */
+    // handle add_object_shared_ptr(std::string_view svName, std::shared_ptr<TObj> ptr)
+    // {
+    //     std::string sName{svName};
+    //     throw_exception_if_name_exists(sName);
+    //     handle hObj = m_vObjects.size();
+    //     m_vObjects.push_back(ptr);
+    //     m_mNameHandleMap.insert(std::pair<std::string, handle>(std::move(sName), hObj));
+    //     return hObj;
+    // }
+    // template <typename TDerivedType>
+    //     requires std::derived_from<TDerivedType, TObj>
+    // handle add_derived_object_ptr(std::string_view svName, std::shared_ptr<TDerivedType> ptr)
+    // {
+    //     return add_derived_object_ptr(svName, std::dynamic_pointer_cast<TObj>(ptr));
+    // }
     /**
      * @brief [在对象池中直接构造对象]
      * @tparam TArgs
@@ -147,7 +145,13 @@ class object_pool
      */
     template <typename... TArgs> inline handle emplace_object(std::string_view svName, TArgs... args)
     {
-        return add_object_shared_ptr(svName, std::make_shared<TObj>(std::forward<TArgs>(args)...));
+        // return add_object_shared_ptr(svName, std::make_shared<TObj>(std::forward<TArgs>(args)...));
+        std::string sName{svName};
+        throw_exception_if_name_exists(sName);
+        handle hObj = m_vObjects.size();
+        m_vObjects.emplace_back(std::forward<TArgs>(args)...);
+        m_mNameHandleMap.insert(std::pair<std::string, handle>(std::move(sName), hObj));
+        return hObj;
     }
     template <typename... TArgs> inline handle emplace_object_ts(std::string_view svName, TArgs &&...args)
     {
@@ -353,7 +357,7 @@ class object_pool
         {
             handle h = m_mNameHandleMap.at(sName);
             auto &o = m_vObjects.at(h);
-            return {h, *o};
+            return {h, o};
         }
         else
         {
@@ -377,7 +381,7 @@ class object_pool
      */
     const TObj &at(handle h) const
     {
-        return *m_vObjects.at(h);
+        return m_vObjects.at(h);
     }
     /**
      * @brief Get mutable object by handle[通过句柄获取可变对象]
@@ -408,15 +412,22 @@ class object_pool
     }
     size_t size() const
     {
-#if defined DEBUG || defined _DEBUG
-        if (m_vObjects.size() != m_mNameHandleMap.size())
+        If ConstExpr(IsDebug)
         {
-            assert(true);
+            if (m_vObjects.size() != m_mNameHandleMap.size())
+            {
+                assert(true);
+            }
         }
-#endif
         return m_vObjects.size();
     }
-    using iterator = std::vector<std::shared_ptr<TObj>>::iterator;
+    Void Clear()
+    {
+        m_mNameHandleMap.clear();
+        m_vObjects.clear();
+    }
+    // using iterator = std::vector<std::shared_ptr<TObj>>::iterator;
+    using iterator = std::vector<TObj>::iterator;
     inline iterator begin()
     {
         return m_vObjects.begin();
@@ -425,8 +436,8 @@ class object_pool
     {
         return m_vObjects.end();
     }
-    using const_iterator = std::vector<std::shared_ptr<TObj>>::const_iterator;
-
+    // using const_iterator = std::vector<std::shared_ptr<TObj>>::const_iterator;
+    using const_iterator = std::vector<TObj>::const_iterator;
     inline const_iterator cbegin() const
     {
         return m_vObjects.cbegin();
@@ -439,6 +450,7 @@ class object_pool
     static_assert(std::forward_iterator<const_iterator>);
 };
 template <typename T> using ObjectPool = object_pool<T>;
+template class object_pool<int>;
 using Boolean = uint8_t;
 template <typename TObject> class CircularListIterator
 {
@@ -454,7 +466,7 @@ template <typename TObject> class CircularListIterator
         if (!m_csMaxSize)
         {
             throw std::invalid_argument(
-                ":( 传入的span大小为零会无法运作的，亲！ || The incoming span with zero size won't work, dear!");
+                ":( 传入的span大小为零会无法运作的，亲！ || The incoming span with zero size won't work,dear!");
         }
     }
     void next()
@@ -473,15 +485,15 @@ template <typename T> using circular_list_iterator = CircularListIterator<T>;
 template class CircularListIterator<int>;
 
 // 什么神奇游戏需要每秒运算超过256次？
-template <size_t ringTimesPreSecond>
-    requires(ringTimesPreSecond <= std::numeric_limits<uint8_t>::max() && ringTimesPreSecond > 0)
+template <size_t sRingTimesPreSecond>
+    requires(sRingTimesPreSecond <= std::numeric_limits<uint8_t>::max() && sRingTimesPreSecond > 0)
 class Clock
 {
   private:
-    std::array<int64_t, ringTimesPreSecond + 1> m_timeTable{};
+    std::array<int64_t, sRingTimesPreSecond + 1> m_timeTable{};
     std::function<void(size_t)> m_fOnTimePass{};
     int64_t m_iOffset{};
-    CircularListIterator<int64_t> m_iterator{m_timeTable, ringTimesPreSecond};
+    CircularListIterator<int64_t> m_iterator{m_timeTable, sRingTimesPreSecond};
 
   public:
     void SetPassCallBack(std::function<void(size_t)> f)
@@ -507,7 +519,7 @@ class Clock
   public:
     constexpr Clock()
     {
-        for (size_t i = 0; i < ringTimesPreSecond + 1; i++)
+        for (size_t i = 0; i < sRingTimesPreSecond + 1; i++)
         {
             m_timeTable[i] = static_cast<int64_t>(i * NS_PER_SEC / 60.0l);
         }
@@ -527,7 +539,7 @@ class Clock
 
         int64_t iTimeDifference = iNow - m_iOffset;
         int64_t iSecondPassed = iTimeDifference / NS_PER_SEC;
-        uTriggeredCycles += iSecondPassed * ringTimesPreSecond;
+        uTriggeredCycles += iSecondPassed * sRingTimesPreSecond;
         int64_t iRemainingNs = iTimeDifference % NS_PER_SEC;
         int64_t iNSToWait{};
         int64_t iTargetTimespec{};
@@ -571,9 +583,9 @@ class Clock
             throw error_h::InitException("Template Clock<size_t>", std::format("{:x}", GetLastError()));
         }
         m_uPerformanceCountingUnit = m_liFrequency.QuadPart;
-        for (size_t i = 0; i < ringTimesPreSecond + 1; ++i)
+        for (size_t i = 0; i < sRingTimesPreSecond + 1; ++i)
         {
-            m_timeTable[i] = m_uPerformanceCountingUnit * i / ringTimesPreSecond;
+            m_timeTable[i] = m_uPerformanceCountingUnit * i / sRingTimesPreSecond;
         }
     }
     void Init()
@@ -591,7 +603,7 @@ class Clock
         int64_t iTimeDifference = liNow.QuadPart - m_iOffset;
         int64_t iRemainingTime = iTimeDifference % m_uPerformanceCountingUnit;
         int64_t iTimeToWait{};
-        uTriggeredCycles += iTimeDifference / m_uPerformanceCountingUnit * ringTimesPreSecond;
+        uTriggeredCycles += iTimeDifference / m_uPerformanceCountingUnit * sRingTimesPreSecond;
         while (114'514'191'981ll * 2'233)
         {
             size_t sCurrentIndex{m_iterator.GetIndex()};
@@ -628,5 +640,52 @@ class Clock
 };
 template <size_t sR> using NanoClock = Clock<sR>;
 using StandardClock = Clock<30>;
-} // namespace open_stg
+/**
+ * @brief 一个std::function<>的别名。返回值表示事件是否向下传递
+ *
+ * @tparam T
+ */
+template <TypeName T> using EventHandler = std::function<Bool(Const T &e)>;
+template <TypeName T> CLASS EventManager
+{
+  private:
+    std::vector<EventHandler<T>> m_vsehHandlers{};
+
+  public:
+    EventManager<>() = Default;
+    /**
+     * @brief 向事件池
+     *
+     * @param eh
+     * @return Void
+     */
+    Void Add(EventHandler<T> eh)
+    {
+        m_vsehHandlers.push_back(eh);
+    }
+    Void Remove(EventHandler<T> eh)
+    {
+        std::ranges::remove(m_vsehHandlers, eh);
+    }
+    Void Clear()
+    {
+        m_vsehHandlers.clear();
+    }
+    Bool Invoke(Const T & arg)
+    {
+        Bool bContinue = true;
+        For(Const AUTO & eh : m_vsehHandlers)
+        {
+            If(eh(arg))
+            {
+                Continue;
+            }
+            Else
+            {
+                Break;
+            }
+        }
+    }
+};
+} // namespace OpenGame
 #endif

@@ -5,8 +5,7 @@
 #ifndef OGAME_STGLIB_TASK
 #define OGAME_STGLIB_TASK
 #include <pthread.h>
-#include <functional>
-namespace open_stg::thread_h
+namespace OpenGame::Thread
 {
 class ptr_pthread
 {
@@ -28,7 +27,7 @@ class ptr_pthread
     pthread_t *m_hThread{};
     void free();
 };
-using PtrThread = ptr_pthread;
-} // namespace open_stg::thread_h
+using PtrPThread = ptr_pthread;
+} // namespace OpenGame::Thread
 
 #endif // OGAME_STGLIB_TASK

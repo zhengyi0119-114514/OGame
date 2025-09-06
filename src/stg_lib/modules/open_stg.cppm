@@ -1,11 +1,11 @@
 module; 
 #include "og.hpp"
-export module open_stg;
-export import open_stg.math;
-export import open_stg.error;
-export import open_stg.task;
-export import open_stg.opt;
-export namespace open_stg
+export module OpenGame;
+export import OpenGame.math;
+export import OpenGame.error;
+export import OpenGame.task;
+export import OpenGame.opt;
+export namespace OpenGame
 {
     namespace view
     {

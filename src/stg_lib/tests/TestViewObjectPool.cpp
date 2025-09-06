@@ -1,8 +1,7 @@
 #include "og_view.hpp"
-#include "og.hpp"
 #include <gtest/gtest.h>
-using namespace open_stg;
-using namespace open_stg::view_h;
+using namespace OpenGame;
+using namespace OpenGame::View;
 using namespace std;
 class testViewObject
 {
@@ -39,8 +38,8 @@ class testViewObject
         return !(*this != rsh);
     }
 };
-using pool = open_stg::object_pool<testViewObject>;
-using moveOnlyPool = open_stg::ObjectPool<std::unique_ptr<int>>;
+using pool = OpenGame::object_pool<testViewObject>;
+using moveOnlyPool = OpenGame::ObjectPool<std::unique_ptr<int>>;
 TEST(TestViewObjectPool, ogmae_lib)
 {
     // INIT TEST
@@ -89,7 +88,7 @@ TEST(TestViewObjectPool, ogmae_lib)
         // 迭代器测试
         for (const auto &child : p)
         {
-            child->Str();
+            child.Str();
         }
         // moveOnlyTest
         {

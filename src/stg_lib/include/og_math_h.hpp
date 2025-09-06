@@ -19,7 +19,7 @@
 #include <math.h>
 #include <stdint.h>
 
-namespace open_stg::math_h
+namespace OpenGame::Math
 {
 // Compile-time trigonometric functions[编译时三角函数]
 // Factorial calculation (!VALUE)[阶乘计算]
@@ -219,5 +219,5 @@ struct FloatSize
         return true;
     }
 };
-} // namespace open_stg::math_h
+} // namespace OpenGame::Math
 #endif // !OGAME_STGLIB_H

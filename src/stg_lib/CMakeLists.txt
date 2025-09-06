@@ -26,7 +26,9 @@ target_sources(
     include/og_sdl3_h.hpp
     include/og_interface.hpp
     include/og_stg_h.hpp
-    include/og_module_view_h.hpp
+    include/og_module_View.hpp
+    include/og_macro.h
+    include/og_abs.h
 )
 
 target_sources(
@@ -42,7 +44,7 @@ target_sources(
     ./src-view/image.cpp
     ./src-view/WindowScreen.cpp
     ./src-view/RotatableImages.cpp
-    ./src-view/KeyboardInput.cpp
+    ./src-view/KeyBinding.cpp
     ./src-stg/BarrageTrajectory.cpp
     ./src-stg/StgScreen.cpp
 )
@@ -53,6 +55,7 @@ target_sources(unit_test
     tests/TestViewObjectPool.cpp
     tests/TestMath.cpp
     tests/StaticAsserts.cpp
+    tests/FunctionCallback.cpp
 )
 
 if(WIN32)

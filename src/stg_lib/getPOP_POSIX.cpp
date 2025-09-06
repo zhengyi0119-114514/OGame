@@ -5,7 +5,7 @@
 #include <filesystem>
 #include <string_view>
 namespace fs = std::filesystem;
-namespace open_stg::opt_h
+namespace OpenGame::Option
 {
 std::filesystem::path GetProgramOptionFileDirectory()
 {
@@ -20,4 +20,4 @@ std::filesystem::path GetProgramOptionFileDirectory()
     }
     return path;
 }
-} // namespace open_stg::opt_h
+} // namespace OpenGame::Option

@@ -1,10 +1,10 @@
 #include "og.hpp"
-namespace open_stg::stg
+namespace OpenGame::stg
 {
-bool CollisionDetection(const HitBoxBase &l, const HitBoxBase &r)
+bool CollisionDetection(const HitBox &l, const HitBox &r)
 {
-    if (math_h::GetSquareDistanceBetweenTwoPoints(l.GetCenter(), r.GetCenter()) >
-        math_h::Power(l.GetRadius() + r.GetRadius(), 2))
+    if (Math::GetSquareDistanceBetweenTwoPoints(l.GetCenter(), r.GetCenter()) >
+        Math::Power(l.GetRadius() + r.GetRadius(), 2))
     {
         return false;
     }
@@ -20,4 +20,4 @@ bool CollisionDetection(const HitBoxBase &l, const HitBoxBase &r)
     }
     return false;
 }
-} // namespace open_stg::stg
+} // namespace OpenGame::stg

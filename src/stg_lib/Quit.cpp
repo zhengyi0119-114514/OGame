@@ -3,7 +3,7 @@
 #if __has_include("windows.h")
 #include <windows.h>
 #endif
-namespace open_stg
+namespace OpenGame
 {
 [[noreturn]]
 void ExitProgram()
@@ -14,4 +14,4 @@ void ExitProgram()
     _Exit(EXIT_SUCCESS);
 #endif
 }
-} // namespace open_stg
+} // namespace OpenGame

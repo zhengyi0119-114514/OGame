@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <utility>
 
-namespace open_stg::thread_h
+namespace OpenGame::Thread
 {
 ptr_pthread::ptr_pthread(pthread_t hThread)
 {
@@ -53,4 +53,4 @@ pthread_t ptr_pthread::operator*() const
 {
     return *m_hThread;
 }
-} // namespace open_stg::thread
+} // namespace OpenGame::thread

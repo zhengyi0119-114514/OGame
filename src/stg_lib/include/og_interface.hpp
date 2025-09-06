@@ -8,19 +8,11 @@
  */
 #ifndef OGAME_STGLIB_INTERFACE_H
 #define OGAME_STGLIB_INTERFACE_H 1
-#include <map>
-#include <memory>
-#include <string>
-namespace open_stg::interface_h
+#include "og_macro.h"
+#include "og_view.hpp"
+namespace OpenGame::inter_h
 {
-struct Tag
-{
-    virtual ~Tag() noexcept = default;
-};
-template <typename TProperty>
-struct PropertyReferenceTag
-{
-    
-};
-} // namespace open_stg::interface_h
+
+
+} // namespace OpenGame::inter_h
 #endif

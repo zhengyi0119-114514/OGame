@@ -10,6 +10,6 @@
 #include "og_module.hpp"
 #include <math.h>
 #include <time.h>
-namespace open_stg::mod_h
+namespace OpenGame::Module
 {
-} // namespace open_stg::mod_h
+} // namespace OpenGame::Module

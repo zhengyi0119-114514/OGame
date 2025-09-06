@@ -21,22 +21,22 @@
 #include "og.hpp"
 #include <SDL3/SDL.h>
 
-namespace open_stg
+namespace OpenGame
 {
 void InitOpenGame()
 {
     try
     {
-        ::open_stg::sdl3_h::InitSdlModule();
+        ::OpenGame::sdl3_h::InitSdlModule();
     }
-    catch(const error_h::InitException& e)
+    catch (const error_h::InitException &e)
     {
         SPDLOG_ERROR(e.what());
         throw;
     }
-#ifdef POSIX 
+#ifdef POSIX
     uid_t uUserId = geteuid();
-    if(uUserId == 0)
+    if (uUserId == 0)
     {
         throw error_h::RunAsRootAtException{};
     }
@@ -44,6 +44,6 @@ void InitOpenGame()
 }
 void QuitOpenGame()
 {
-    ::open_stg::sdl3_h::QuitSdlModule();
+    ::OpenGame::sdl3_h::QuitSdlModule();
 }
-} // namespace open_stg
+} // namespace OpenGame

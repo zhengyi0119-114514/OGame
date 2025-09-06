@@ -1,5 +1,6 @@
 #include "og_math_h.hpp"
-namespace open_stg::math_h
+#include "og_macro.h"
+namespace OpenGame::Math
 {
 double GetDistanceBetweenTwoPoints(const Point &p1, const Point &p2)
 {
@@ -15,8 +16,8 @@ int DoubleToInt(double d)
 }
 SDL_FRect Rectangle::ToSdlFRect() const
 {
-    return SDL_FRect{static_cast<float>(center.x - width / 2), static_cast<float>(center.y + width / 2),
-                     static_cast<float>(width), static_cast<float>(height)};
+    return SDL_FRect{StaticCast<float>(center.x - width / 2), StaticCast<float>(center.y + width / 2),
+                     StaticCast<float>(width), StaticCast<float>(height)};
 }
 
-} // namespace open_stg::math_h
+} // namespace OpenGame::Math

@@ -11,11 +11,11 @@
 #include "og_view.hpp"
 #include <filesystem>
 
-namespace open_stg::opt_h
+namespace OpenGame::Option
 {
 std::filesystem::path GetProgramOptionFileDirectory();
 using SurfacePool = ObjectPool<sdl3_h::SharedPtrSurface>;
 using TexturePool = ObjectPool<sdl3_h::SharedPtrTexture>;
 using TtfFontPool = ObjectPool<sdl3_h::SharedPtrTtfFont>;
-} // namespace open_stg::opt_h
+} // namespace OpenGame::Option
 #endif

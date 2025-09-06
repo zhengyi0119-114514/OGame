@@ -1,5 +1,5 @@
 #include "og.hpp"
-namespace open_stg::sdl3_h
+namespace OpenGame::sdl3_h
 {
 void SurfaceManager::DestoryObject(SDL_Surface *p)
 {
@@ -22,4 +22,4 @@ void RendererManager::DestoryObject(SDL_Renderer* p)
         SDL_DestroyRenderer(p);
     }
 }
-} // namespace open_stg::sdl3_h
+} // namespace OpenGame::sdl3_h

@@ -10,17 +10,17 @@
 #include <SDL3/SDL.h>
 
 
-// import open_stg;
-using namespace open_stg::sdl3_h;
-using namespace open_stg::math_h;
-using namespace open_stg::opt_h;
-using namespace open_stg;
+// import OpenGame;
+using namespace OpenGame::sdl3_h;
+using namespace OpenGame::Math;
+using namespace OpenGame::Option;
+using namespace OpenGame;
 using namespace boost::program_options;
 
 int main(int argc, char **args)
 {
     InitOpenGame();
-    std::filesystem::path configFileDirectory{opt_h::GetProgramOptionFileDirectory()};
+    std::filesystem::path configFileDirectory{Option::GetProgramOptionFileDirectory()};
     SPDLOG_INFO(std::format("config file at {0:}",configFileDirectory.string()));
     Clock<100> c;
     c.Init();

@@ -1,17 +1,22 @@
 #include "og.hpp"
-namespace open_stg::stg
+namespace OpenGame::stg
 {
-StraightLineTrajectory::StraightLineTrajectory(double theta, double r)
+StraightLineTrajectory::StraightLineTrajectory(double theta, double r) : m_dTheta(theta)
 {
-    m_2dvSpeed = {.x = r * math_h::Taylor7Cos(theta), .y = r * math_h::Taylor6Sin(theta)};
+    m_2dvSpeed = {.x = r * Math::Taylor7Cos(theta), .y = r * Math::Taylor6Sin(theta)};
 }
-StraightLineTrajectory::StraightLineTrajectory(math_h::TwoDimensionalVector v)
+StraightLineTrajectory::StraightLineTrajectory(Math::TwoDimensionalVector v) : m_dTheta(atan2(v.y, v.x))
 {
     m_2dvSpeed = v;
 }
-void StraightLineTrajectory::Move(math_h::Point &p) const
+void StraightLineTrajectory::Move(Math::Point &p) const
 {
     p.x += m_2dvSpeed.x;
     p.y += m_2dvSpeed.y;
 }
-} // namespace open_stg::stg
+
+double StraightLineTrajectory::GetDirection() const noexcept
+{
+    return m_dTheta;
+}
+} // namespace OpenGame::stg

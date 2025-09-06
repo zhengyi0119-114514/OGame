@@ -1,5 +1,5 @@
 #include "og_math_h.hpp"
-namespace open_stg::math_h
+namespace OpenGame::Math
 {
 CollisionDetectionPoints Rectangle::GetCollisionDetectionPoints() const
 {
@@ -69,4 +69,4 @@ bool Rectangle::CollisionDetection(const Point &p) const
 
     return (p.x >= left && p.x <= right) && (p.y <= top && p.y >= bottom);
 }
-} // namespace open_stg::math_h
+} // namespace OpenGame::Math

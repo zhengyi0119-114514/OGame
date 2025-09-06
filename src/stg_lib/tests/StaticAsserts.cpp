@@ -1,8 +1,12 @@
 #include "og.hpp"
 
-using namespace open_stg::stg;
+using namespace OpenGame;
+using namespace OpenGame::stg;
+using namespace OpenGame::View;
+StaticAssert(CTrajectory<StraightLineTrajectory>);
+StaticAssert(CStgGameObject<Bullet<StraightLineTrajectory, CircleHitBox>>);
+StaticAssert(CStgGameObject<PlayerShip>);
+StaticAssert(CHitBox<CircleHitBox>);
+StaticAssert(CHitBox<RectangleHitBox>);
+StaticAssert(CHitBox<RotatableRectangleHitBox>);
 
-static_assert(CTrajectory<StraightLineBarrageTrajectory>);
-static_assert(CHitBox<CircleHitBox>);
-static_assert(CHitBox<RectangleHitBox>);
-static_assert(CHitBox<RotatableRectangleHitBox>);

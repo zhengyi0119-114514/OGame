@@ -12,14 +12,8 @@
 #include "og_math_h.hpp"
 #include <SDL3/SDL.h>
 
-namespace open_stg::mod_h
+namespace OpenGame::Module
 {
-struct IGameObject
-{
-    virtual void DoOperator() = 0;
-    
-    virtual ~IGameObject() noexcept = default;
-};
 class GameScreen
 {
   protected:
@@ -29,8 +23,9 @@ class GameScreen
     virtual void StopGame() = 0;
     virtual void PauseGame() = 0;
     virtual void ContinueGame() = 0;
-    virtual void HandleEvent(const SDL_Event &e);
-    virtual math_h::Size GetScreenSize() const = 0;
+    virtual void HandleEvent(const SDL_Event &e, SDL_WindowID wid = 0);
+    virtual void DoOperator() = 0;
+    virtual Math::Size GetScreenSize() const = 0;
 };
-} // namespace open_stg::mod_h
+} // namespace OpenGame::Module
 #endif

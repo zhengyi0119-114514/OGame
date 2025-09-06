@@ -1,8 +1,8 @@
 module;
 #include "og_error_h.hpp"
-export module open_stg.error;
-export namespace open_stg::error
+export module OpenGame.error;
+export namespace OpenGame::error
 {
-    using run_as_root_error = ::open_stg::error_h::RunAsRootAtException;
+    using run_as_root_error = ::OpenGame::error_h::RunAsRootAtException;
 }
 

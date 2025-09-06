@@ -12,53 +12,56 @@
  */
 #ifndef OGAME_STGLIB_VIEW_H
 #define OGAME_STGLIB_VIEW_H 1
+#include "og_macro.h"
 #include "og_math_h.hpp"
 #include "og_sdl3_h.hpp"
-#include <functional>
+#include "og_templates_h.hpp"
 #include <vector>
 
-namespace open_stg::view_h
+namespace OpenGame::View
 {
 /**
  * @brief Base output interface[基础输出接口]
  */
-struct IOutput
+OG_INTERFACE IOutput
 {
     virtual ~IOutput() noexcept = default; ///< Virtual destructor[虚析构函数]
 };
-struct IInput
+OG_INTERFACE IInput
 {
     virtual ~IInput() noexcept = default;
-    virtual void HandleEvent(const SDL_Event &e) = 0;
+    Virtual Void HandleEvent(const SDL_Event &e, SDL_WindowID wid = 0) = 0;
+    Virtual Void DoOperator() = 0;
 };
+
 /**
  * @brief Image output interface[图像输出接口]
  */
-struct IImageOutput : IOutput
+OG_INTERFACE IImageOutput : IOutput
 {
     /**
      * @brief Print image to renderer[将图像输出到渲染器]
      * @param pRenderer SDL renderer pointer[SDL渲染器指针]
      */
-    virtual void PrintToRenderer(SDL_Renderer *pRenderer,
-                                 math_h::Size sTargetSize = {math_h::SIZE_UNDEFINED, math_h::SIZE_UNDEFINED}) = 0;
+    virtual void PrintToRenderer(SDL_Renderer * pRenderer,
+                                 Math::Size sTargetSize = {Math::SIZE_UNDEFINED, Math::SIZE_UNDEFINED}) = 0;
     virtual ~IImageOutput() noexcept = default; ///< Virtual destructor[虚析构函数]
 };
 using SharedPtrIImageOutput = std::shared_ptr<IImageOutput>;
-struct IAudioOutput : public IOutput
+OG_INTERFACE IAudioOutput : IOutput
 {
     virtual ~IAudioOutput() noexcept = default;
 };
-using SharedPtrIAudioOutput = std::shared_ptr<IAudioOutput>;
+Using SharedPtrIAudioOutput = std::shared_ptr<IAudioOutput>;
 /**
  * @brief Image view implementation[图像视图实现]
  */
-class Image : public IImageOutput
+CLASS Image : IImageOutput
 {
   protected:
     sdl3_h::SharedPtrTexture m_spTexture;
-    math_h::Point m_spLocation{math_h::SIZE_UNDEFINED, math_h::SIZE_UNDEFINED}; ///< Image location[图像位置]
-    math_h::Size getTextureSize();
+    Math::Point m_spLocation{Math::SIZE_UNDEFINED, Math::SIZE_UNDEFINED}; ///< Image location[图像位置]
+    Math::Size getTextureSize();
 
   public:
     /**
@@ -67,73 +70,127 @@ class Image : public IImageOutput
      * @param location Image location[图像位置]
      * @param sSize Image size (default: undefined)[图像尺寸(默认:未定义)]
      */
-    explicit Image(sdl3_h::SharedPtrSurface spSurface, SDL_Renderer *pRenderer, math_h::Point location);
-    explicit Image(sdl3_h::SharedPtrTexture spTexture, math_h::Point spLocation);
-    void ResetLocation(math_h::Point spLocation) noexcept;
-    void SetLocation(math_h::Point p) noexcept;
-    virtual void PrintToRenderer(SDL_Renderer *pRenderer,
-                                 math_h::Size sTargetSize = {math_h::SIZE_UNDEFINED, math_h::SIZE_UNDEFINED}) override;
-    virtual int32_t NumberOfRetentions() = 0;
+    explicit Image(sdl3_h::SharedPtrSurface spSurface, SDL_Renderer * pRenderer, Math::Point location);
+    explicit Image(sdl3_h::SharedPtrTexture spTexture, Math::Point spLocation);
+    void ResetLocation(Math::Point spLocation) noexcept;
+    void SetLocation(Math::Point p) noexcept;
+    virtual void PrintToRenderer(SDL_Renderer * pRenderer,
+                                 Math::Size sTargetSize = {Math::SIZE_UNDEFINED, Math::SIZE_UNDEFINED}) override;
 };
-class RotatableImage : public Image
+CLASS RotatableImage : Image
 {
   private:
-    double m_dAngleOfRevole;
+    Double m_dAngleOfRevole;
 
   public:
-    explicit RotatableImage(sdl3_h::SharedPtrSurface spSurface, SDL_Renderer *pRenderer, math_h::Point location,
+    Explicit RotatableImage(sdl3_h::SharedPtrSurface spSurface, SDL_Renderer * pRenderer, Math::Point location,
                             double dAngleOfRevolve = 0.0);
-    explicit RotatableImage(sdl3_h::SharedPtrTexture spTexture, math_h::Point spLocation, double dAngleOfRevolve = 0.0);
-    void SetAngleOfRevolve(double angleOfRotation); ///< [弧度制]
-    double GetAngleOfRevolve() const noexcept;
-    void ResetLocation(math_h::Point spLocation) noexcept;
-    void SetLocation(math_h::Point p) noexcept;
-    virtual void PrintToRenderer(SDL_Renderer *pRenderer,
-                                 math_h::Size sTargetSize = {math_h::SIZE_UNMEANING, math_h::SIZE_UNMEANING}) override;
+    Explicit RotatableImage(sdl3_h::SharedPtrTexture spTexture, Math::Point spLocation, Double dAngleOfRevolve = 0.0);
+    Void SetAngleOfRevolve(Double angleOfRotation); ///< [弧度制]
+    Double GetAngleOfRevolve() const noexcept;      /// < [弧度制]
+    Void ResetLocation(Math::Point pLocation) noexcept;
+    Void SetLocation(Math::Point p) noexcept;
+    Virtual Void PrintToRenderer(SDL_Renderer * pRenderer,
+                                 Math::Size sTargetSize = {Math::SIZE_UNMEANING, Math::SIZE_UNMEANING}) override;
 };
+
 /**
  * @brief Thread-safe window screen management[线程安全的窗口屏幕管理]
  */
-class WindowScreen
+CLASS WindowScreen
 {
   private:
     std::mutex m_Lock; ///< Mutex for thread safety[线程安全互斥锁]
     std::vector<SharedPtrIImageOutput> m_iImageViewObjects;
-    math_h::Size m_sWindowSize{};
+    Math::Size m_sWindowSize{};
+    sdl3_h::SharedPtrRenderer m_pRenderer;
 
   public:
-    WindowScreen();
-    /**
-     * @brief Initialize window screen[初始化窗口屏幕]
-     */
-    void Init();
+    Const Inline Static ConstExpr size_t ImagePoolReserveSize = 100;
+    WindowScreen(sdl3_h::SharedPtrRenderer pRenderer);
+    Void Init();
+    Void PrintToRenderer(SDL_Renderer * pRenderer);
+    Void AddObject(SharedPtrIImageOutput img);
+    Void Clear();
 };
-// Bit Flag
-enum class KeyboardInputInformation
+// 灵感来源于(C#) System.EventArgs
+STRUCT KeyBindingEventArgs
 {
-    NONE = 0x0000,
-    CHECK_STATUS = 0x0001,
+    SDL_WindowID WindowId{0}; ///< The value 0 is an invalid ID.
+};
+ENUM CLASS KeyboardEventType{
+    UNKNOWN = 0,
     KEY_UP = SDL_EVENT_KEY_UP,
     KEY_DOWN = SDL_EVENT_KEY_DOWN,
 };
-
-class KeyboardInputEvent : IInput
+STRUCT KeyboardEventArgs : KeyBindingEventArgs
 {
-  public:
-    using CallBack = std::function<void()>;
-    explicit KeyboardInputEvent(SDL_Scancode sc, std::string_view strBindingId, CallBack fCallBack,
-                                KeyboardInputInformation i);
-    virtual void HandleEvent(const SDL_Event &e);
-    std::string GetKeyName() const;
-    const std::string &GetKeyboardBindingName() const noexcept;
-    SDL_Scancode GetKey() const noexcept;
-    void SetKey(SDL_Scancode sc) noexcept;
-
-  private:
-    KeyboardInputInformation m_kbiInformation{};
-    std::string m_sKeyboardBindingId{};
-    CallBack m_fCallBack{};
-    SDL_Scancode m_scCode{SDL_SCANCODE_UNKNOWN};
+    Const Bool *KeyboardState{NullPtr};
+    KeyboardEventType Type;
+    SDL_Scancode Scancode;
+    Bool IsDown;
 };
-} // namespace open_stg::view_h
+ENUM CLASS MouseClickEventType{
+    UNKNOWN = 0,
+    BUTTON_DOWN = SDL_EVENT_MOUSE_BUTTON_DOWN,
+    BUTTON_UP = SDL_EVENT_MOUSE_BUTTON_UP,
+};
+STRUCT MouseClickEventArgs : KeyBindingEventArgs
+{
+    MouseClickEventType Type;
+    Math::Point Location;
+    SByte Clicks;
+    Bool IsDown;
+    SDL_MouseID MosueId;
+};
+enum CLASS KeyBindingTargetType
+{
+    MOUSE,
+    MOUSE_WHEEL,
+    KEYBOARD,
+    GAMEPAD,
+    FINGER,
+};
+STRUCT KeyBindingTarget
+{
+    KeyboardEventType Type;
+    UNION
+    {
+        SDL_Scancode KeyboardScancode;
+        Uint8 MouseKeyId;
+        SDL_MouseWheelDirection MouseWheel;
+        SDL_GamepadButton GamepadButton;
+        LLInt Finger_EnterTextHere;
+    };
+};
+
+CLASS KeyboardEventClassificationProcessor
+{
+  private:
+    Int m_sKeyEventPoolSize{0};
+    std::shared_ptr<EventHandler<KeyBindingEventArgs>> m_mEventHandlerPool{};
+    size_t m_sEventHandlerPoolSize;
+
+  public:
+    Explicit KeyboardEventClassificationProcessor();
+    Virtual ~KeyboardEventClassificationProcessor() NoExcept = Default;
+    Void ProcessKeyboardButtonEvent(SDL_WindowID wid, Const SDL_KeyboardEvent & e);
+    Void Binding(SDL_Scancode sc, EventHandler<KeyBindingEventArgs> h);
+    Void ClearEventHandler();
+};
+CLASS EventClassificationProcessor
+{
+  private:
+    ObjectPool<EventManager<KeyBindingEventArgs>> m_opEventPool;
+    KeyboardEventClassificationProcessor m_kecpKeyboardEvent;
+
+  public:
+    Explicit EventClassificationProcessor();
+    Virtual ~EventClassificationProcessor() NoExcept = Default;
+    Void Init();
+    Void ClassifyAndProcessEvents(SDL_WindowID wid); /// < 处理事件 
+    Void Binding(KeyBindingTarget kbtTarget, EventHandler<KeyBindingEventArgs> eh);
+    Void ClearEventHandler();
+};
+} // namespace OpenGame::View
 #endif

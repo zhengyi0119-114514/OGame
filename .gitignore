@@ -6,6 +6,9 @@ cmake-build-*/
 conan-cache/
 host/
 
+# 代码评估
+fuck-u-code
+
 # User spesific settings
 CMakeUserPresets.json
 

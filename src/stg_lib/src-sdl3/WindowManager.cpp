@@ -1,5 +1,5 @@
 #include "og.hpp"
-namespace open_stg::sdl3_h
+namespace OpenGame::sdl3_h
 {
 void WindowManager::DestoryObject(SDL_Window *p)
 {
@@ -8,4 +8,4 @@ void WindowManager::DestoryObject(SDL_Window *p)
         SDL_DestroyWindow(p);
     }
 }
-} // namespace open_stg::sdl3_h
+} // namespace OpenGame::sdl3_h

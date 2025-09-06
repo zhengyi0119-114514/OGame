@@ -1,18 +1,20 @@
 #ifndef OGAME_STGLIB_MV_H
 #define OGAME_STGLIB_MV_H 1
+#include "og_macro.h"
 #include "og_module.hpp"
 #include "og_view.hpp"
-#include <concepts>
 
-namespace open_stg::module_view_h
+namespace OpenGame::ModuleView
 {
-template <typename TSourceType>
-    requires std::derived_from<TSourceType, mod_h::IGameObject>
-struct IGameObjectViewObjectMapper
+template <typename TSourceType> OG_INTERFACE IGameObjectViewObjectMapper
 {
     virtual ~IGameObjectViewObjectMapper() noexcept = default;
-    virtual view_h::SharedPtrIImageOutput GetImageOutput(const TSourceType &) = 0;
-    virtual view_h::SharedPtrIAudioOutput GetAudioOutput(const TSourceType &) = 0;
+    virtual View::SharedPtrIImageOutput GetImageOutput(const TSourceType &s, SDL_Renderer *pRenderer) = 0;
+    virtual View::SharedPtrIAudioOutput GetAudioOutput(const TSourceType &s, SDL_Renderer *pRenderer) = 0;
 };
-} // namespace open_stg::module_view_h
+class MotionController
+{
+    
+};
+} // namespace OpenGame::ModuleView
 #endif

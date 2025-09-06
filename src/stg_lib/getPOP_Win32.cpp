@@ -3,7 +3,7 @@
 #include <windows.h>
 namespace fs = std::filesystem;
 
-namespace open_stg::opt_h
+namespace OpenGame::Option
 {
 std::filesystem::path GetProgramOptionFileDirectory()
 {

@@ -1,14 +1,14 @@
 #include "og.hpp"
-namespace open_stg::view_h
+namespace OpenGame::View
 {
-RotatableImage::RotatableImage(sdl3_h::SharedPtrSurface spSurface, SDL_Renderer *pRenderer, math_h::Point location,
+RotatableImage::RotatableImage(sdl3_h::SharedPtrSurface spSurface, SDL_Renderer *pRenderer, Math::Point location,
                                double dAngleOfRevolve)
     : Image(spSurface, pRenderer, location)
 {
     m_dAngleOfRevole = static_cast<float>(dAngleOfRevolve);
 }
 
-RotatableImage::RotatableImage(sdl3_h::SharedPtrTexture spTexture, math_h::Point spLocation, double dAngleOfRevolve)
+RotatableImage::RotatableImage(sdl3_h::SharedPtrTexture spTexture, Math::Point spLocation, double dAngleOfRevolve)
     : Image(spTexture, spLocation)
 {
     m_dAngleOfRevole = static_cast<float>(dAngleOfRevolve);
@@ -21,11 +21,11 @@ double RotatableImage::GetAngleOfRevolve() const noexcept
 {
     return m_dAngleOfRevole;
 }
-void RotatableImage::ResetLocation(math_h::Point p) noexcept
+void RotatableImage::ResetLocation(Math::Point p) noexcept
 {
     m_spLocation = p;
 }
-void RotatableImage::PrintToRenderer(SDL_Renderer *pRenderer, math_h::Size size)
+void RotatableImage::PrintToRenderer(SDL_Renderer *pRenderer, Math::Size size)
 {
     float fTextureWidth{}, fTextureHeight{};
     int iRendererWidth{}, iRendererHeight{};
@@ -39,7 +39,8 @@ void RotatableImage::PrintToRenderer(SDL_Renderer *pRenderer, math_h::Size size)
         .h = fTextureHeight,
     };
     SDL_RenderTextureRotated(/*renderer*/ pRenderer, /*texture*/ m_spTexture, /*srcrect*/ nullptr,
-                             /*dstrect */ &dstRect, /*angle(角度制)*/ dAngleOfRevolve, /*center*/ nullptr, SDL_FLIP_NONE);
+                             /*dstrect */ &dstRect, /*angle(角度制)*/ dAngleOfRevolve, /*center*/ nullptr,
+                             SDL_FLIP_NONE);
 }
 
-} // namespace open_stg::view_h
+} // namespace OpenGame::View

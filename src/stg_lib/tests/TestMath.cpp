@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include "og_math_h.hpp"
-namespace math = open_stg::math_h;
+namespace math = OpenGame::Math;
 TEST(TestCrashDetection,ogmae_lib)
 {
     {

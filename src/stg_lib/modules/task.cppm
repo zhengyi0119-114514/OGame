@@ -1,7 +1,7 @@
 module;
 #include "og_task_h.hpp"
-export module open_stg.task;
-export namespace open_stg::thread
+export module OpenGame.task;
+export namespace OpenGame::thread
 {
-    using ptr_thread = open_stg::thread_h::ptr_pthread;
+    using ptr_thread = OpenGame::Thread::ptr_pthread;
 }

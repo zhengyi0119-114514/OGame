@@ -3,7 +3,7 @@
 #include <SDL3_image/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <spdlog/spdlog.h>
-namespace open_stg::sdl3_h
+namespace OpenGame::sdl3_h
 {
 void InitSdlModule()
 {
@@ -30,4 +30,4 @@ void QuitSdlModule()
     TTF_Quit();
     SDL_Quit();
 }
-} // namespace open_stg::sdl3_h
+} // namespace OpenGame::sdl3_h

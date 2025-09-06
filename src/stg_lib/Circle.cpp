@@ -1,5 +1,5 @@
 #include "og_math_h.hpp"
-namespace open_stg::math_h
+namespace OpenGame::Math
 {
 CollisionDetectionPoints Circle::GetCollisionDetectionPoints() const
 {
@@ -18,6 +18,6 @@ CollisionDetectionPoints Circle::GetCollisionDetectionPoints() const
 }
 bool Circle::CollisionDetection(const Point &p) const
 {
-    return GetSquareDistanceBetweenTwoPoints(p, center) < math_h::Power(radius, 2);
+    return GetSquareDistanceBetweenTwoPoints(p, center) < Math::Power(radius, 2);
 }
-} // namespace open_stg::math_h
+} // namespace OpenGame::Math
