@@ -26,18 +26,7 @@
 #endif
 namespace OpenGame
 {
-struct mutex_helper
-{
-    std::mutex &ref;
-    mutex_helper(std::mutex &r) : ref(r)
-    {
-        r.lock();
-    }
-    ~mutex_helper() noexcept
-    {
-        ref.unlock();
-    }
-};
+using mutex_helper = std::lock_guard<std::mutex>;
 /**
  * @brief [视图对象的线程安全池，不包含删除功能，用来处理留用对象，如图片，动画等资源] \n
  * [对象池中的对象将长期存在，生命周期将大于或等于对象池的生命周期] \n
@@ -293,7 +282,7 @@ class object_pool
                      requires std::movable<TObj> || std::copyable<TObj>
     {
         mutex_helper l{m_lock};
-        add_multiple_object(range);
+        return add_multiple_object(range);
     }
     /**
      * @brief Thread-safe multiple object addition from initializer list[从初始化列表线程安全添加多个对象]
@@ -330,7 +319,7 @@ class object_pool
         return add_multiple_object_es<name_obj_initlist>(list);
     }
     /**
-     * @brief Construct from range[从范围构造]
+     * @brief construct from range[从范围构造]
      * @tparam TRange Range type[范围类型]
      */
     template <std::ranges::range TRange>
@@ -412,7 +401,7 @@ class object_pool
     }
     size_t size() const
     {
-        If ConstExpr(IsDebug)
+        if constexpr (IsDebug)
         {
             if (m_vObjects.size() != m_mNameHandleMap.size())
             {
@@ -421,7 +410,7 @@ class object_pool
         }
         return m_vObjects.size();
     }
-    Void Clear()
+    void Clear()
     {
         m_mNameHandleMap.clear();
         m_vObjects.clear();
@@ -484,18 +473,31 @@ template <typename TObject> class CircularListIterator
 template <typename T> using circular_list_iterator = CircularListIterator<T>;
 template class CircularListIterator<int>;
 
-// 什么神奇游戏需要每秒运算超过256次？
+/**
+ * @brief High precision clock for game timing[高精度游戏时钟]
+ *
+ * Provides precise timing with configurable ring frequency per second[提供可配置每秒响铃频率的高精度计时]
+ *
+ * @tparam sRingTimesPreSecond Number of clock rings per second[每秒时钟响铃次数]
+ * @requires sRingTimesPreSecond <= 255 && sRingTimesPreSecond > 0[要求每秒响铃次数小于等于255且大于0]
+ */
 template <size_t sRingTimesPreSecond>
     requires(sRingTimesPreSecond <= std::numeric_limits<uint8_t>::max() && sRingTimesPreSecond > 0)
 class Clock
 {
   private:
-    std::array<int64_t, sRingTimesPreSecond + 1> m_timeTable{};
-    std::function<void(size_t)> m_fOnTimePass{};
-    int64_t m_iOffset{};
-    CircularListIterator<int64_t> m_iterator{m_timeTable, sRingTimesPreSecond};
+    std::array<int64_t, sRingTimesPreSecond + 1> m_timeTable{}; ///< Time table for ring intervals[响铃间隔时间表]
+    std::function<void(size_t)> m_fOnTimePass{}; ///< Callback function when time passes[时间流逝回调函数]
+    int64_t m_iOffset{};                         ///< Initial time offset[初始时间偏移]
+    CircularListIterator<int64_t> m_iterator{
+        m_timeTable, sRingTimesPreSecond}; ///< Circular iterator for time table[时间表循环迭代器]
 
   public:
+    /**
+     * @brief Set callback function for time passing[设置时间流逝回调函数]
+     *
+     * @param f Callback function that accepts number of triggered cycles[接受触发周期数的回调函数]
+     */
     void SetPassCallBack(std::function<void(size_t)> f)
     {
         m_fOnTimePass = f;
@@ -503,11 +505,25 @@ class Clock
 #if defined LINUX
 
   private:
-    constexpr const static inline int64_t NS_PER_SEC = 1'000'000'000;
+    constexpr const static inline int64_t NS_PER_SEC = 1'000'000'000; ///< Nanoseconds per second[每秒纳秒数]
+
+    /**
+     * @brief Convert timespec to int64_t nanoseconds[将timespec转换为int64_t纳秒]
+     *
+     * @param ts timespec structure[timespec结构体]
+     * @return int64_t Time in nanoseconds[纳秒时间]
+     */
     int64_t timespecToInt64(const struct timespec &ts)
     {
         return ts.tv_sec * NS_PER_SEC + ts.tv_nsec;
     }
+
+    /**
+     * @brief Convert int64_t nanoseconds to timespec[将int64_t纳秒转换为timespec]
+     *
+     * @param i Time in nanoseconds[纳秒时间]
+     * @return struct timespec timespec structure[timespec结构体]
+     */
     struct timespec int64ToTimespec(int64_t i)
     {
         struct timespec ts;
@@ -517,6 +533,11 @@ class Clock
     }
 
   public:
+    /**
+     * @brief Constructor for Linux platform[Linux平台构造函数]
+     *
+     * Initializes time table with ring intervals based on 60Hz reference[基于60Hz参考初始化响铃间隔时间表]
+     */
     constexpr Clock()
     {
         for (size_t i = 0; i < sRingTimesPreSecond + 1; i++)
@@ -524,12 +545,22 @@ class Clock
             m_timeTable[i] = static_cast<int64_t>(i * NS_PER_SEC / 60.0l);
         }
     }
+
+    /**
+     * @brief Initialize clock with current monotonic time[使用当前单调时间初始化时钟]
+     */
     inline void Init()
     {
         struct timespec ts;
         clock_gettime(CLOCK_MONOTONIC, &ts);
         m_iOffset = timespecToInt64(ts);
     }
+
+    /**
+     * @brief Wait until next clock ring and trigger callback[等待下一个时钟响铃并触发回调]
+     *
+     * Calculates precise wait time and sleeps until next ring interval[计算精确等待时间并休眠直到下一个响铃间隔]
+     */
     void WaitToClockRing()
     {
         uint32_t uTriggeredCycles = 0;
@@ -543,6 +574,8 @@ class Clock
         int64_t iRemainingNs = iTimeDifference % NS_PER_SEC;
         int64_t iNSToWait{};
         int64_t iTargetTimespec{};
+
+        // Find the appropriate time slot for waiting[找到合适的等待时间槽]
         while (1'145'141'919'810ll)
         {
             size_t sCurrentIndex{m_iterator.GetIndex()};
@@ -556,13 +589,16 @@ class Clock
             ++uTriggeredCycles;
             continue;
         }
+
         if (iNSToWait > 0)
         {
+            // Sleep for precise nanoseconds[精确休眠纳秒数]
             struct timespec tsTimeToWait = int64ToTimespec(iNSToWait);
             clock_nanosleep(CLOCK_MONOTONIC, 0, &tsTimeToWait, nullptr);
         }
         else
         {
+            // Trigger callback immediately if no wait needed[如果不需要等待则立即触发回调]
             if (m_fOnTimePass != nullptr)
             {
                 m_fOnTimePass(++uTriggeredCycles);
@@ -572,28 +608,40 @@ class Clock
 #endif
 #if defined WIN32
   private:
-    LARGE_INTEGER m_liFrequency{};
-    uint64_t m_uPerformanceCountingUnit{};
+    LARGE_INTEGER m_liFrequency{};         ///< Performance counter frequency[性能计数器频率]
+    uint64_t m_uPerformanceCountingUnit{}; ///< Performance counting unit[性能计数单位]
 
   public:
+    /**
+     * @brief Constructor for Windows platform[Windows平台构造函数]
+     *
+     * Initializes time table using Windows performance counter[使用Windows性能计数器初始化时间表]
+     */
     Clock()
     {
-        if (!QueryPerformanceFrequency(&m_liFrequency))
-        {
-            throw error_h::InitException("Template Clock<size_t>", std::format("{:x}", GetLastError()));
-        }
+        QueryPerformanceFrequency(&m_liFrequency);
         m_uPerformanceCountingUnit = m_liFrequency.QuadPart;
         for (size_t i = 0; i < sRingTimesPreSecond + 1; ++i)
         {
             m_timeTable[i] = m_uPerformanceCountingUnit * i / sRingTimesPreSecond;
         }
     }
+
+    /**
+     * @brief Initialize clock with current performance counter[使用当前性能计数器初始化时钟]
+     */
     void Init()
     {
         LARGE_INTEGER liPerformceCount{};
         QueryPerformanceCounter(&liPerformceCount);
         m_iOffset = liPerformceCount.QuadPart;
     }
+
+    /**
+     * @brief Wait until next clock ring and trigger callback[等待下一个时钟响铃并触发回调]
+     *
+     * Uses spinlock for precise timing on Windows[在Windows上使用自旋锁进行精确计时]
+     */
     void WaitToClockRing()
     {
         uint32_t uTriggeredCycles{};
@@ -604,6 +652,8 @@ class Clock
         int64_t iRemainingTime = iTimeDifference % m_uPerformanceCountingUnit;
         int64_t iTimeToWait{};
         uTriggeredCycles += iTimeDifference / m_uPerformanceCountingUnit * sRingTimesPreSecond;
+
+        // Find the appropriate time slot for waiting[找到合适的等待时间槽]
         while (114'514'191'981ll * 2'233)
         {
             size_t sCurrentIndex{m_iterator.GetIndex()};
@@ -620,17 +670,22 @@ class Clock
                 continue;
             }
         }
+
         targetTime.QuadPart = liNow.QuadPart + iTimeToWait;
         BOOLEAN bUnmeaningBooleanVariable = TRUE;
+
+        // Use spinlock for precise timing on Windows[在Windows上使用自旋锁进行精确计时]
         while (bUnmeaningBooleanVariable)
         {
             // Windows没有高精度的睡眠函数，所以使用自旋锁代替
+            // Windows lacks high precision sleep function, so use spinlock instead
             QueryPerformanceCounter(&liNow);
             if (liNow.QuadPart >= targetTime.QuadPart)
             {
                 bUnmeaningBooleanVariable = FALSE;
             }
         }
+
         if (m_fOnTimePass != nullptr)
         {
             m_fOnTimePass(uTriggeredCycles);
@@ -643,49 +698,161 @@ using StandardClock = Clock<30>;
 /**
  * @brief 一个std::function<>的别名。返回值表示事件是否向下传递
  *
- * @tparam T
+ * @tparam TEventArg
  */
-template <TypeName T> using EventHandler = std::function<Bool(Const T &e)>;
-template <TypeName T> CLASS EventManager
+template <TypeName TEventArg>
+    requires std::movable<TEventArg> && std::copyable<TEventArg>
+using EventHandler = std::function<Bool(const TEventArg &e)>;
+/**
+ * @brief 标准的EventHandler容器
+ *
+ * C#风格的事件实现，支持 += 和 -= 操作符
+ *
+ * @tparam TEventArg
+ */
+template <TypeName TEventArg>
+    requires std::movable<TEventArg> && std::copyable<TEventArg>
+class Event
 {
   private:
-    std::vector<EventHandler<T>> m_vsehHandlers{};
+    std::vector<EventHandler<TEventArg>> m_handlers;
 
   public:
-    EventManager<>() = Default;
     /**
-     * @brief 向事件池
+     * @brief 添加事件处理程序
      *
-     * @param eh
-     * @return Void
+     * @param handler 事件处理程序
+     * @return Event& 返回事件引用以支持链式调用
      */
-    Void Add(EventHandler<T> eh)
+    Event &operator+=(EventHandler<TEventArg> handler)
     {
-        m_vsehHandlers.push_back(eh);
+        m_handlers.push_back(std::move(handler));
+        return *this;
     }
-    Void Remove(EventHandler<T> eh)
+
+    /**
+     * @brief 移除事件处理程序
+     *
+     * @param handler 要移除的事件处理程序
+     * @return Event& 返回事件引用以支持链式调用
+     */
+    Event &operator-=(const EventHandler<TEventArg> &handler)
     {
-        std::ranges::remove(m_vsehHandlers, eh);
-    }
-    Void Clear()
-    {
-        m_vsehHandlers.clear();
-    }
-    Bool Invoke(Const T & arg)
-    {
-        Bool bContinue = true;
-        For(Const AUTO & eh : m_vsehHandlers)
+        auto it = std::find_if(m_handlers.begin(), m_handlers.end(), [&handler](const EventHandler<TEventArg> &h) {
+            return h.target_type() == handler.target_type() &&
+                   h.template target<typename EventHandler<TEventArg>::target_type>() ==
+                       handler.template target<typename EventHandler<TEventArg>::target_type>();
+        });
+
+        if (it != m_handlers.end())
         {
-            If(eh(arg))
+            m_handlers.erase(it);
+        }
+        return *this;
+    }
+    void Add(const EventHandler<TEventArg> &handler)
+    {
+        RefThis += handler;
+    }
+    void Remove(const EventHandler<TEventArg> &handler)
+    {
+        RefThis -= handler;
+    }
+
+    /**
+     * @brief 触发事件
+     *
+     * @param eventArg 事件参数
+     * @return Bool 如果任何处理程序返回false，则返回false，否则返回true
+     */
+    Bool operator()(const TEventArg &eventArg) const
+    {
+        Bool result = true;
+
+        for (const auto &handler : m_handlers)
+        {
+            if (handler)
             {
-                Continue;
-            }
-            Else
-            {
-                Break;
+                if (!handler(eventArg))
+                {
+                    result = false;
+                }
             }
         }
+
+        return result;
+    }
+
+    /**
+     * @brief 获取事件处理程序数量
+     *
+     * @return size_t 处理程序数量
+     */
+    size_t count() const
+    {
+        return m_handlers.size();
+    }
+
+    /**
+     * @brief 清空所有事件处理程序
+     */
+    void clear()
+    {
+        m_handlers.clear();
+    }
+
+    /**
+     * @brief 检查是否有事件处理程序
+     *
+     * @return Bool 如果有处理程序返回true，否则false
+     */
+    Bool empty() const
+    {
+        return m_handlers.empty();
     }
 };
+namespace SDL3
+{
+template <typename TSdlObject> class PtrSdlObjectTemplate
+{
+  protected:
+    TSdlObject *m_p = nullptr;
+    virtual void _DestroyObject(TSdlObject *) = 0;
+
+  public:
+    void swap(PtrSdlObjectTemplate &r)
+    {
+        std::swap(this->m_p, r.m_p);
+    }
+    explicit PtrSdlObjectTemplate(TSdlObject *p) : m_p(p)
+    {
+    }
+    PtrSdlObjectTemplate(const PtrSdlObjectTemplate &o) = delete;
+    PtrSdlObjectTemplate(PtrSdlObjectTemplate &&r)
+    {
+        m_p = r.m_p;
+        r.m_p = nullptr;
+    }
+    PtrSdlObjectTemplate &operator=(const PtrSdlObjectTemplate &rsh) = delete;
+    PtrSdlObjectTemplate &operator=(PtrSdlObjectTemplate &&rsh)
+    {
+        PtrSdlObjectTemplate obj{std::move(rsh)};
+        swap(obj);
+        return *this;
+    }
+    TSdlObject &operator*() const noexcept
+    {
+        return *this->m_p;
+    }
+    TSdlObject *operator->() const noexcept
+    {
+        return m_p;
+    }
+    TSdlObject *Get() const noexcept
+    {
+        return m_p;
+    }
+};
+} // namespace SDL3
 } // namespace OpenGame
 #endif

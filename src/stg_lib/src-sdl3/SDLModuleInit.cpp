@@ -3,7 +3,7 @@
 #include <SDL3_image/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <spdlog/spdlog.h>
-namespace OpenGame::sdl3_h
+namespace OpenGame::SDL3
 {
 void InitSdlModule()
 {
@@ -18,11 +18,11 @@ void InitSdlModule()
                   | SDL_INIT_EVENTS  // 逝件
                   ))
     {
-        throw error_h::InitException("SDL", SDL_GetError());
+        throw Error::InitException("SDL", SDL_GetError());
     }
     if (not TTF_Init())
     {
-        throw error_h::InitException("SDL_ttf", ":(藕也不击倒");
+        throw Error::InitException("SDL_ttf", ":(藕也不击倒");
     }
 }
 void QuitSdlModule()

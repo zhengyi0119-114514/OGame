@@ -3,6 +3,6 @@ module;
 export module OpenGame.error;
 export namespace OpenGame::error
 {
-    using run_as_root_error = ::OpenGame::error_h::RunAsRootAtException;
+    using run_as_root_error = ::OpenGame::Error::RunAsRootAtException;
 }
 

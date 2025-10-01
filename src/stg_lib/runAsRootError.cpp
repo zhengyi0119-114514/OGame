@@ -1,5 +1,5 @@
 #include "og_error_h.hpp"
-namespace OpenGame::error_h
+namespace OpenGame::Error
 {
 RunAsRootAtException::RunAsRootAtException()
 {

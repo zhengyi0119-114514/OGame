@@ -7,7 +7,7 @@
 #include "og_module_view_h.hpp"
 #include <vector>
 
-namespace OpenGame::stg
+namespace OpenGame::STG
 {
 const constexpr static inline int32_t BAKA_CIRNO_GROUP{999'999'999};  /// < バカ⑨ (Baka Cirno)[笨蛋琪露诺]
 const constexpr static inline int32_t AYACHI_NENE_GROUP{0x0d00'0721}; /// < 绫地宁宁****
@@ -86,7 +86,7 @@ class CircleHitBox final : public HitBox
      * @brief Get collision detection points[获取碰撞检测点]
      * @return constexpr Math::CollisionDetectionPoints
      */
-    constexpr inline virtual Math::CollisionDetectionPoints GetCollisionDetectionPoints() const override
+    inline virtual Math::CollisionDetectionPoints GetCollisionDetectionPoints() const override
     {
         return m_shape.GetCollisionDetectionPoints();
     }
@@ -96,7 +96,7 @@ class CircleHitBox final : public HitBox
      * @param p Point to check[要检测的点]
      * @return constexpr bool True if collided[如果碰撞返回true]
      */
-    constexpr inline virtual bool CollisionDetection(const Math::Point &p) const override
+     inline virtual bool CollisionDetection(const Math::Point &p) const override
     {
         return m_shape.CollisionDetection(p);
     }
@@ -121,11 +121,11 @@ class RectangleHitBox final : public HitBox
     {
         return m_radius;
     }
-    constexpr inline virtual Math::CollisionDetectionPoints GetCollisionDetectionPoints() const override
+     inline virtual Math::CollisionDetectionPoints GetCollisionDetectionPoints() const override
     {
         return m_shape.GetCollisionDetectionPoints();
     }
-    constexpr inline bool CollisionDetection(const Math::Point &p) const override
+     inline bool CollisionDetection(const Math::Point &p) const override
     {
         return m_shape.CollisionDetection(p);
     }
@@ -149,11 +149,11 @@ class RotatableRectangleHitBox final : public HitBox
     {
         return m_radius;
     }
-    constexpr inline virtual Math::CollisionDetectionPoints GetCollisionDetectionPoints() const override
+     inline virtual Math::CollisionDetectionPoints GetCollisionDetectionPoints() const override
     {
         return m_shape.GetCollisionDetectionPoints();
     }
-    constexpr inline bool CollisionDetection(const Math::Point &p) const override
+     inline bool CollisionDetection(const Math::Point &p) const override
     {
         return m_shape.CollisionDetection(p);
     }
@@ -177,14 +177,6 @@ concept CHitBox =
         { hb.CollisionDetection(p) } -> std::same_as<bool>;
     } && std::movable<THitBox> && std::copyable<THitBox> && std::derived_from<THitBox, HitBox> &&
     std::destructible<THitBox>;
-template <typename TStgGameObject>
-concept CStgGameObject =
-    requires(const TStgGameObject &co, TStgGameObject &o) {
-        { co.GetHitBox() } -> std::same_as<const HitBox &>;
-        { co.GetLocation() } noexcept -> std::same_as<const Math::Point &>;
-        { co.GetGroup() } noexcept -> std::same_as<int32_t>;
-    } && CGameObject<TStgGameObject> && std::movable<TStgGameObject> && std::copyable<TStgGameObject> &&
-    std::destructible<TStgGameObject>;
 template <CTrajectory TTrajectory, CHitBox THitBox> class Bullet
 {
   private:
@@ -222,7 +214,7 @@ template <CTrajectory TTrajectory, CHitBox THitBox> class Bullet
     {
         return m_cTrajectory.GetDirection();
     }
-    inline bool IsInRange(const Math::Size &s)
+    inline bool IsInRange(const Math::Size<double> &s)
     {
         Math::Point c = m_cHitBox.GetCenter();
         return c.x < s.width && c.y < s.height;
@@ -245,47 +237,6 @@ using StraightLineCircleBullet = Bullet<StraightLineTrajectory, CircleHitBox>;
 using StraightLineRectangleBullet = Bullet<StraightLineTrajectory, RectangleHitBox>;
 using StraightLineRotatableRectangleBellet = Bullet<StraightLineTrajectory, RotatableRectangleHitBox>;
 
-template <CStgGameObject TObjectToAdd> OG_INTERFACE IScreenAddObject
-{
-    virtual void Add(const TObjectToAdd &o) = 0;
-};
-class PlayerShip final
-{
-  public:
-    int32_t GetGroup() const noexcept;
-    const HitBox &GetHitBox() const noexcept;
-    void DoOperator(IScreenAddObject<StraightLineCircleBullet> *c = nullptr,
-                    IScreenAddObject<StraightLineRotatableRectangleBellet> *rr = nullptr);
-    const Math::Point &GetLocation() const noexcept;
-    ~PlayerShip() noexcept = default;
-
-  private:
-    ModuleView::MotionController m_mcContruller;
-    CircleHitBox m_chbCircleHitBox;
-};
-
-class StgScreen final : public Module::GameScreen,
-                        public IScreenAddObject<StraightLineCircleBullet>,
-                        public IScreenAddObject<StraightLineRotatableRectangleBellet>
-{
-  private:
-    Math::Size m_sScreenSize{};
-    PlayerShip m_psPlayerShip;
-    std::vector<StraightLineCircleBullet> m_vslcb{};
-    std::vector<StraightLineRotatableRectangleBellet> m_vslrrb{};
-    Bool m_bContinue{true};
-
-  public:
-    virtual void StartGame() override;
-    virtual void StopGame() override;
-    virtual void PauseGame() override;
-    virtual void ContinueGame() override;
-    virtual void DoOperator() override;
-    virtual void HandleEvent(const SDL_Event &e, SDL_WindowID wid = 0) override;
-    virtual Math::Size GetScreenSize() const override;
-    virtual void Add(const StraightLineCircleBullet &o) override;
-    virtual void Add(const StraightLineRotatableRectangleBellet &o) override;
-};
 } // namespace OpenGame::stg
 
 #endif // OG_STG_H_HPP

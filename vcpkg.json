@@ -7,12 +7,10 @@
         "gtest",
         "lua",
         "pthreads",
-        "qt",
         {
             "name": "sdl3",
             "features": [
                 "alsa",
-                "ibus",
                 "vulkan"
             ]
         },

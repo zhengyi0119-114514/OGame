@@ -9,8 +9,6 @@ namespace OpenGame::ModuleView
 template <typename TSourceType> OG_INTERFACE IGameObjectViewObjectMapper
 {
     virtual ~IGameObjectViewObjectMapper() noexcept = default;
-    virtual View::SharedPtrIImageOutput GetImageOutput(const TSourceType &s, SDL_Renderer *pRenderer) = 0;
-    virtual View::SharedPtrIAudioOutput GetAudioOutput(const TSourceType &s, SDL_Renderer *pRenderer) = 0;
 };
 class MotionController
 {

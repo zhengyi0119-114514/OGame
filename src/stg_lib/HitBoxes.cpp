@@ -1,6 +1,6 @@
 #include "og_stg_h.hpp"
 #include <utility>
-namespace OpenGame::stg
+namespace OpenGame::STG
 {
 Math::Point &HitBox::GetCenter() noexcept
 {

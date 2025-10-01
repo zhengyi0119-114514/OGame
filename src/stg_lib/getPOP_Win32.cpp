@@ -1,6 +1,7 @@
 #include"og_opt_h.hpp"
 #include <filesystem>
 #include <windows.h>
+
 namespace fs = std::filesystem;
 
 namespace OpenGame::Option

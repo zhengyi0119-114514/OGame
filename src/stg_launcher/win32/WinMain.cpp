@@ -4,7 +4,16 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR pCmdLine, int nCmdSho
 {
     WCHAR windowClassName[]{L"OpenSTGLauncherWindowClass"};
     WCHAR windowTitle[]{L"Open Stg Game Launcher"};
-    WNDCLASSW windowClass{.lpfnWndProc = DefWindowProc, .hInstance = hInstance, .lpszClassName = windowClassName};
+    WNDCLASSW windowClass{.lpfnWndProc = DefWindowProc,
+                          .hInstance = hInstance,
+                          .lpszClassName = windowClassName,
+                          .lpfnWndProc = NULL,
+                          .cbClsExtra = 0,
+                          .cbWndExtra = 0,
+                          .style = CS_HREDRAW | CS_VREDRAW,
+                          .hIcon = LoadIcon(hInstance, IDI_APPLICATION),
+                          .hCursor = LoadCursor(hInstance, IDC_ARROW),
+                          .hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH)};
     RegisterClassW(&windowClass);
     HWND hWindow = CreateWindowExW(0, windowClassName, windowTitle, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
                                    CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr, hInstance, nullptr);
@@ -26,13 +35,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR pCmdLine, int nCmdSho
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR pCmdLine, int nCmdShow)
 {
     size_t wcharStringSize = strlen(pCmdLine);
-    wchar_t* wcharString = (wchar_t*)malloc(wcharStringSize);
-    if(wcharString == NULL)
+    wchar_t *wcharString = (wchar_t *)malloc(wcharStringSize);
+    if (wcharString == NULL)
     {
         return EXIT_FAILURE;
     }
-    wsprintfW(wcharString,L"%s",pCmdLine);
-    wWinMain(hInstance,NULL,wcharString,nCmdShow);
-    free((void*)wcharString);
+    wsprintfW(wcharString, L"%s", pCmdLine);
+    wWinMain(hInstance, NULL, wcharString, nCmdShow);
+    free((void *)wcharString);
 }
 #endif

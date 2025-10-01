@@ -27,9 +27,9 @@ void InitOpenGame()
 {
     try
     {
-        ::OpenGame::sdl3_h::InitSdlModule();
+        ::OpenGame::SDL3::InitSdlModule();
     }
-    catch (const error_h::InitException &e)
+    catch (const Error::InitException &e)
     {
         SPDLOG_ERROR(e.what());
         throw;
@@ -38,12 +38,12 @@ void InitOpenGame()
     uid_t uUserId = geteuid();
     if (uUserId == 0)
     {
-        throw error_h::RunAsRootAtException{};
+        throw Error::RunAsRootAtException{};
     }
 #endif
 }
 void QuitOpenGame()
 {
-    ::OpenGame::sdl3_h::QuitSdlModule();
+    ::OpenGame::SDL3::QuitSdlModule();
 }
 } // namespace OpenGame

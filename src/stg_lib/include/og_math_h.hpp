@@ -15,9 +15,14 @@
 #define OGAME_STGLIB_MATH_H 1
 #include <SDL3/SDL.h>
 #include <array>
+#include <cmath>
 #include <concepts>
 #include <math.h>
+#include <numbers>
 #include <stdint.h>
+
+
+// Define π constant if not available[如果不可用则定义π常量]
 
 namespace OpenGame::Math
 {
@@ -51,11 +56,11 @@ template <typename TType = double>
 constexpr inline TType Taylor6Sin(TType x)
 {
     // 使用模运算将x限制在[-π, π]范围内
-    x = x - 2 * M_PI * static_cast<int>(x / (2 * M_PI));
-    if (x > M_PI)
-        x -= 2 * M_PI;
-    if (x < -M_PI)
-        x += 2 * M_PI;
+    x = x - 2 * std::numbers::pi * static_cast<int>(x / (2 * std::numbers::pi));
+    if (x > std::numbers::pi)
+        x -= 2 * std::numbers::pi;
+    if (x < -std::numbers::pi)
+        x += 2 * std::numbers::pi;
 
     // 泰勒展开前7项
     return x - Power<TType>(x, 3) / Factorial<3>::VALUE + Power<TType>(x, 5) / Factorial<5>::VALUE -
@@ -66,11 +71,11 @@ template <typename TType = double>
     requires std::floating_point<TType>
 constexpr inline TType Taylor7Cos(TType x)
 {
-    x = x - 2 * M_PI * static_cast<int>(x / (2 * M_PI));
-    if (x > M_PI)
-        x -= 2 * M_PI;
-    if (x < -M_PI)
-        x += 2 * M_PI;
+    x = x - 2 * std::numbers::pi * static_cast<int>(x / (2 * std::numbers::pi));
+    if (x > std::numbers::pi)
+        x -= 2 * std::numbers::pi;
+    if (x < -std::numbers::pi)
+        x += 2 * std::numbers::pi;
 
     return 1 - Power<TType>(x, 2) / Factorial<2>::VALUE + Power<TType>(x, 4) / Factorial<4>::VALUE -
            Power<TType>(x, 6) / Factorial<6>::VALUE + Power<TType>(x, 8) / Factorial<8>::VALUE -
@@ -83,7 +88,7 @@ constexpr static inline const int64_t SIZE_UNDEFINED{(9 * 9) * 1145141919810};
 // number~~)[这个字面值用于填充无意义的字段(~~这是一串散发着恶臭的数字~~)]
 constexpr static inline const int64_t SIZE_UNMEANING{1'145'141'919'810'114};
 // Wish you Cirno's wisdom ᗜˬᗜ ⑨：𝓫𝓪𝓴𝓪[祝你获得琪露诺的智慧]
-constexpr static inline const double BAKA_CIRNO_NUMBER{Taylor7Cos<double>(M_PI / 4)};
+constexpr static inline const double BAKA_CIRNO_NUMBER{Taylor7Cos<double>(std::numbers::pi / 4)};
 
 struct Point
 {
@@ -148,63 +153,70 @@ struct Rectangle
     constexpr inline bool IsUndefined() const
     {
         return center.IsUndefined() || (width >= SIZE_UNDEFINED || height >= SIZE_UNDEFINED);
-    };
+    }
     bool CollisionDetection(const Point &p) const;
     SDL_FRect ToSdlFRect() const;
 };
 
 /**
  * @brief Rotatable Rectangle with angle support[可旋转矩形]
- * 
+ *
  * Extends basic Rectangle with rotation capability[扩展基础矩形类添加旋转功能]
  */
-struct RotatableRectangle : public Rectangle {
+struct RotatableRectangle : public Rectangle
+{
     double rotationAngle; // in radians[以弧度表示]
     /**
      * @brief Get rotated collision detection points[获取旋转后的碰撞检测点]
      */
     CollisionDetectionPoints GetCollisionDetectionPoints() const;
-    
+
     /**
      * @brief Rotate the rectangle by given angle[按给定角度旋转矩形]
      */
-    constexpr inline void Rotate(double angle) {
+    constexpr inline void Rotate(double angle)
+    {
         rotationAngle += angle;
         // Normalize angle to [0, 2π)
-        rotationAngle = fmod(rotationAngle, 2 * M_PI);
-        if (rotationAngle < 0) {
-            rotationAngle += 2 * M_PI;
+        rotationAngle = fmod(rotationAngle, 2 * std::numbers::pi);
+        if (rotationAngle < 0)
+        {
+            rotationAngle += 2 * std::numbers::pi;
         }
     }
-    
+
     /**
      * @brief Set absolute rotation angle[设置绝对旋转角度]
      */
-    constexpr inline void SetRotation(double angle) {
+    constexpr inline void SetRotation(double angle)
+    {
         rotationAngle = angle;
         // Normalize angle to [0, 2π)
-        rotationAngle = fmod(rotationAngle, 2 * M_PI);
-        if (rotationAngle < 0) {
-            rotationAngle += 2 * M_PI;
+        rotationAngle = fmod(rotationAngle, 2 * std::numbers::pi);
+        if (rotationAngle < 0)
+        {
+            rotationAngle += 2 * std::numbers::pi;
         }
     }
-    
+
     /**
      * @brief Get current rotation angle[获取当前旋转角度]
      */
-    constexpr inline double GetRotation() const {
+    constexpr inline double GetRotation() const
+    {
         return rotationAngle;
     }
-    
+
     /**
      * @brief [该函数无法正常使用]
      */
     SDL_FRect ToSdlFRect() const;
 };
+template<typename T = double>
 struct Size
 {
-    double width;
-    double height;
+    T width;
+    T height;
     constexpr inline bool IsUndefined() const noexcept
     {
         return (width >= SIZE_UNDEFINED) || (height >= SIZE_UNDEFINED);

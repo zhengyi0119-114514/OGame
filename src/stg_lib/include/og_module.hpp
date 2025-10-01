@@ -25,7 +25,7 @@ class GameScreen
     virtual void ContinueGame() = 0;
     virtual void HandleEvent(const SDL_Event &e, SDL_WindowID wid = 0);
     virtual void DoOperator() = 0;
-    virtual Math::Size GetScreenSize() const = 0;
+    virtual Math::Size<int> GetScreenSize() const = 0;
 };
 } // namespace OpenGame::Module
 #endif

@@ -1,6 +1,6 @@
 #include "og.hpp"
 #include <gtest/gtest.h>
-Using namespace OpenGame;
+using namespace OpenGame;
 
 TEST(TestFunctionCallback,ogmae_lib)
 {

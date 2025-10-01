@@ -1,5 +1,5 @@
 #include "og.hpp"
-namespace OpenGame::stg
+namespace OpenGame::STG
 {
 bool CollisionDetection(const HitBox &l, const HitBox &r)
 {

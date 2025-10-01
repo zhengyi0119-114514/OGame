@@ -1,6 +1,6 @@
 #include "og.hpp"
 #include <format>
-namespace OpenGame::error_h
+namespace OpenGame::Error
 {
 InitException::InitException(std::string_view svModule, std::string_view svReason)
 {
@@ -10,4 +10,4 @@ const char *InitException::what() const noexcept
 {
     return m_message.c_str();
 }
-} // namespace OpenGame::error_h
+} // namespace OpenGame::Error

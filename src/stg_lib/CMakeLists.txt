@@ -24,11 +24,9 @@ target_sources(
     include/og_error_h.hpp
     include/og_templates_h.hpp
     include/og_sdl3_h.hpp
-    include/og_interface.hpp
     include/og_stg_h.hpp
-    include/og_module_View.hpp
+    include/og_module_view_h.hpp
     include/og_macro.h
-    include/og_abs.h
 )
 
 target_sources(
@@ -41,10 +39,15 @@ target_sources(
     ./InitException.cpp
     ./Quit.cpp
     ./Program.cpp
-    ./src-view/image.cpp
-    ./src-view/WindowScreen.cpp
-    ./src-view/RotatableImages.cpp
-    ./src-view/KeyBinding.cpp
+    ./FunctionsNotRealizedException.cpp
+    ./SDLError.cpp
+    ./src-view/Window.cpp
+    ./src-sdl3/Surface.cpp
+    ./src-sdl3/Renderer.cpp
+    ./src-sdl3/Texture.cpp
+    ./src-sdl3/TrueTypeFont.cpp
+    ./src-sdl3/Window.cpp
+    ./src-sdl3/SDLModuleInit.cpp
     ./src-stg/BarrageTrajectory.cpp
     ./src-stg/StgScreen.cpp
 )
@@ -67,7 +70,4 @@ elseif(UNIX)
     target_sources(
         open_stg_lib PRIVATE getPOP_POSIX.cpp
     )
-endif()
-if(SDL3_FOUND)
-    add_subdirectory(src-sdl3)
 endif()

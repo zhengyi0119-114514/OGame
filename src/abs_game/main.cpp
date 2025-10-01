@@ -3,31 +3,26 @@
 #endif
 #define __STDC_WAND_LIB_EXT1__ 1
 #include "og.hpp"
-#include <boost/program_options.hpp>
-#include <spdlog/spdlog.h>
-#include <format>
-#include <stdlib.h>
 #include <SDL3/SDL.h>
-
+#include <boost/program_options.hpp>
+#include <format>
+#include <spdlog/spdlog.h>
+#include <stdlib.h>
 
 // import OpenGame;
-using namespace OpenGame::sdl3_h;
+using namespace OpenGame::SDL3;
 using namespace OpenGame::Math;
 using namespace OpenGame::Option;
+using namespace OpenGame::View;
 using namespace OpenGame;
 using namespace boost::program_options;
 
 int main(int argc, char **args)
 {
     InitOpenGame();
-    std::filesystem::path configFileDirectory{Option::GetProgramOptionFileDirectory()};
-    SPDLOG_INFO(std::format("config file at {0:}",configFileDirectory.string()));
-    Clock<100> c;
+    std::filesystem::path pConfigFileDirectory{Option::GetProgramOptionFileDirectory()};
+    SPDLOG_INFO(std::format("config file at {0:}", pConfigFileDirectory.string()));
+    Clock<60> c;
     c.Init();
-    for(size_t i = 0 ;i<61;i++)
-    {
-        SPDLOG_INFO(std::format("{:}",i));
-        c.WaitToClockRing();
-    }
     QuitOpenGame();
 }

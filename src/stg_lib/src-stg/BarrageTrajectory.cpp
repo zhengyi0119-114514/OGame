@@ -1,5 +1,5 @@
 #include "og.hpp"
-namespace OpenGame::stg
+namespace OpenGame::STG
 {
 StraightLineTrajectory::StraightLineTrajectory(double theta, double r) : m_dTheta(theta)
 {

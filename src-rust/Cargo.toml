@@ -1,0 +1,17 @@
+[package]
+name = "ogame_logic_part"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+bitflags = "2.9.4"
+
+[lib]
+crate-type = ["cdylib"]
+
+[profile.dev]
+opt-level = 0
+
+[profile.release]
+opt-level = 3
+lto = true
