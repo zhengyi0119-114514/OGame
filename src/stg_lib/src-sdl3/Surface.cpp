@@ -1,4 +1,3 @@
-#include "og_error_h.hpp"
 #include "og_sdl3_h.hpp"
 #include <SDL3_image/SDL_image.h>
 namespace OpenGame::SDL3
@@ -13,7 +12,7 @@ Surface::Surface(std::filesystem::path pImageFilePath)
     if (!RefThis.Get())
         throw Error::SDLException(NameOf(Surface));
 }
-Surface::Surface(Int iSurfaceWidth, Int iSurfaceHeigt, SDL_PixelFormat pf)
+Surface::Surface(int iSurfaceWidth, int iSurfaceHeigt, SDL_PixelFormat pf)
     : Surface(SDL_CreateSurface(iSurfaceWidth, iSurfaceHeigt, pf))
 {
     if (!RefThis.Get())
@@ -31,5 +30,43 @@ Colorspace Surface::GetColorspace() const
 SDL_Palette *Surface::CreatePalette()
 {
     return SDL_CreateSurfacePalette(RefThis.Get());
+}
+void Surface::AddAlternateImage(SDL_Surface *pImage)
+{
+    if (!SDL_AddSurfaceAlternateImage(RefThis.Get(), pImage))
+        throw Error::SDLException(NameOf(Surface));
+}
+bool Surface::HasAlternateImage() const
+{
+    return SDL_SurfaceHasAlternateImages(RefThis.Get());
+}
+std::span<SDL_Surface *> Surface::GetSurfaceImages() const
+{
+    int iCountOfSurfaceImages = 0;
+    VAR ss = SDL_GetSurfaceImages(RefThis.Get(), &iCountOfSurfaceImages);
+    if (!ss)
+        throw Error::SDLException(NameOf(Surface));
+    return {ss, StaticCast<size_t>(iCountOfSurfaceImages)};
+}
+void Surface::RemoveAlternateImages()
+{
+    SDL_RemoveSurfaceAlternateImages(RefThis.Get());
+}
+void Surface::Lock()
+{
+    SDL_LockSurface(RefThis.Get());
+}
+void Surface::Unlock()
+{
+    SDL_UnlockSurface(RefThis.Get());
+}
+void Surface::SetRLE(bool bEnable)
+{
+    if (!SDL_SetSurfaceRLE(RefThis.Get(), bEnable))
+        throw Error::SDLException(NameOf(Surface));
+}
+bool Surface::GetRLE() const
+{
+    return SDL_SurfaceHasRLE(RefThis.Get());
 }
 } // namespace OpenGame::SDL3

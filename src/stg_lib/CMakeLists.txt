@@ -1,73 +1,14 @@
-target_include_directories(
-    open_stg_lib PUBLIC include
-)
-target_include_directories(
-    open_stg_lib PUBLIC modules
+target_sources(open_stg_lib PRIVATE "${CMAKE_BINARY_DIR}/include/ProjectImformation.h")
+target_include_directories(open_stg_lib PRIVATE "include-private")
+target_include_directories(open_stg_lib INTERFACE SYSTEM include)
+target_sources(
+    open_stg_lib
+    PRIVATE FILE_SET HEADERS 
+    FILES
+    ./include-private/CloseStg.h
 )
 target_sources(
-    open_stg_lib PUBLIC FILE_SET CXX_MODULES TYPE CXX_MODULES FILES
-    modules/open_stg.cppm
-    modules/math.cppm
-    modules/opt.cppm
-    modules/task.cppm
-    modules/error.cppm
-
-)
-target_sources(
-    open_stg_lib PUBLIC FILE_SET HEADERS TYPE HEADERS FILES
-    include/og.hpp
-    include/og_math_h.hpp
-    include/og_task_h.hpp
-    include/og_module.hpp
-    include/og_view.hpp
-    include/og_opt_h.hpp
-    include/og_error_h.hpp
-    include/og_templates_h.hpp
-    include/og_sdl3_h.hpp
-    include/og_stg_h.hpp
-    include/og_module_view_h.hpp
-    include/og_macro.h
-)
-
-target_sources(
-    open_stg_lib PRIVATE
-    ./InitAndQuit.cpp
-    ./pthread.cpp
-    ./StgScene.cpp
-    ./math.cpp
-    ./runAsRootError.cpp
-    ./InitException.cpp
-    ./Quit.cpp
-    ./Program.cpp
-    ./FunctionsNotRealizedException.cpp
-    ./SDLError.cpp
-    ./src-view/Window.cpp
-    ./src-sdl3/Surface.cpp
-    ./src-sdl3/Renderer.cpp
-    ./src-sdl3/Texture.cpp
-    ./src-sdl3/TrueTypeFont.cpp
-    ./src-sdl3/Window.cpp
-    ./src-sdl3/SDLModuleInit.cpp
-    ./src-stg/BarrageTrajectory.cpp
-    ./src-stg/StgScreen.cpp
-)
-
-target_sources(unit_test 
+    open_stg_lib 
     PRIVATE 
-    tests/TestSurfacePool.cpp 
-    tests/TestViewObjectPool.cpp
-    tests/TestMath.cpp
-    tests/StaticAsserts.cpp
-    tests/FunctionCallback.cpp
+    ./ElectromagneticDotTimer.c
 )
-
-if(WIN32)
-    target_link_libraries(open_stg_lib PRIVATE ws2_32)
-    target_sources(
-        open_stg_lib PRIVATE getPOP_Win32.cpp
-    )
-elseif(UNIX)
-    target_sources(
-        open_stg_lib PRIVATE getPOP_POSIX.cpp
-    )
-endif()

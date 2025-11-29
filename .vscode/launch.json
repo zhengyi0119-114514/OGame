@@ -37,7 +37,7 @@
       "cmakeDebugType": "configure",
       "clean": false,
       "configureAll": false
-    },
+    }, 
     {
       "name": "CMake: clean and debug configuration",
       "type": "cmake",

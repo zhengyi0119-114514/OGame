@@ -13,20 +13,55 @@
 
 #ifndef OGAME_STGLIB_SDL3_H
 #define OGAME_STGLIB_SDL3_H 1
-#include "og_macro.h"
-#include "og_math_h.hpp"
-#include "og_templates_h.hpp"
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>
-#include <concepts>
 #include <filesystem>
-#include <memory>
 #include <utility>
+#include <span>
 #if __has_include("windows.h")
 #include <windows.h>
 #endif
 namespace OpenGame::SDL3
 {
+template <typename TSdlObject> class PtrSdlObjectTemplate
+{
+  protected:
+    TSdlObject *m_p = nullptr;
+
+  public:
+    void swap(PtrSdlObjectTemplate &r)
+    {
+        std::swap(this->m_p, r.m_p);
+    }
+    explicit PtrSdlObjectTemplate(TSdlObject *p) : m_p(p)
+    {
+    }
+    PtrSdlObjectTemplate(const PtrSdlObjectTemplate &o) = delete;
+    PtrSdlObjectTemplate(PtrSdlObjectTemplate &&r)
+    {
+        m_p = r.m_p;
+        r.m_p = nullptr;
+    }
+    PtrSdlObjectTemplate &operator=(const PtrSdlObjectTemplate &rsh) = delete;
+    PtrSdlObjectTemplate &operator=(PtrSdlObjectTemplate &&rsh)
+    {
+        PtrSdlObjectTemplate obj{std::move(rsh)};
+        swap(obj);
+        return *this;
+    }
+    TSdlObject &operator*() const noexcept
+    {
+        return *this->m_p;
+    }
+    TSdlObject *operator->() const noexcept
+    {
+        return m_p;
+    }
+    TSdlObject *Get() const noexcept
+    {
+        return m_p;
+    }
+};
 /**
  * @brief Initialize SDL module[初始化SDL模块]
  */
@@ -63,7 +98,7 @@ enum class Colorspace
 class Surface : PtrSdlObjectTemplate<SDL_Surface>
 {
   protected:
-    virtual void _DestroyObject(SDL_Surface *) override;
+    void _DestroyObject(SDL_Surface *);
 
   public:
     using PtrSdlObjectTemplate<SDL_Surface>::PtrSdlObjectTemplate;
@@ -85,7 +120,7 @@ class Surface : PtrSdlObjectTemplate<SDL_Surface>
      * will fill in with valid values later.
      *
      */
-    Surface(Int iSurfaceWidth, Int iSurfaceHeigt, SDL_PixelFormat pf);
+    Surface(int iSurfaceWidth, int iSurfaceHeigt, SDL_PixelFormat pf);
     /**
      * @brief Get the colorspace used by a surface.
      *
@@ -132,6 +167,73 @@ class Surface : PtrSdlObjectTemplate<SDL_Surface>
      * @param palette
      */
     void SetPalette(SDL_Palette *palette);
+
+    /**
+     * @brief Add an alternate version of a surface.
+     *
+     * This function adds an alternate version of this surface, usually used for
+     * content with high DPI representations like cursors or icons. The size,
+     * format, and content do not need to match the original surface, and these
+     * alternate versions will not be updated when the original surface changes.
+     *
+     * This function adds a reference to the alternate version, so you should call
+     * SDL_DestroySurface() on the image after this call.
+     *
+     * @param pImage image a pointer to an alternate SDL_Surface to associate with this
+     *              surface.
+     */
+    void AddAlternateImage(SDL_Surface *pImage);
+
+    /**
+     * @brief Return whether a surface has alternate versions available.
+     *
+     * @return true if alternate versions are available or false otherwise.
+     */
+    bool HasAlternateImage() const;
+    /**
+     * @brief Get an array including all versions of a surface.
+     *
+     * This returns all versions of a surface, with the surface being queried as
+     * the first element in the returned array.
+     *
+     * Freeing the array of surfaces does not affect the surfaces in the array.
+     * They are still referenced by the surface being queried and will be cleaned
+     * up normally.
+     */
+    std::span<SDL_Surface *> GetSurfaceImages() const;
+    /**
+     * @brief Remove all alternate versions of a surface.
+     *
+     * This function removes a reference from all the alternative versions,
+     * destroying them if this is the last reference to them.
+     *
+     */
+    void RemoveAlternateImages();
+    /**
+     * @brief Set up a surface for directly accessing the pixels.
+     */
+    void Lock();
+    /**
+     * @brief Release a surface after directly accessing the pixels.
+     */
+    void Unlock();
+    /**
+     * @brief Set the RLE acceleration hint for a surface.
+     *
+     * If RLE is enabled, color key and alpha blending blits are much faster, but
+     * the surface must be locked before directly accessing the pixels.
+     *
+     * @param bEnable
+     */
+    void SetRLE(bool bEnable);
+    /**
+     * @brief Returns whether the surface is RLE enabled.
+     *
+     * It is safe to pass a NULL `surface` here; it will return false.
+     *
+     * @return
+     */
+    bool GetRLE() const;
 };
 class Texture : PtrSdlObjectTemplate<SDL_Texture>
 {
@@ -139,17 +241,19 @@ class Texture : PtrSdlObjectTemplate<SDL_Texture>
 class Renderer : PtrSdlObjectTemplate<SDL_Renderer>
 {
   protected:
-    virtual void _DestroyObject(SDL_Renderer *) override;
+    void _DestroyObject(SDL_Renderer *);
 
   public:
     using PtrSdlObjectTemplate<SDL_Renderer>::Get;
     using PtrSdlObjectTemplate<SDL_Renderer>::swap;
+    using PtrSdlObjectTemplate<SDL_Renderer>::PtrSdlObjectTemplate;
     virtual ~Renderer() noexcept;
-    Renderer(const Renderer &rlv) = delete;
-    Renderer(Renderer &&rrv);
+    // Renderer(const Renderer &rlv) = delete;
+    // Renderer(Renderer &&rrv);
+
     explicit Renderer(SDL_Renderer &pRend);
-    Renderer &operator=(const Renderer &rsh) = delete;
-    Renderer &operator=(Renderer &&rsh);
+    // Renderer &operator=(const Renderer &rsh) = delete;
+    // Renderer &operator=(Renderer &&rsh);
 };
 enum class WindowFlags
 {
@@ -188,14 +292,16 @@ constexpr static inline Uint64 WindowFlagsExNotFocusable = SDL_WINDOW_NOT_FOCUSA
 class Window : PtrSdlObjectTemplate<SDL_Window>
 {
   protected:
-    virtual void _DestroyObject(SDL_Window *) override;
+    void _DestroyObject(SDL_Window *);
 
   public:
     using PtrSdlObjectTemplate<SDL_Window>::Get;
     using PtrSdlObjectTemplate<SDL_Window>::swap;
-    Window(const Window &) = delete;
+    using PtrSdlObjectTemplate<SDL_Window>::PtrSdlObjectTemplate;
+    // Window(const Window &) = delete;
+    // Window(Window &&rrv);
     explicit Window(SDL_Window *pWin);
-    Window &operator=(const Window &rsh);
+    Window &operator=(const Window &rsh) = delete;
     /**
      * @brief 调用SDL_CreateWindow创建Window
      *
@@ -302,7 +408,7 @@ class Window : PtrSdlObjectTemplate<SDL_Window>
      *
      * @param bResizable
      */
-    void SetResizable(Bool bResizable);
+    void SetResizable(bool bResizable);
     /**
      * @brief Set the minimum size of a window's client area.
      *
@@ -317,10 +423,10 @@ class Window : PtrSdlObjectTemplate<SDL_Window>
      *
      * @exception OpenGame::Error::SDLException
      *
-     * @return Bool
+     * @return bool
      *
      */
-    Bool IsKeyboardGrab() const;
+    bool IsKeyboardGrab() const;
     /**
      * @return SDL_Point
      *
@@ -352,7 +458,7 @@ class Window : PtrSdlObjectTemplate<SDL_Window>
      * @param bGrabbed
      *
      */
-    void SetKeyboardGrab(Bool bGrabbed);
+    void SetKeyboardGrab(bool bGrabbed);
     /**
      * @brief Set whether the window may have input focus.
      *
@@ -361,7 +467,7 @@ class Window : PtrSdlObjectTemplate<SDL_Window>
      * @param bFocusable
      *
      */
-    void SetFocusable(Bool bFocusable);
+    void SetFocusable(bool bFocusable);
     /**
      * @brief Request that the window be made as large as possible.
      *
@@ -398,7 +504,7 @@ class Window : PtrSdlObjectTemplate<SDL_Window>
      * @param bAlwaysOnTop
      *
      */
-    void SetAlwaysOnTop(Bool bAlwaysOnTop);
+    void SetAlwaysOnTop(bool bAlwaysOnTop);
     /**
      * @brief Request that a window be raised above other windows and gain the input focus.
      *
@@ -426,7 +532,7 @@ class Window : PtrSdlObjectTemplate<SDL_Window>
 class TrueTypeFont : PtrSdlObjectTemplate<TTF_Font>
 {
 };
-Bool inline IsInRange(const SDL_FRect &r, const SDL_FPoint &p)
+bool inline IsInRange(const SDL_FRect &r, const SDL_FPoint &p)
 {
     return ((p.x > r.x) && (p.x < (r.x + r.w))) && ((p.y > r.y) && (p.y < (r.y + r.w)));
 }

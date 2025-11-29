@@ -14,6 +14,10 @@ Window::Window(std::string_view svTitle, int iWindowWidth, int iWindowHeight, Wi
         throw Error::InitException(NameOf(PtrWindow), SDL_GetError());
     }
 }
+// Window::Window(Window&& rrv):PtrSdlObjectTemplate<SDL_Window>(std::move(rrv))
+// {
+    
+// }
 Math::Size<int> Window::GetSize() const
 {
     int iWindowHeight, iWindowWidth;
@@ -37,7 +41,7 @@ const char *Window::GetTitle() const
 {
     return SDL_GetWindowTitle(RefThis.m_p);
 }
-Bool Window::IsKeyboardGrab() const
+bool Window::IsKeyboardGrab() const
 {
     return SDL_GetWindowKeyboardGrab(Get());
 }
@@ -96,7 +100,7 @@ void Window::SetPosition(const SDL_Point &p)
     if (!SDL_SetWindowPosition(RefThis.Get(), p.x, p.y))
         throw Error::SDLException(NameOf(PtrWindow));
 }
-void Window::SetKeyboardGrab(Bool bGrabbed)
+void Window::SetKeyboardGrab(bool bGrabbed)
 {
     if (!SDL_SetWindowKeyboardGrab(RefThis.Get(), bGrabbed))
         throw Error::SDLException(NameOf(PtrWindow));
@@ -111,7 +115,7 @@ void Window::Minimize()
     if (!SDL_MinimizeWindow(RefThis.Get()))
         throw Error::SDLException(NameOf(PtrWindow));
 }
-void Window::SetResizable(Bool bResizable)
+void Window::SetResizable(bool bResizable)
 {
     if (!SDL_SetWindowResizable(RefThis.Get(), bResizable))
         throw Error::SDLException(NameOf(PtrWindow));
@@ -126,7 +130,7 @@ void Window::Hide()
     if (!SDL_HideWindow(RefThis.Get()))
         throw Error::SDLException(NameOf(PtrWindow));
 }
-void Window::SetFocusable(Bool bGrabbed)
+void Window::SetFocusable(bool bGrabbed)
 {
     if (!SDL_SetWindowFocusable(RefThis.Get(), bGrabbed))
         throw Error::SDLException(NameOf(PtrWindow));

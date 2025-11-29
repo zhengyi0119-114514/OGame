@@ -1,41 +1,41 @@
 {
-    "dependencies": [
-        "boost-charconv",
-        "boost-filesystem",
-        "boost-json",
-        "boost-program-options",
-        "gtest",
-        "lua",
-        "pthreads",
-        {
-            "name": "sdl3",
-            "features": [
-                "alsa",
-                "vulkan"
-            ]
-        },
-        {
-            "name": "sdl3-image",
-            "features": [
-                "jpeg",
-                "png",
-                "tiff",
-                "webp"
-            ]
-        },
-        {
-            "name": "sdl3-ttf",
-            "features": [
-                "harfbuzz",
-                "svg"
-            ]
-        },
-        {
-            "name": "spdlog",
-            "features": [
-                "wchar",
-                "benchmark"
-            ]
-        }
-    ]
+  "dependencies": [
+    "boost-charconv",
+    "boost-filesystem",
+    "boost-json",
+    "boost-program-options",
+    "gtest",
+    "lua",
+    "pthreads",
+    {
+      "name": "sdl3",
+      "features": [
+        "alsa",
+        "vulkan"
+      ]
+    },
+    {
+      "name": "sdl3-image",
+      "features": [
+        "jpeg",
+        "png",
+        "tiff",
+        "webp"
+      ]
+    },
+    {
+      "name": "sdl3-ttf",
+      "features": [
+        "harfbuzz",
+        "svg"
+      ]
+    },
+    {
+      "name": "spdlog",
+      "features": [
+        "wchar",
+        "benchmark"
+      ]
+    }
+  ]
 }
