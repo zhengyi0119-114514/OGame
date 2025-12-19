@@ -12,6 +12,7 @@
   - ~~毫无意义的宏定义~~
   - ~~单纯反人类的代码风格~~
   - ~~无处不在的梗~~
+  - ~~追求极端鲁棒性的神仙设计~~
 - ~~反复横跳的程序设计~~
 
 
@@ -62,17 +63,10 @@
 
 本项目严重依赖C11的SafeCLib,但AUR的**aur/libsafec 1:3.7.1-1**无法使用,所以请自行安装:  
 [LibSafeC](https://github.com/rurban/safeclib)
-(妈的这库的.pc文件安装位置不规范，害得我找了老半天)
 
 ``` bash
-sudo pacman -S gtest qt6 boost lua
-```
-
-SDL3 :**若要添加~~测试性~~必须的SDL3支持，请安装包 sdl3_image(AUR),sdl3_ttf(AUR),sdl3**
-
-``` bash
-sudo pacman -S sdl3 vulkan-devel #vulkan-devel Optional
-yay -S sdl3_image sdl3_ttf
+sudo pacman -S gtk4 boost lua sdl3 sdl3_ttf vulkan-devel #vulkan-devel Optional
+yay -S sdl3_image 
 ```
 
 ### OpenSUSE Tumbleweed
@@ -94,3 +88,4 @@ sudo zypper install SDL3-devel SDL3_image-devel SDL3_ttf-devel
 
 > Stg基础功能  
 > 使用Lua对项目进行拓展  
+> ~~自由地拉屎~~

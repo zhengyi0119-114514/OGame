@@ -151,7 +151,7 @@ class Surface : PtrSdlObjectTemplate<SDL_Surface>
      * A single palette can be shared with many surfaces.
      *
      *
-     * @return true on success or false on failure; call SDL_GetError() for more
+     * @return FALSE; on success or false on failure; call SDL_GetError() for more
      *          information.
      */
     SDL_Palette *CreatePalette();
@@ -187,7 +187,7 @@ class Surface : PtrSdlObjectTemplate<SDL_Surface>
     /**
      * @brief Return whether a surface has alternate versions available.
      *
-     * @return true if alternate versions are available or false otherwise.
+     * @return FALSE; if alternate versions are available or false otherwise.
      */
     bool HasAlternateImage() const;
     /**

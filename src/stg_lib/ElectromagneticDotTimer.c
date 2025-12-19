@@ -103,11 +103,11 @@ void OgElectromagneticDotTimerSkipATimeStamp(OgELECTROMAGNETIC_DOT_TIMER *pEdt)
 #include <time.h>
 
 #define NUMBER_OF_NS_IN_PRE_SECOND ((int64_t)(1000000000))
-OPEN_STG_PRIVATE OPEN_STG_CDECL inline void TimespecDifference(struct timespec *ptsSubtrahend,
+OG_PRIVATE OG_CDECL inline void TimespecDifference(struct timespec *ptsSubtrahend,
                                                                struct timespec *ptsReduction,
                                                                struct timespec *ptsOutput);
-OPEN_STG_PRIVATE OPEN_STG_CDECL inline int64_t TimespecToInt64(struct timespec *pts);
-OPEN_STG_PRIVATE OPEN_STG_CDECL inline struct timespec Int64ToTimespec(int64_t i);
+OG_PRIVATE OG_CDECL inline int64_t TimespecToInt64(struct timespec *pts);
+OG_PRIVATE OG_CDECL inline struct timespec Int64ToTimespec(int64_t i);
 
 int64_t TimespecToInt64(struct timespec *pts)
 {
@@ -133,7 +133,7 @@ void TimespecDifference(struct timespec *ptsSubtrahend, struct timespec *ptsRedu
     ptsOutput->tv_sec = iSecondsDifference;
     ptsOutput->tv_nsec = iNanoSecondDifference;
 }
-OgELECTROMAGNETIC_DOT_TIMER *OgElectromagneticDotTimerCreate(int8_t iFrequency)
+OgELECTROMAGNETIC_DOT_TIMER *OgCreateElectromagneticDotTimer(int8_t iFrequency)
 {
     size_t sSizeOfEdtStruct = sizeof(OgELECTROMAGNETIC_DOT_TIMER);
     size_t sSizeOfDotTable = sizeof(clock_t) * (iFrequency + 1); /*<<这里故意多添加了一个元素 */
@@ -162,7 +162,7 @@ OgELECTROMAGNETIC_DOT_TIMER *OgElectromagneticDotTimerCreate(int8_t iFrequency)
     }
     return pEdt;
 }
-void OgElectromagneticDotTimerDestory(OgELECTROMAGNETIC_DOT_TIMER *pEdt)
+void OgDestoryElectromagneticDotTimer(OgELECTROMAGNETIC_DOT_TIMER *pEdt)
 {
     if (!pEdt)
         return;
@@ -217,7 +217,7 @@ void OgElectromagneticDotTimerSkipATimeStamp(OgELECTROMAGNETIC_DOT_TIMER *pEdt)
     // 清空队列
     pEdt->tsLast = tsCurrentTime;
 }
-void OgElectromagneticDotTimerRefresh(OgELECTROMAGNETIC_DOT_TIMER *pEdt)
+void OgRefreshElectromagneticDotTimer(OgELECTROMAGNETIC_DOT_TIMER *pEdt)
 {
     if (!pEdt)
         return;

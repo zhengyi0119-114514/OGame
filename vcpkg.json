@@ -1,11 +1,9 @@
 {
   "dependencies": [
-    "boost-charconv",
-    "boost-filesystem",
     "boost-json",
     "boost-program-options",
-    "gtest",
     "lua",
+    "fmt",
     "pthreads",
     {
       "name": "sdl3",

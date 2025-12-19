@@ -36,8 +36,7 @@ if(
     "${CMAKE_SYSTEM_NAME}" STREQUAL "Windows" OR
     "${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsPhone" OR
     "${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore" OR
-    "${CMAKE_SYSTEM_NAME}" STREQUAL "MSYS" OR
-    "${CMAKE_SYSTEM_NAME}" STREQUAL "CYGWIN"
+    "${CMAKE_SYSTEM_NAME}" STREQUAL "MSYS"
 )
 endif()
 
@@ -56,7 +55,10 @@ set(RESOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/resources")
 # 如果是 Windows/MSVC，使用 copy_directory
 add_custom_command(
     TARGET test_game POST_BUILD
-    COMMAND "${CMAKE_COMMAND}" "-E" "copy_directory_if_different"
-    "${RESOURCE_DIR}"
-    "$<TARGET_FILE_DIR:test_game>/resources"
+    COMMAND "${CMAKE_COMMAND}" "-E" "copy_directory_if_different" "${RESOURCE_DIR}" "$<TARGET_FILE_DIR:test_game>/resources"
+)
+add_custom_command(
+    TARGET open_stg_lib
+    PRE_BUILD
+    COMMAND "${CMAKE_COMMAND}" "-E" "copy" "${CMAKE_CURRENT_SOURCE_DIR}/Directory.Build.props" "${CMAKE_BINARY_DIR}/Directory.Build.props"
 )

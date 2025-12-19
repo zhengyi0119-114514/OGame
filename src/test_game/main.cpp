@@ -4,8 +4,13 @@
 
 int main(int argc, char **args)
 {
-    OgELECTROMAGNETIC_DOT_TIMER *pedt = OgElectromagneticDotTimerCreate(10);
-    OgElectromagneticDotTimerRefresh(pedt);
+    SPDLOG_INFO("Program start");
+    if(OgInit(0))
+    {
+        SPDLOG_ERROR("Failed to init og.");
+    }
+    OgELECTROMAGNETIC_DOT_TIMER *pedt = OgCreateElectromagneticDotTimer(10);
+    OgRefreshElectromagneticDotTimer(pedt);
     for (size_t sIndex = 0; sIndex < 31; sIndex++)
     {
         SPDLOG_INFO("Ciallo～(∠・ω< )⌒★");
@@ -15,5 +20,6 @@ int main(int argc, char **args)
         }
         OgElectromagneticDotTimerSkipATimeStamp(pedt);
     }
-    OgElectromagneticDotTimerDestory(pedt);
+    OgDestoryElectromagneticDotTimer(pedt);
+    OgQuit();
 }

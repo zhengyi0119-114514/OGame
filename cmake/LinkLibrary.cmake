@@ -1,8 +1,3 @@
-if(${LIBSAFEC_FOUND})
-    target_link_libraries(open_stg_lib PUBLIC PkgConfig::LIBSAFEC)
-    target_compile_definitions(open_stg_lib PUBLIC LIBSAFEC)
-endif()
-
 target_link_libraries(
     test_game PUBLIC
     open_stg_lib
@@ -15,13 +10,18 @@ target_link_libraries(open_stg_lib PUBLIC
     Boost::json
     ogame_logic_part
     ${LUA_LIBRARIES}
-    ${__SDL3_TARGETS}
-    ${__ICU_TARGETS}
+    SDL3::SDL3 
+    SDL3_ttf::SDL3_ttf 
+    SDL3_image::SDL3_image
+    $<IF:$<TARGET_EXISTS:ICU::dt>,ICU::dt,ICU::data>
+    $<IF:$<TARGET_EXISTS:ICU::in>,ICU::in,ICU::i18n>
+    ICU::io
+    fmt::fmt
     spdlog::spdlog
+    $<TARGET_NAME_IF_EXISTS:PkgConfig::XDG_DESKTOP_PORTAL>
+    $<TARGET_NAME_IF_EXISTS:PkgConfig::LIBSAFEC>
 )
+
 target_include_directories(open_stg_lib PUBLIC
     ${LUA_INCLUDE_DIR}
-)
-target_link_libraries(
-    unit_test PRIVATE open_stg_lib
 )

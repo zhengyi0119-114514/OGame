@@ -45,64 +45,29 @@ target_compile_features(
     c_std_17
 )
 
-if(
-    "${CMAKE_SYSTEM_NAME}" STREQUAL "Windows" OR
-    "${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsPhone" OR
-    "${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore" OR
-    "${CMAKE_SYSTEM_NAME}" STREQUAL "MSYS" OR
-    "${CMAKE_SYSTEM_NAME}" STREQUAL "CYGWIN"
+target_compile_options(
+    open_stg_lib
+    PUBLIC
+    $<$<C_COMPILER_ID:GNU>:-fexec-charset=UTF-8>
+    $<$<C_COMPILER_ID:MSVC>:/utf-8>
+    $<$<C_COMPILER_ID:MSVC>:/Zc:__cplusplus>
+    $<$<C_COMPILER_ID:MSVC>:/Zc:__STDC__>
+    $<$<AND:$<C_COMPILER_ID:GNU,AppleClang,ARMClang,CrayClang,TIClang,IntelLLVM,Clang>,$<CONFIG:Release>>:-Ofast>
+    $<$<AND:$<C_COMPILER_ID:MSVC>,$<CONFIG:Release>>:/Ox>
 )
-    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-        # - Fixes msvc toolchain issue
-        # cmake dosen't set `CMAKE_HOST_SYSTEM_PROCESSOR` before `project(...)`, which led to the failure of msvc configuration
-        if(DEFINED ENV{PROCESSOR_ARCHITEW6432})
-            set(CMAKE_HOST_SYSTEM_PROCESSOR "$ENV{PROCESSOR_ARCHITEW6432}")
-        elseif(DEFINED ENV{PROCESSOR_ARCHITECTURE})
-            set(CMAKE_HOST_SYSTEM_PROCESSOR "$ENV{PROCESSOR_ARCHITECTURE}")
-        endif()
+target_compile_definitions(
+    open_stg_lib
+    PUBLIC
+    $<$<C_COMPILER_ID:MSVC>:_CRT_SECURE_NO_WARNINGS>
+    $<$<C_COMPILER_ID:MSVC>:__STDC_WANT_LIB_EXT1__>
+    $<$<PLATFORM_ID:Windows,WindowsPhone,WindowsStore,MSYS>:WIN32>
+    $<$<BOOL:${UNIX}>:POSIX=true>
+    $<$<CONFIG:Debug>:_DEBUG>
+    $<$<CONFIG:Debug>:DEBUG>
+    $<$<BOOL:${XDG_DESKTOP_PORTAL_FOUND}>:OPEN_STG_HAS_XDG_PORTAL=true>
+    $<$<PLATFORM_ID:Linux>:OPEN_STG_IS_LINUX=true>
+    $<$<PLATFORM_ID:FreeBSD,NetBSD,OpenBSD,MirBSD>:OPEN_STG_IS_BSD=true> #未测试
+    $<$<BOOL:${APPLE}>:OPEN_STG_IS_APPLE=true>
+)
 
-        target_compile_options(
-            open_stg_lib
-            PUBLIC
-            /utf-8
-        )
-        target_compile_definitions(
-            open_stg_lib
-            PUBLIC
-            _CRT_SECURE_NO_WARNINGS
-        )
-    elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-        target_compile_options(open_stg_lib
-            PUBLIC "-fexec-charset=UTF-8"
-        )
-    endif()
 
-    target_compile_definitions(
-        open_stg_lib
-        PUBLIC
-        WINDOWS32
-    )
-elseif(UNIX)
-    target_compile_definitions(
-        open_stg_lib
-        PRIVATE
-        POSIX=true
-    )
-endif()
-
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    target_compile_definitions(
-        open_stg_lib
-        PUBLIC
-        LINUX=true
-    )
-endif()
-
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    target_compile_definitions(
-        open_stg_lib
-        PRIVATE
-        _DEBUG
-        DEBUG
-    )
-endif()

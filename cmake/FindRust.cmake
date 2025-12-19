@@ -47,16 +47,15 @@ list(APPEND CMAKE_MESSAGE_CONTEXT "FindRust")
 
 set(RUST_FOUND FALSE CACHE BOOL "find rustc or cargo")
 set(RUST_VERSION "" CACHE STRING "rustc version")
+set(RUST_CRATE_BUILD_TYPE "debug" CACHE STRING "Rust crate build type,value is one of [debug|release]")
+set(RUST_CRATE_BINARY_DIR "" CACHE PATH "Cust crate build type")
+set(__RUST_BUILD_OPTIONS "")
 
 if(NOT DEFINED RUSTUP_EXECUTABLE_FILE_PATH)
     set(RUSTUP_EXECUTABLE_FILE_PATH "RUSTUP_EXECUTABLE_FILE_PATH-NOTFOUND" CACHE PATH "rustup")
     set(CARGO_EXECUTABLE_FILE_PATH "CARGO_EXECUTABLE_FILE_PATH-NOTFOUND" CACHE PATH "cargo")
     set(RUSTC_EXECUTABLE_FILE_PATH "RUSTC_EXECUTABLE_FILE_PATH-NOTFOUND" CACHE PATH "rustc")
     set(RUSTDOC_EXECUTABLE_FILE_PATH "RUSTDOC_EXECUTABLE_FILE_PATH-NOTFOUND" CACHE PATH "rustdoc")
-    set(RUST_CRATE_BUILD_TYPE "debug" CACHE STRING "Rust crate build type,value is one of [debug|release]")
-    set(RUST_CRATE_BINARY_DIR "" CACHE PATH "Cust crate build type")
-
-    set(__RUST_BUILD_OPTIONS "")
 
     find_program(CARGO_EXECUTABLE_FILE_PATH NAMES "cargo" PATHS ENV PATH ENV Path)
     find_program(RUSTC_EXECUTABLE_FILE_PATH NAMES "rustc" PATHS ENV PATH ENV Path)
@@ -74,7 +73,7 @@ if(NOT DEFINED RUSTUP_EXECUTABLE_FILE_PATH)
     endif()
 endif()
 
-set(__RUST_TARGET_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/rust-target/" CACHE PATH "--output-dir <VALUE>")
+set(__RUST_TARGET_DIRECTORY "${CMAKE_SOURCE_DIR}/target/" CACHE PATH "--output-dir <VALUE>")
 
 if(NOT EXISTS "${__RUST_TARGET_DIRECTORY}")
     file(MAKE_DIRECTORY "${__RUST_TARGET_DIRECTORY}")
@@ -89,10 +88,11 @@ if(NOT DEFINED __RUST_TOOLCHAIN)
             WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
             OUTPUT_VARIABLE __RUSTUP_OUTPUT
         )
+
         if(NOT "${__RUSTUP_OUTPUT}" MATCHES "${__RUST_TOOLCHAIN}")
             __RUST_FAILED_MESSAGE("Unknown toolchain :${__RUST_TOOLCHAIN}")
         endif()
-        
+
     else()
         set(__RUST_TOOLCHAIN "")
         execute_process(
@@ -131,6 +131,7 @@ if(NOT DEFINED RUST_CRATE_BUILD_TYPE)
 endif()
 
 set(RUST_CRATE_BINARY_DIR "${__RUST_TARGET_DIRECTORY}/${__RUST_TOOLCHAIN}/${RUST_CRATE_BUILD_TYPE}")
+__RUST_STATUS_MESSAGE("Rust binary dir: ${RUST_CRATE_BINARY_DIR}")
 
 if(
     "${CMAKE_SYSTEM_NAME}" STREQUAL "Windows" OR
@@ -173,11 +174,13 @@ function(__ADD_EXECUTABLE_CRATE __crate __source_dir)
         "${__crate}_BINARY_FILE" "${RUST_CRATE_BINARY_DIR}/${__crate}${__RUST_EXECUTABLE_FILE_EXTENSION}"
         CACHE FILEPATH "Rust crate binary file" FORCE
     )
-
+    set(
+        __COMMAND "${CARGO_EXECUTABLE_FILE_PATH}" "build" "--target-dir" "${__RUST_TARGET_DIRECTORY}"
+        ${__RUST_BUILD_OPTIONS} "-p" "${__crate}" ${ARGN}
+    )
     # Create a custom target for building the Rust crate
     add_custom_target("_${__crate}_build"
-        COMMAND "${CARGO_EXECUTABLE_FILE_PATH}" "build" "--target-dir" "${__RUST_TARGET_DIRECTORY}" ${__RUST_BUILD_OPTIONS}
-        "-p" "${__crate}" ${ARGN}
+        COMMAND ${__COMMAND}
         WORKING_DIRECTORY "${__source_dir}"
         COMMENT "Building Rust bin crate \"${__crate}\""
     )
@@ -190,15 +193,24 @@ function(__ADD_EXECUTABLE_CRATE __crate __source_dir)
 endfunction()
 
 function(__ADD_STATIC_LIBRARY_CRATE __crate __source_dir)
-    set()
     set("${__crate}_BINARY_FILE" "${RUST_CRATE_BINARY_DIR}/${__RUST_STATIC_LIBRARY_FILE_SUFFIX}${__crate}${__RUST_STATIC_LIBRARY_FILE_EXTENSION}"
         CACHE FILEPATH "Rust crate binary file" FORCE
     )
-    add_custom_target("_${__crate}_build" ALL
-        "${CARGO_EXECUTABLE_FILE_PATH}" "build" "-p" "${__crate}" ${__RUST_BUILD_OPTIONS}
-            "--target-dir" "${__RUST_TARGET_DIRECTORY}" ${ARGN}
+    set(__COMMAND
+        "${CARGO_EXECUTABLE_FILE_PATH}" "build" "-p" "${__crate}" ${__RUST_BUILD_OPTIONS} "--target-dir" "${__RUST_TARGET_DIRECTORY}" ${ARGN}
+    )
+    add_custom_command(
+        OUTPUT ${${__crate}_BINARY_FILE}
+        COMMAND ${__COMMAND}
         WORKING_DIRECTORY "${__source_dir}"
-        COMMENT "Building rust crate ${__crate}"
+        COMMENT "Building rust crate ${__crate} target_dir:${__RUST_TARGET_DIRECTORY}"
+    )
+    add_custom_target(
+        "_${__crate}_build" ALL
+        COMMAND ${__COMMAND}
+        DEPENDS ${${__crate}_BINARY_FILE}
+        WORKING_DIRECTORY "${__source_dir}"
+        COMMENT "Building rust crate ${__crate} target_dir:${__RUST_TARGET_DIRECTORY}"
     )
     add_library("${__crate}" SHARED IMPORTED GLOBAL)
     set_target_properties("${__crate}"
@@ -215,23 +227,24 @@ function(__ADD_SHARED_LIBRARY_CRATE __crate __source_dir)
         "${CMAKE_SYSTEM_NAME}" STREQUAL "MSYS" OR
         "${CMAKE_SYSTEM_NAME}" STREQUAL "CYGWIN"
     )
-        set(__IMPORTED_LIBRARY_FILE_NAME "${__RUST_STATIC_LIBRARY_FILE_SUFFIX}${__crate}${__RUST_IMPROT_LIBRARY_FILE_EXTENSION}")
-        set(__IMPORTED_LIBRARY_BINARY "${RUST_CRATE_BINARY_DIR}/${__IMPORTED_LIBRARY_FILE_NAME}")
-        set(__IMPORTED_LIBRARY_FINALLY_FILE "")
-        set(__DLL_FILE_NAME "${__RUST_SHARED_LIBRARY_FILE_SUFFIX}${__crate}${__RUST_SHARED_LIBRARY_FILE_EXTENSION}")
-        set(__DLL_BINARY_FILE "${RUST_CRATE_BINARY_DIR}/${__DLL_FILE_NAME}")
+        set(__IMPORTED_LIBRARY_BINARY "${RUST_CRATE_BINARY_DIR}/${__RUST_STATIC_LIBRARY_FILE_SUFFIX}${__crate}${__RUST_IMPROT_LIBRARY_FILE_EXTENSION}")
+        set(__DLL_BINARY_FILE "${RUST_CRATE_BINARY_DIR}/${__RUST_SHARED_LIBRARY_FILE_SUFFIX}${__crate}${__RUST_SHARED_LIBRARY_FILE_EXTENSION}")
         set("${__crate}_BINARY_FILE" "${__IMPORTED_LIBRARY_BINARY}" "${__DLL_BINARY_FILE}" CACHE FILEPATH "Rust crate binary file" FORCE)
-
+        set(__COMMAND
+            "${CARGO_EXECUTABLE_FILE_PATH}" "build" "-p" "${__crate}" ${__RUST_BUILD_OPTIONS} "--target-dir" "${__RUST_TARGET_DIRECTORY}" ${ARGN}
+        )
         add_custom_command(
             OUTPUT ${${__crate}_BINARY_FILE}
-            COMMAND "${CARGO_EXECUTABLE_FILE_PATH}" "build" "-p" "${__crate}" ${__RUST_BUILD_OPTIONS}
-                "--target-dir" "${__RUST_TARGET_DIRECTORY}" ${ARGN}
+            COMMAND ${__COMMAND}
             WORKING_DIRECTORY "${__source_dir}"
             COMMENT "Building rust crate ${__crate} target_dir:${__RUST_TARGET_DIRECTORY}"
         )
         add_custom_target(
             "_${__crate}_build" ALL
+            COMMAND ${__COMMAND}
             DEPENDS ${${__crate}_BINARY_FILE}
+            WORKING_DIRECTORY "${__source_dir}"
+            COMMENT "Building rust crate ${__crate} target_dir:${__RUST_TARGET_DIRECTORY}"
         )
         add_library("${__crate}" SHARED IMPORTED GLOBAL)
         set_target_properties("${__crate}"
@@ -240,17 +253,25 @@ function(__ADD_SHARED_LIBRARY_CRATE __crate __source_dir)
             IMPORTED_IMPLIB "${__IMPORTED_LIBRARY_BINARY}"
         )
     else()
-        set("${__crate}_BINARY_FILE" "${RUST_CRATE_BINARY_DIR}/${__RUST_SHARED_LIBRARY_FILE_SUFFIX}${__crate}${__RUST_SHARED_LIBRARY_FILE_EXTENSION}"
-            CACHE FILEPATH "Rust crate binary file" FORCE)
+        set(
+            "${__crate}_BINARY_FILE" "${RUST_CRATE_BINARY_DIR}/${__RUST_SHARED_LIBRARY_FILE_SUFFIX}${__crate}${__RUST_SHARED_LIBRARY_FILE_EXTENSION}"
+            CACHE FILEPATH "Rust crate binary file" FORCE
+        )
+        set(__COMMAND
+            "${CARGO_EXECUTABLE_FILE_PATH}" "build" "-p" "${__crate}" ${__RUST_BUILD_OPTIONS} "--target-dir" "${__RUST_TARGET_DIRECTORY}" ${ARGN}
+        )
+
         add_custom_command(
-            OUTPUT ${${__crate}_BINARY_FILE}
-            COMMAND "${CARGO_EXECUTABLE_FILE_PATH}" "build" "-p" "${__crate}" ${__RUST_BUILD_OPTIONS}
-                "--target-dir" "${__RUST_TARGET_DIRECTORY}" ${ARGN}
+            OUTPUT "${${__crate}_BINARY_FILE}"
+            COMMAND ${__COMMAND}
             WORKING_DIRECTORY "${__source_dir}"
             COMMENT "Building rust crate ${__crate} target_dir:${__RUST_TARGET_DIRECTORY}"
         )
         add_custom_target("_${__crate}_build" ALL
+            COMMAND ${__COMMAND}
             DEPENDS ${${__crate}_BINARY_FILE}
+            WORKING_DIRECTORY "${__source_dir}"
+            COMMENT "Building rust crate ${__crate} target_dir:${__RUST_TARGET_DIRECTORY}"
         )
         add_library("${__crate}" SHARED IMPORTED GLOBAL)
         set_target_properties("${__crate}"
