@@ -1,5 +1,4 @@
 #include <OpenStg.h>
-#include <format>
 #include <spdlog/spdlog.h>
 
 int main(int argc, char **args)

@@ -178,6 +178,7 @@ function(__ADD_EXECUTABLE_CRATE __crate __source_dir)
         __COMMAND "${CARGO_EXECUTABLE_FILE_PATH}" "build" "--target-dir" "${__RUST_TARGET_DIRECTORY}"
         ${__RUST_BUILD_OPTIONS} "-p" "${__crate}" ${ARGN}
     )
+
     # Create a custom target for building the Rust crate
     add_custom_target("_${__crate}_build"
         COMMAND ${__COMMAND}
@@ -227,9 +228,9 @@ function(__ADD_SHARED_LIBRARY_CRATE __crate __source_dir)
         "${CMAKE_SYSTEM_NAME}" STREQUAL "MSYS" OR
         "${CMAKE_SYSTEM_NAME}" STREQUAL "CYGWIN"
     )
-        set(__IMPORTED_LIBRARY_BINARY "${RUST_CRATE_BINARY_DIR}/${__RUST_STATIC_LIBRARY_FILE_SUFFIX}${__crate}${__RUST_IMPROT_LIBRARY_FILE_EXTENSION}")
-        set(__DLL_BINARY_FILE "${RUST_CRATE_BINARY_DIR}/${__RUST_SHARED_LIBRARY_FILE_SUFFIX}${__crate}${__RUST_SHARED_LIBRARY_FILE_EXTENSION}")
-        set("${__crate}_BINARY_FILE" "${__IMPORTED_LIBRARY_BINARY}" "${__DLL_BINARY_FILE}" CACHE FILEPATH "Rust crate binary file" FORCE)
+        set("${__crate}_IMPORTED_LIBRARY" "${RUST_CRATE_BINARY_DIR}/${__RUST_STATIC_LIBRARY_FILE_SUFFIX}${__crate}${__RUST_IMPROT_LIBRARY_FILE_EXTENSION}" CACHE FILEPATH "lib<DLL_NAME>.dll.a or <DLL_NAME>.lib" FORCE)
+        set("${__crate}_DLL_FILE" "${RUST_CRATE_BINARY_DIR}/${__RUST_SHARED_LIBRARY_FILE_SUFFIX}${__crate}${__RUST_SHARED_LIBRARY_FILE_EXTENSION}" CACHE FILEPATH "<DLL_NAME>.dll" FORCE)
+        set("${__crate}_BINARY_FILE" "${${__crate}_IMPORTED_LIBRARY}" "${${__crate}_DLL_FILE}" CACHE FILEPATH "Rust crate binary file" FORCE)
         set(__COMMAND
             "${CARGO_EXECUTABLE_FILE_PATH}" "build" "-p" "${__crate}" ${__RUST_BUILD_OPTIONS} "--target-dir" "${__RUST_TARGET_DIRECTORY}" ${ARGN}
         )
@@ -249,8 +250,8 @@ function(__ADD_SHARED_LIBRARY_CRATE __crate __source_dir)
         add_library("${__crate}" SHARED IMPORTED GLOBAL)
         set_target_properties("${__crate}"
             PROPERTIES
-            IMPORTED_LOCATION "${__DLL_BINARY_FILE}"
-            IMPORTED_IMPLIB "${__IMPORTED_LIBRARY_BINARY}"
+            IMPORTED_LOCATION "${${__crate}_DLL_FILE}"
+            IMPORTED_IMPLIB "${${__crate}_IMPORTED_LIBRARY}"
         )
     else()
         set(
@@ -319,5 +320,27 @@ function(ADD_CRATE __crate)
         __ADD_EXECUTABLE_CRATE("${__crate}" "${__SOURCE_DIR}")
     else()
         __RUST_FAILED_MESSAGE("Unsupported CRATE_TYPE :${__CRATE_CRATE_TYPE},it must be one of [cdylib|SHARED|staticlib|STATIC|bin|EXECUTABLE]")
+    endif()
+endfunction()
+
+function(TARGET_LINK_SHARED_CRATE __target)
+    cmake_parse_arguments(__CRATE
+        "" # Options
+        "" # One value keyword
+        "PUBLIC" "PRIVATE" # Multi value keywords
+        ${ARGV}
+    )
+    target_link_libraries(
+        "${__target}"
+        PUBLIC ${__CRATE_PUBLIC}
+        PRIVATE ${__CRATE_PRIVATE}
+    )
+
+    if("${CMAKE_SYSTEM_NAME}" MATCHES "Windows" OR
+        "${CMAKE_SYSTEM_NAME}" STREQUAL "MSYS")
+        foreach(__crate ${__CRATE_PUBLIC} ${__CRATE_PRIVATE})
+            add_custom_command(TARGET "${__target}" POST_BUILD
+                COMMAND "${CMAKE_COMMAND}" "-E" "copy_if_different" "${${__crate}_DLL_FILE}" "$<TARGET_FILE_DIR:${__target}>")
+        endforeach()
     endif()
 endfunction()

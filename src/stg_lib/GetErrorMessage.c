@@ -1,35 +1,35 @@
 #include "CloseStg.h"
 #include "string.h"
 
-void OgCoreGetErrorMessage(OG_ERROR_CODE code, char *pszBuffer, uint64_t uLengthOfBuffer)
+void OgCrGetErrorMessage(OG_ERROR_CODE code, char *pszBuffer, uint64_t uLengthOfBuffer)
 {
     switch (code)
     {
-    case OG_ERROR_MESSAGE_NO_ERROR: {
+    case OPEN_STG_ERROR_MESSAGE_NO_ERROR: {
         strcpy_s(pszBuffer, uLengthOfBuffer, "No error.");
     }
-    case OG_ERROR_MESSAGE_MEMORY_ERROR: {
+    case OPEN_STG_ERROR_MESSAGE_MEMORY_ERROR: {
         strcpy_s(pszBuffer, uLengthOfBuffer,
                  "Memory alloc failed."
                  "This is usually caused by insufficient memory.");
     }
-    case OG_ERROR_MESSAGE_INVALID_PARAMETER: {
+    case OPEN_STG_ERROR_MESSAGE_INVALID_PARAMETER: {
         strcpy_s(pszBuffer, uLengthOfBuffer, "Invalid parameter.");
     }
-    case OG_ERROR_MESSAGE_MODULE_EXIST: {
+    case OPEN_STG_ERROR_MESSAGE_MODULE_EXIST: {
         strcpy_s(pszBuffer, uLengthOfBuffer, "Module exist");
     }
-    case OG_ERROR_MESSAGE_NOT_INITIALIZED: {
+    case OPEN_STG_ERROR_MESSAGE_NOT_INITIALIZED: {
         strcpy_s(pszBuffer, uLengthOfBuffer, "Module is not initalized.");
     }
     }
 }
 void OgSdlGetErrorMessage(OG_ERROR_CODE code, char *pszBuffer, uint64_t uLengthOfBuffer)
 {
-    strcpy_s(pszBuffer, uLengthOfBuffer, OgGetTLSStruct()->pszErrorMessage);
+    strcpy_s(pszBuffer, uLengthOfBuffer, OgGetTLSStruct()->pszAdditionalErrorMessage);
 }
 void OgGetErrorMessage(OG_ERROR eError, char *pszBuffer, uint64_t uLengthOfBuffer)
 {
-    OG_ERROR_NAMESPACE ns = OG_GET_ERROR_NAMESPACE(eError);
-    getProgramData()->rgModules[ns].pmModule.pfGetErrorMessage(OG_GET_ERROR_CODE(eError), pszBuffer, uLengthOfBuffer);
+    OG_ERROR_NAMESPACE ns = OgGetErrorNamespace(eError);
+    getProgramData()->rgModules[ns].pmModule.pfGetErrorMessage(OgGetErrorCode(eError), pszBuffer, uLengthOfBuffer);
 }

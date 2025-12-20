@@ -6,7 +6,7 @@ OG_BOOL OgRegisteredProgramModule(const OG_PROGRAM_MODULE_PUBLIC *pModule)
 {
     if (pModule == NULL)
     {
-        setError(OG_ERROR_MESSAGE_INVALID_PARAMETER);
+        setError(OPEN_STG_ERROR_MESSAGE_INVALID_PARAMETER);
         return FALSE;
     }
     OG_PROGRAM_DATA *ppd = getProgramData();
@@ -14,7 +14,7 @@ OG_BOOL OgRegisteredProgramModule(const OG_PROGRAM_MODULE_PUBLIC *pModule)
     size_t sDisplay = 0, sRegistered = 0, sSturct = sizeof(OG_PROGRAM_MODULE_PUBLIC);
     char *pszDisplay = NULL, *pszRegistered = NULL;
     OG_BOOL bIsStatic = FALSE, bMakeRegisteredNameAsDisplayName = FALSE;
-    bIsStatic = pModule->ufModuleRegisteredFlag & OG_INIT_PROGRAM_MODULE_FLAG_ALLOC_STATIC_HANDLE;
+    bIsStatic = pModule->ufModuleRegisteredFlag & OPEN_STG_FLAG_MODULE_ALLOC_STATIC_HANDLE;
     uint32_t uIndex;
     // 这里必须先分配内存再分配模块
     if (pModule->pszModuleDisplayName)
@@ -30,7 +30,7 @@ OG_BOOL OgRegisteredProgramModule(const OG_PROGRAM_MODULE_PUBLIC *pModule)
     // NOTE: 这里的'或'不是短路的！！
     if ((pszDisplay = (char *)malloc(sDisplay)) == NULL | (pszRegistered = (char *)malloc(sRegistered)) == NULL)
     {
-        setError(OG_ERROR_MESSAGE_MEMORY_ERROR);
+        setError(OPEN_STG_ERROR_MESSAGE_MEMORY_ERROR);
         goto freeResources;
     }
     memset((void *)pszDisplay, 0, sDisplay);
@@ -52,7 +52,7 @@ OG_BOOL OgRegisteredProgramModule(const OG_PROGRAM_MODULE_PUBLIC *pModule)
     ppm->pvAdditionalData = pModule->pvAdditionalData;
     ppm->ufModuleRegisteredFlag = pModule->ufModuleRegisteredFlag;
     ppm->uModuleNamespace = uIndex;
-
+    return TRUE;
 freeResources:
     free(pszDisplay);
     free(pszRegistered);

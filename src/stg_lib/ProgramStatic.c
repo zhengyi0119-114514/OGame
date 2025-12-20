@@ -15,10 +15,11 @@ OG_BOOL initProgramData(uint32_t uInternalModuleCount)
     s_pdData = (OG_PROGRAM_DATA *)malloc(sizeof(OG_PROGRAM_DATA));
     if (s_pdData == NULL)
     {
-        setError(OG_ERROR_MESSAGE_MEMORY_ERROR);
+        setError(OPEN_STG_ERROR_MESSAGE_MEMORY_ERROR);
         return OG_FALSE;
     }
-    if (initModuleContainer(uInternalModuleCount))
+    memset((void *)s_pdData, 0, sizeof(OG_PROGRAM_DATA));
+    if (!initModuleContainer(uInternalModuleCount))
         return OG_FALSE;
     return OG_TRUE;
 }

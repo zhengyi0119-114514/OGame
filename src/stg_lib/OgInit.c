@@ -3,6 +3,7 @@
 #include <SDL3_image/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 OG_BOOL OgInit(uint64_t ufInitFlag)
 {
@@ -16,6 +17,26 @@ OG_BOOL OgInit(uint64_t ufInitFlag)
     {
         return FALSE;
     }
+    OG_ERRNO = 114514;
+    if (!initSDL())
+    {
+        return FALSE;
+    }
+    {
+        OG_PROGRAM_MODULE_PUBLIC mod;
+        mod.iSize = sizeof(OG_PROGRAM_MODULE_PUBLIC);
+        mod.pszModuleDisplayName = "OpenStg Core";
+        mod.pszModuleRegisteredName = "ice_thorn.core.cirno";
+        mod.pfGetErrorMessage = OgCrGetErrorMessage;
+        mod.pvAdditionalData = NULL;
+        mod.ufModuleRegisteredFlag = OPEN_STG_FLAG_MODULE_ALLOC_STATIC_HANDLE;
+        mod.uModuleNamespace = OPEN_STG_NAMESPACE_CORE;
+        if (!OgRegisteredProgramModule(&mod))
+        {
+            return FALSE;
+        }
+    }
+    reserveModule(1);
     return bResult;
 }
 OG_BOOL initSDL()
@@ -24,10 +45,22 @@ OG_BOOL initSDL()
         goto setSdlErrorAndReturn;
     if (TTF_Init())
         goto setSdlErrorAndReturn;
-
+    {
+        OG_PROGRAM_MODULE_PUBLIC mod;
+        mod.iSize = sizeof(OG_PROGRAM_MODULE_PUBLIC);
+        mod.pszModuleDisplayName = "OpenStg SDL3";
+        mod.pszModuleRegisteredName = "ice_thorn.sdl3.chiruno";
+        mod.pfGetErrorMessage = OgSdlGetErrorMessage;
+        mod.pvAdditionalData = NULL;
+        mod.ufModuleRegisteredFlag = OPEN_STG_FLAG_MODULE_ALLOC_STATIC_HANDLE;
+        mod.uModuleNamespace = OPEN_STG_NAMESPACE_CORE;
+        if (OgRegisteredProgramModule(&mod))
+        {
+            return FALSE;
+        }
+    }
     return OG_TRUE;
 setSdlErrorAndReturn:
-    OG_ERRNO = OG_MAKE_ERROR(OG_ERROR_NAMESPACE_SDL3, OG_ERROR_MESSAGE_SDL3_INIT_FAILED);
-    OG_ERROR_MESSAGE = SDL_GetError();
+    SET_ERROR_AND_MESSAGE(OgMakeError(OPEN_STG_NAMESPACE_SDL3,OPEN_STG_ERROR_MESSAGE_SDL3_INIT_FAILED),SDL_GetError());
     return OG_FALSE;
 }

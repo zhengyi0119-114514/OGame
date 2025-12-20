@@ -1,8 +1,17 @@
 #include "CloseStg.h"
 
 #if defined WIN32 || WINDOWS32
+#include <windows.h>
+typedef struct OgELECTROMAGNETIC_DOT_TIMER_
+{
+    LARGE_INTEGER *pliDotTable;
+    LARGE_INTEGER liFrequency;
+    LARGE_INTEGER liStart;
+    LARGE_INTEGER liLast;
+    int8_t iFrequency;
+} OgELECTROMAGNETIC_DOT_TIMER;
 
-OgELECTROMAGNETIC_DOT_TIMER *OgElectromagneticDotTimerCreate(int8_t iFrequency)
+OgELECTROMAGNETIC_DOT_TIMER *OgCreateElectromagneticDotTimer(int8_t iFrequency)
 {
     if (iFrequency < 1)
         return NULL;
@@ -28,7 +37,7 @@ OgELECTROMAGNETIC_DOT_TIMER *OgElectromagneticDotTimerCreate(int8_t iFrequency)
     }
     return pedt;
 }
-void OgElectromagneticDotTimerDestory(OgELECTROMAGNETIC_DOT_TIMER *pEdt)
+void OgDestoryElectromagneticDotTimer(OgELECTROMAGNETIC_DOT_TIMER *pEdt)
 {
     if (pEdt)
     {
@@ -56,7 +65,7 @@ int64_t OgElectromagneticDotTimerPullTask(OgELECTROMAGNETIC_DOT_TIMER *pEdt)
     }
     return iResult;
 }
-void OgElectromagneticDotTimerRefresh(OgELECTROMAGNETIC_DOT_TIMER *pEdt)
+void OgRefreshElectromagneticDotTimer(OgELECTROMAGNETIC_DOT_TIMER *pEdt)
 {
     LARGE_INTEGER liCurrentTime;
     QueryPerformanceCounter(&liCurrentTime);
@@ -103,9 +112,8 @@ void OgElectromagneticDotTimerSkipATimeStamp(OgELECTROMAGNETIC_DOT_TIMER *pEdt)
 #include <time.h>
 
 #define NUMBER_OF_NS_IN_PRE_SECOND ((int64_t)(1000000000))
-OG_PRIVATE OG_CDECL inline void TimespecDifference(struct timespec *ptsSubtrahend,
-                                                               struct timespec *ptsReduction,
-                                                               struct timespec *ptsOutput);
+OG_PRIVATE OG_CDECL inline void TimespecDifference(struct timespec *ptsSubtrahend, struct timespec *ptsReduction,
+                                                   struct timespec *ptsOutput);
 OG_PRIVATE OG_CDECL inline int64_t TimespecToInt64(struct timespec *pts);
 OG_PRIVATE OG_CDECL inline struct timespec Int64ToTimespec(int64_t i);
 

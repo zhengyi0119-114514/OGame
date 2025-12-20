@@ -5,10 +5,10 @@ target_include_directories(open_stg_lib PRIVATE "include-private")
 target_include_directories(open_stg_lib PUBLIC SYSTEM include)
 target_sources(
     open_stg_lib
-    PRIVATE FILE_SET HEADERS
+    PUBLIC FILE_SET HEADERS
     FILES
-    include-private/CloseStg.h
-    include-private/CloseStgHistory.h
+    include/OpenStg.h
+    include/OpenStgDefine.h
 )
 target_sources(
     open_stg_lib
@@ -21,6 +21,7 @@ target_sources(
     OgQuit.c
     ProgramStatic.c
     RegisteredProgram.c
+    SetError.c
     ThreadLocalStorage.c
     WindowsDllMain.c
 )

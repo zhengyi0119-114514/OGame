@@ -102,10 +102,10 @@ OG_EXTERN OG_CDECL void OgRefreshElectromagneticDotTimer(OgELECTROMAGNETIC_DOT_T
  * @note 在Windows中，未使用Pthreads实现，使用了原生DllMain()实现
  * @return OgTHREAD_LOCAL_STORAGE_STRUCT* 线程局部存储结构的指针 
  */
-OG_EXTERN OG_CDECL OgTHREAD_LOCAL_STORAGE_STRUCT* OgGetTLSStruct(void);
+OG_EXTERN OG_CDECL OG_THREAD_LOCAL_STORAGE_STRUCT* OgGetTLSStruct(void);
 #define OG_ERRNO (OgGetTLSStruct()->ecErrno)                     ///< 线程独立的Errno字段
-#define OG_ERROR_MESSAGE (OgGetTLSStruct()->pszErrorMessage)     ///< 线程独立的ErrorMessage字段，长度原则上不长过 OG_ERROR_MESSAGE_MAX_LENGTH-1
-#define OG_ERROR_MESSAGE_MAX_LENGTH 256 
+#define OG_ERROR_MESSAGE (OgGetTLSStruct()->pszErrorMessage)     ///< 线程独立的ErrorMessage字段，长度原则上不长过 OPEN_STG_ERROR_MESSAGE_MAX_LENGTH-1
+#define OPEN_STG_ERROR_MESSAGE_MAX_LENGTH 256 
 
 // NOTE: 改动时手动更改OgRegisteredProgramModule()函数
 /**
@@ -141,7 +141,7 @@ OG_EXTERN OG_CDECL OG_BOOL OgRegisteredProgramModule(const OG_PROGRAM_MODULE* mo
  * @param uLengthOfBuffer 缓冲区的长度
  * @return void 
  */
-OG_EXTERN OG_CDECL void OgCoreGetErrorMessage(OG_ERROR_CODE code, char *pszBuffer,uint64_t uLengthOfBuffer);
+OG_EXTERN OG_CDECL void OgCrGetErrorMessage(OG_ERROR_CODE code, char *pszBuffer,uint64_t uLengthOfBuffer);
 #ifdef __cplusplus
 }
 #endif

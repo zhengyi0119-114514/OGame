@@ -6,11 +6,12 @@
 
 OG_BOOL initModuleContainer(uint32_t uCount)
 {
-    OG_PROGRAM_DATA *ppd = getProgramData();
-    ppd->rgModules = (OG_RPOGRAM_MODULE_PRIVATE *)calloc(uCount, sizeof(OG_RPOGRAM_MODULE_PRIVATE));
-    if (ppd->rgModules == NULL)
+    OG_PROGRAM_DATA *ppm = getProgramData();
+    ppm->rgModules = (OG_PROGRAM_MODULE_PRIVATE *)calloc(uCount, sizeof(OG_PROGRAM_MODULE_PRIVATE));
+    ppm->uCountOfReserved = uCount;
+    if (ppm->rgModules == NULL)
     {
-        setError(OG_ERROR_MESSAGE_NO_ERROR);
+        setError(OPEN_STG_ERROR_MESSAGE_NO_ERROR);
         return OG_FALSE;
     }
     return OG_TRUE;
@@ -18,17 +19,18 @@ OG_BOOL initModuleContainer(uint32_t uCount)
 OG_BOOL reserveModule(uint32_t uCount)
 {
     OG_PROGRAM_DATA *ppd = getProgramData();
-    OG_RPOGRAM_MODULE_PRIVATE *rgModules = NULL;
+    OG_PROGRAM_MODULE_PRIVATE *rgModules = NULL;
     size_t uCountOfReserved = ppd->uCountOfReserved + uCount;
     size_t sNewModuleIndex = ppd->uCountOfReserved;
-    rgModules = (OG_RPOGRAM_MODULE_PRIVATE *)realloc((void *)ppd->rgModules,
-                                                     sizeof(OG_RPOGRAM_MODULE_PRIVATE) * uCountOfReserved);
+    rgModules = (OG_PROGRAM_MODULE_PRIVATE *)realloc((void *)ppd->rgModules,
+                                                     sizeof(OG_PROGRAM_MODULE_PRIVATE) * uCountOfReserved);
     if (rgModules == NULL)
     {
-        setError(OG_ERROR_MESSAGE_MEMORY_ERROR);
+        setError(OPEN_STG_ERROR_MESSAGE_MEMORY_ERROR);
         return FALSE;
     }
-    memset((void *)rgModules + sNewModuleIndex, 0, sizeof(OG_RPOGRAM_MODULE_PRIVATE) * uCount);
+    // 注意操作优先级!!!
+    memset((void *)(rgModules + sNewModuleIndex), 0, sizeof(OG_PROGRAM_MODULE_PRIVATE) * uCount);
     ppd->rgModules = rgModules;
     ppd->uCountOfReserved += uCount;
     return TRUE;
@@ -36,61 +38,73 @@ OG_BOOL reserveModule(uint32_t uCount)
 OG_BOOL allocModule(OG_PROGRAM_MODULE_PUBLIC **ppModule, int64_t sPreAllocIndex, uint32_t *puOutIndex)
 {
     OG_PROGRAM_DATA *ppd = getProgramData();
-    OG_RPOGRAM_MODULE_PRIVATE *pModule = NULL;
-    // 检查模块空间名称是否是静态分配
-    if (sPreAllocIndex >= 0)
+    OG_PROGRAM_MODULE_PRIVATE *pTargetPrivateModule = NULL;
+    uint32_t uMaxIndex = ppd->uCountOfReserved - 1, uTargetIndex;
+    // 检查参数
+    if (ppModule == NULL)
+        goto invalidParameter;
+    if (puOutIndex == NULL)
+        goto invalidParameter;
+    if (sPreAllocIndex >= 0) // Index是预分配的
     {
-        if (ppd->uCountOfReserved > sPreAllocIndex + 1) // 检查大小
+        if (sPreAllocIndex > uMaxIndex)
         {
-            if (!reserveModule(sPreAllocIndex + 1 - ppd->uCountOfReserved)) // 大小不足，分配内存
+            if (!reserveModule(sPreAllocIndex - uMaxIndex))
+            {
                 return FALSE;
+            }
         }
-        if (ppd->rgModules[sPreAllocIndex].bIsUsed) // 模块已被占用
+        if (ppd->rgModules[sPreAllocIndex].bIsUsed)
         {
-            setError(OG_ERROR_MESSAGE_MODULE_EXIST);
+            setError(OPEN_STG_ERROR_MESSAGE_MODULE_EXIST);
+            
             return FALSE;
         }
         else
         {
-            pModule = ppd->rgModules + sPreAllocIndex;
-            pModule->bIsUsed = TRUE; // 占用模块
-            *ppModule = &(pModule->pmModule);
-            if (!puOutIndex)
-                *puOutIndex = sPreAllocIndex;
-            return TRUE;
+            pTargetPrivateModule = &ppd->rgModules[sPreAllocIndex];
+            uTargetIndex = sPreAllocIndex;
         }
     }
     else
     {
-        for (size_t sIndex = 0, sEnd = ppd->uCountOfReserved; sIndex < sEnd; ++sIndex)
+        for (uint32_t uIndex = 0, uMax = ppd->uCountOfReserved; uIndex < uMax; ++uIndex)
         {
-            pModule = ppd->rgModules + sIndex;
-            if (!pModule->bIsUsed)
+            OG_PROGRAM_MODULE_PRIVATE *pppm = &ppd->rgModules[uIndex];
+            if (pppm->bIsUsed)
             {
-                pModule->bIsUsed = TRUE;
-                *ppModule = &pModule->pmModule;
-                if (!puOutIndex)
-                    *puOutIndex = ppd->uCountOfReserved - 1;
-                return TRUE;
+                continue;
+            }
+            else
+            {
+                pTargetPrivateModule = pppm;
+                uTargetIndex = uIndex;
+                break;
             }
         }
-        if (!reserveModule(1))
+        if (pTargetPrivateModule == NULL)
         {
-            return FALSE;
+            if (!reserveModule(1))
+            {
+                return FALSE;
+            }
+            uTargetIndex = uMaxIndex + 1;
+            pTargetPrivateModule = &ppd->rgModules[uTargetIndex];
         }
-        if (!puOutIndex)
-            *puOutIndex = ppd->uCountOfReserved - 1;
-        pModule = ppd->rgModules + ppd->uCountOfReserved - 1;
-        *ppModule = &pModule->pmModule;
-        pModule->bIsUsed = TRUE;
-        return TRUE;
     }
+
+    *puOutIndex = uTargetIndex;
+    *ppModule = &pTargetPrivateModule->pmModule;
+    return TRUE;
+invalidParameter:
+    setError(OPEN_STG_ERROR_MESSAGE_INVALID_PARAMETER);
+    return FALSE;
 }
+
 OG_BOOL freeModuleContainer()
 {
-    // FIXME: 释放数据成员
     OG_PROGRAM_DATA *ppd = getProgramData();
-    OG_RPOGRAM_MODULE_PRIVATE *rgModules = ppd->rgModules;
+    OG_PROGRAM_MODULE_PRIVATE *rgModules = ppd->rgModules;
     for (size_t sIndex = 0, sMax = ppd->uCountOfReserved; sIndex < sMax; ++sIndex)
     {
         free((void *)rgModules[sIndex].pmModule.pszModuleDisplayName);

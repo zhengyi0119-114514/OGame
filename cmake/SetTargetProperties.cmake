@@ -1,32 +1,13 @@
-find_program(__LLD_FOUND NAMES "lld")
-
-if(
-    "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR
-    "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang" OR
-    "${CMAKE_CXX_COMPILER_ID}" STREQUAL "ARMClang" OR
-    "${CMAKE_CXX_COMPILER_ID}" STREQUAL "IntelLLVM" OR
-    "${CMAKE_CXX_COMPILER_ID}" STREQUAL "CrayClang" OR
-    "${CMAKE_CXX_COMPILER_ID}" STREQUAL "IBMClang" OR
-    "${CMAKE_CXX_COMPILER_ID}" STREQUAL "TIClang"
+set_target_properties(
+    test_game
+    PROPERTIES
+    CXX_STANDARD 20
+    CXX_STANDARD_REQUIRED TRUE
+    CXX_EXTENSIONS TRUE
+    C_STANDARD 17
+    C_STANDARD_REQUIRED TRUE
+    C_EXTENSIONS TRUE
 )
-    set(__IS_CLANG TRUE)
-else()
-    set(__IS_CLANG FALSE)
-endif()
-
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    set(__IS_GNU TRUE)
-else()
-    set(__IS_GNU FALSE)
-endif()
-
-if(${__IS_GNU} OR ${__IS_CLANG} AND NOT "${__LLD_FOUND}" STREQUAL "__LLD_FOUND-NOTFOUND")
-    if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.29)
-        set(CMAKE_LINKER_TYPE LLD)
-    else()
-        add_link_options("-fuse-ld=lld")
-    endif()
-endif()
 
 set_target_properties(open_stg_lib PROPERTIES
     CXX_STANDARD 20
@@ -64,10 +45,11 @@ target_compile_definitions(
     $<$<BOOL:${UNIX}>:POSIX=true>
     $<$<CONFIG:Debug>:_DEBUG>
     $<$<CONFIG:Debug>:DEBUG>
-    $<$<BOOL:${XDG_DESKTOP_PORTAL_FOUND}>:OPEN_STG_HAS_XDG_PORTAL=true>
-    $<$<PLATFORM_ID:Linux>:OPEN_STG_IS_LINUX=true>
-    $<$<PLATFORM_ID:FreeBSD,NetBSD,OpenBSD,MirBSD>:OPEN_STG_IS_BSD=true> #未测试
-    $<$<BOOL:${APPLE}>:OPEN_STG_IS_APPLE=true>
+    $<$<BOOL:${XDG_DESKTOP_PORTAL_FOUND}>:OPEN_STG_MACRO_HAS_XDG_PORTAL=true>
+    $<$<PLATFORM_ID:Linux>:OPEN_STG_MACRO_IS_LINUX=true>
+    $<$<PLATFORM_ID:FreeBSD,NetBSD,OpenBSD,MirBSD>:OPEN_STG_MACRO_IS_BSD=true> #未测试
+    $<$<PLATFORM_ID:Windows,WindowsPhone,WindowsStore,MSYS>:OPEN_STG_MACRO_IS_WINDOWS=true>
+    $<$<BOOL:${APPLE}>:OPEN_STG_MACRO_IS_APPLE=true>
 )
 
 

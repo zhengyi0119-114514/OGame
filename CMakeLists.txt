@@ -3,9 +3,11 @@ project(open_stg VERSION 0.1.0)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" "${CMAKE_SOURCE_DIR}")
 include(cmake/FindPackage.cmake)
+include(cmake/SetGlobalProperties.cmake)
 include(GNUInstallDirs)
 
-option(USE_SDL_CLOCK "Use SDL2's clock instead of system clock" FALSE)
+option(USE_SDL_CLOCK "Use SDL3's clock instead of system clock" FALSE)
+
 
 add_library(open_stg_lib SHARED src/empty.c)
 
@@ -18,7 +20,6 @@ target_include_directories(open_stg_lib PUBLIC "${CMAKE_BINARY_DIR}/include")
 
 add_executable(test_game)
 target_sources(test_game PRIVATE src/empty.c)
-target_link_libraries(test_game PRIVATE open_stg_lib)
 
 add_executable(unit_test)
 target_sources(unit_test PRIVATE src/empty.c)
@@ -31,14 +32,6 @@ ADD_CRATE(ogame_logic_part
     CRATE_TYPE "SHARED"
     SOURCE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
 )
-
-if(
-    "${CMAKE_SYSTEM_NAME}" STREQUAL "Windows" OR
-    "${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsPhone" OR
-    "${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore" OR
-    "${CMAKE_SYSTEM_NAME}" STREQUAL "MSYS"
-)
-endif()
 
 add_subdirectory(src/stg_lib)
 add_subdirectory(src/test_game)

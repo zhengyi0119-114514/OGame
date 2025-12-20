@@ -3,18 +3,7 @@
 
 #if !defined OPEN_GAME_PRIVATE_HISTORY_H
 #define OPEN_GAME_PRIVATE_HISTORY_H 1
-#if defined WIN32 || defined WINNT || defined _WIN32
-#define OG_EXPORT __declspec(dllexport)
-#define OG_CDECL __cdecl
-#define OG_STDCALL __stdcall
-#define OG_INTERNAL
-#else
-#define OG_EXPORT
-#define OG_CDECL __attribute__((__cdecl__))
-#define OG_INTERNAL __attribute__((visibility("hidden")))
-#endif
-#define OG_PRIVATE static
-#define OG_EXTERN extern
+
 
 #if defined __cplusplus
 extern "C"
@@ -46,7 +35,7 @@ extern "C"
     {
         OG_PROGRAM_MODULE_PUBLIC_VER1 pmModule;
         OG_BOOL bIsUsed;
-    } OG_RPOGRAM_MODULE_PRIVATE;
+    } OG_PROGRAM_MODULE_PRIVATE;
 #if defined __cplusplus
 }
 #endif
