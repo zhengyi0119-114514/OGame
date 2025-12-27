@@ -4,9 +4,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-OG_BOOL initModuleContainer(uint32_t uCount)
+OG_BOOL_T initModuleContainer(uint32_t uCount)
 {
-    OG_PROGRAM_DATA *ppm = getProgramData();
+    OG_PROGRAM_DATA_T *ppm = getProgramData();
     ppm->rgModules = (OG_PROGRAM_MODULE_PRIVATE *)calloc(uCount, sizeof(OG_PROGRAM_MODULE_PRIVATE));
     ppm->uCountOfReserved = uCount;
     if (ppm->rgModules == NULL)
@@ -16,9 +16,9 @@ OG_BOOL initModuleContainer(uint32_t uCount)
     }
     return OG_TRUE;
 }
-OG_BOOL reserveModule(uint32_t uCount)
+OG_BOOL_T reserveModule(uint32_t uCount)
 {
-    OG_PROGRAM_DATA *ppd = getProgramData();
+    OG_PROGRAM_DATA_T *ppd = getProgramData();
     OG_PROGRAM_MODULE_PRIVATE *rgModules = NULL;
     size_t uCountOfReserved = ppd->uCountOfReserved + uCount;
     size_t sNewModuleIndex = ppd->uCountOfReserved;
@@ -35,9 +35,9 @@ OG_BOOL reserveModule(uint32_t uCount)
     ppd->uCountOfReserved += uCount;
     return TRUE;
 }
-OG_BOOL allocModule(OG_PROGRAM_MODULE_PUBLIC **ppModule, int64_t sPreAllocIndex, uint32_t *puOutIndex)
+OG_BOOL_T allocModule(OG_PROGRAM_MODULE_PUBLIC **ppModule, int64_t sPreAllocIndex, uint32_t *puOutIndex)
 {
-    OG_PROGRAM_DATA *ppd = getProgramData();
+    OG_PROGRAM_DATA_T *ppd = getProgramData();
     OG_PROGRAM_MODULE_PRIVATE *pTargetPrivateModule = NULL;
     uint32_t uMaxIndex = ppd->uCountOfReserved - 1, uTargetIndex;
     // 检查参数
@@ -101,9 +101,9 @@ invalidParameter:
     return FALSE;
 }
 
-OG_BOOL freeModuleContainer()
+OG_BOOL_T freeModuleContainer()
 {
-    OG_PROGRAM_DATA *ppd = getProgramData();
+    OG_PROGRAM_DATA_T *ppd = getProgramData();
     OG_PROGRAM_MODULE_PRIVATE *rgModules = ppd->rgModules;
     for (size_t sIndex = 0, sMax = ppd->uCountOfReserved; sIndex < sMax; ++sIndex)
     {

@@ -1,9 +1,10 @@
 #include "CloseStg.h"
 #include "CloseStgHistory.h"
 #include <pthread.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
+
 #if __has_include("windows.h")
 #include <windows.h>
 #endif
@@ -13,7 +14,7 @@ OG_PRIVATE pthread_key_t s_pkPthreadKey = 0;
 extern DWORD s_tls;
 #endif
 
-OG_BOOL inilTSL(uint64_t ufInitFlag)
+OG_BOOL_T inilTSL(uint64_t ufInitFlag)
 {
 #if defined _WIN32
     return OG_TRUE;
@@ -29,7 +30,7 @@ failed:
     return OG_FALSE;
 #endif
 }
-OG_INTERNAL OG_CDECL OG_BOOL quitTSL(void)
+OG_INTERNAL OG_BOOL_T OG_CDECL quitTSL(void)
 {
 #if defined _WIN32
     return OG_TRUE;
@@ -50,7 +51,6 @@ OG_THREAD_LOCAL_STORAGE_STRUCT *OgGetTLSStruct(void)
     {
         // FIXME: 有空去查查DllMain()
         fprintf_s(stderr, "%p As TlsGetValue in thread_id %d\n", (void *)ptlss, (int)GetCurrentThreadId());
-        _Exit(114514);
     }
     return ptlss;
 #else

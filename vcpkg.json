@@ -2,8 +2,9 @@
   "dependencies": [
     "boost-json",
     "boost-program-options",
-    "lua",
     "fmt",
+    "icu",
+    "lua",
     "pthreads",
     {
       "name": "sdl3",
@@ -31,8 +32,8 @@
     {
       "name": "spdlog",
       "features": [
-        "wchar",
-        "benchmark"
+        "benchmark",
+        "wchar"
       ]
     }
   ]

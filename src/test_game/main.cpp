@@ -8,7 +8,7 @@ int main(int argc, char **args)
     {
         SPDLOG_ERROR("Failed to init og.");
     }
-    OgELECTROMAGNETIC_DOT_TIMER *pedt = OgCreateElectromagneticDotTimer(10);
+    OG_ELECTROMAGNETIC_DOT_TIMER *pedt = OgCreateElectromagneticDotTimer(10);
     OgRefreshElectromagneticDotTimer(pedt);
     for (size_t sIndex = 0; sIndex < 31; sIndex++)
     {

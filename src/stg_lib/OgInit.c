@@ -5,9 +5,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-OG_BOOL OgInit(uint64_t ufInitFlag)
+OG_BOOL_T OgInit(uint64_t ufInitFlag)
 {
-    OG_BOOL bResult = TRUE;
+    OG_BOOL_T bResult = TRUE;
     if (!inilTSL(0))
     {
         fputs(strerror(errno), stderr);
@@ -39,7 +39,7 @@ OG_BOOL OgInit(uint64_t ufInitFlag)
     reserveModule(1);
     return bResult;
 }
-OG_BOOL initSDL()
+OG_BOOL_T initSDL()
 {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_GAMEPAD | SDL_INIT_JOYSTICK))
         goto setSdlErrorAndReturn;

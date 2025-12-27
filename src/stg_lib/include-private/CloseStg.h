@@ -16,60 +16,50 @@
 extern "C"
 {
 #endif
-#ifdef _WIN32
-    typedef struct OgELECTROMAGNETIC_DOT_TIMER_ OgELECTROMAGNETIC_DOT_TIMER;
-#elif defined __unix__ || defined __unix
-typedef struct OgELECTROMAGNETIC_DOT_TIMER_
-{
-    int64_t *piDotTable;
-    struct timespec tsLast;
-    struct timespec tsStart;
-    int8_t iFrequency;
-} OgELECTROMAGNETIC_DOT_TIMER;
-#endif
+    typedef struct OG_ELECTROMAGNETIC_DOT_TIMER_ OG_ELECTROMAGNETIC_DOT_TIMER;
     // 计时器
-    OG_EXPORT OG_CDECL OgELECTROMAGNETIC_DOT_TIMER *OgCreateElectromagneticDotTimer(int8_t iFrequency);
-    OG_EXPORT OG_CDECL int64_t OgElectromagneticDotTimerPullTask(OgELECTROMAGNETIC_DOT_TIMER *pEdt);
-    OG_EXPORT OG_CDECL void OgElectromagneticDotTimerSkipATimeStamp(OgELECTROMAGNETIC_DOT_TIMER *pEdt);
-    OG_EXPORT OG_CDECL void OgRefreshElectromagneticDotTimer(OgELECTROMAGNETIC_DOT_TIMER *pEdt);
-    OG_EXPORT OG_CDECL void OgDestoryElectromagneticDotTimer(OgELECTROMAGNETIC_DOT_TIMER *pEdt);
+    OG_EXPORT OG_ELECTROMAGNETIC_DOT_TIMER * OG_CDECL OgCreateElectromagneticDotTimer(int8_t iDotFrequency);
+    OG_EXPORT int64_t  OG_CDECL OgElectromagneticDotTimerPullTask(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt);
+    OG_EXPORT void  OG_CDECL OgElectromagneticDotTimerSkipATimeStamp(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt);
+    OG_EXPORT  void OG_CDECL OgRefreshElectromagneticDotTimer(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt);
+    OG_EXPORT  void OG_CDECL OgDestoryElectromagneticDotTimer(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt);
     // 初始化
-    OG_EXPORT OG_CDECL OG_BOOL OgInit(uint64_t ufInitFlag);
-    OG_EXPORT OG_CDECL OG_BOOL OgQuit(void);
+    OG_EXPORT OG_BOOL_T OG_CDECL OgInit(uint64_t ufInitFlag);
+    OG_EXPORT OG_BOOL_T OG_CDECL OgQuit(void);
     // 线程局部存储
-    OG_EXPORT OG_CDECL OG_THREAD_LOCAL_STORAGE_STRUCT *OgGetTLSStruct(void);
+    OG_EXPORT  OG_THREAD_LOCAL_STORAGE_STRUCT *OG_CDECL OgGetTLSStruct(void);
 #define OG_ERRNO (OgGetTLSStruct()->ecErrno)
 #define OG_ERROR_MESSAGE (OgGetTLSStruct()->pszAdditionalErrorMessage)
-    OG_INTERNAL OG_CDECL OG_BOOL inilTSL(uint64_t ufInitFlag);
+    OG_INTERNAL OG_BOOL_T OG_CDECL inilTSL(uint64_t ufInitFlag);
     // SDL
-    OG_INTERNAL OG_CDECL OG_BOOL initSDL(void);
+    OG_INTERNAL OG_BOOL_T OG_CDECL initSDL(void);
     // 错误处理
-    OG_INTERNAL OG_CDECL void setError(OG_ERROR_CODE ec);
-    OG_INTERNAL OG_CDECL void setErrorAndMessage(const char *pszFile, const char *pszFunction, uint32_t uLine,
-                                                 OG_ERROR eErrno, const char *pszMessage);
+    OG_INTERNAL void OG_CDECL setError(OG_ERROR_CODE_T ec);
+    OG_INTERNAL void OG_CDECL setErrorAndMessage(const char *pszFile, const char *pszFunction, uint32_t uLine,
+                                                 OG_ERROR_T eErrno, const char *pszMessage);
 #define SET_ERROR_AND_MESSAGE(errno, message)                                                                          \
     setErrorAndMessage(__FILE__, OPEN_STG_MACRO_FUNCTION, __LINE__, (errno), (message))
-    OG_EXPORT OG_CDECL void OgCrGetErrorMessage(OG_ERROR_CODE code, char *pszBuffer, uint64_t uLengthOfBuffer);
-    OG_EXPORT OG_CDECL void OgSdlGetErrorMessage(OG_ERROR_CODE code, char *pszBuffer, uint64_t uLengthOfBuffer);
-    OG_EXPORT OG_CDECL void OgGetErrorMessage(OG_ERROR eError, char *pszBuffer, uint64_t uLengthOfBuffer);
+    OG_EXPORT void OG_CDECL OgCrGetErrorMessage(OG_ERROR_CODE_T code, char *pszBuffer, uint64_t uLengthOfBuffer);
+    OG_EXPORT void OG_CDECL OgSdlGetErrorMessage(OG_ERROR_CODE_T code, char *pszBuffer, uint64_t uLengthOfBuffer);
+    OG_EXPORT void OG_CDECL OgGetErrorMessage(OG_ERROR_T eError, char *pszBuffer, uint64_t uLengthOfBuffer);
     // 模块管理
     typedef struct OgTagPROGRAM_DATA
     {
         OG_PROGRAM_MODULE_PRIVATE *rgModules;
         uint32_t uCountOfReserved;
-    } OG_PROGRAM_DATA;
-    OG_EXPORT OG_CDECL OG_BOOL OgRegisteredProgramModule(const OG_PROGRAM_MODULE_PUBLIC *pModule);
-    OG_INTERNAL OG_CDECL OG_BOOL initProgramData(uint32_t uInternalModuleCount);
-    OG_INTERNAL OG_CDECL OG_BOOL freeProgramData();
-    OG_INTERNAL OG_CDECL OG_PROGRAM_DATA *getProgramData();
-    OG_INTERNAL OG_CDECL OG_BOOL reserveModule(uint32_t uCount);
+    } OG_PROGRAM_DATA_T;
+    OG_EXPORT OG_BOOL_T OG_CDECL  OgRegisteredProgramModule(const OG_PROGRAM_MODULE_PUBLIC *pModule);
+    OG_INTERNAL OG_BOOL_T OG_CDECL  initProgramData(uint32_t uInternalModuleCount);
+    OG_INTERNAL OG_BOOL_T OG_CDECL  freeProgramData();
+    OG_INTERNAL  OG_PROGRAM_DATA_T *OG_CDECL getProgramData();
+    OG_INTERNAL OG_BOOL_T OG_CDECL  reserveModule(uint32_t uCount);
     /**
      * @param sPreAllocIndex 默认为负数
      */
-    OG_INTERNAL OG_CDECL OG_BOOL allocModule(OG_PROGRAM_MODULE_PUBLIC **ppModule, int64_t sPreAllocIndex,
+    OG_INTERNAL OG_BOOL_T OG_CDECL  allocModule(OG_PROGRAM_MODULE_PUBLIC **ppModule, int64_t sPreAllocIndex,
                                              uint32_t *piIndex);
-    OG_INTERNAL OG_CDECL OG_BOOL initModuleContainer(uint32_t uCount);
-    OG_INTERNAL OG_CDECL OG_BOOL freeModuleContainer();
+    OG_INTERNAL OG_BOOL_T OG_CDECL  initModuleContainer(uint32_t uCount);
+    OG_INTERNAL OG_BOOL_T OG_CDECL  freeModuleContainer();
 
 #ifdef __cplusplus
 }

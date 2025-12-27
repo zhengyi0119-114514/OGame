@@ -2,18 +2,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-OG_BOOL OgRegisteredProgramModule(const OG_PROGRAM_MODULE_PUBLIC *pModule)
+OG_BOOL_T OgRegisteredProgramModule(const OG_PROGRAM_MODULE_PUBLIC *pModule)
 {
     if (pModule == NULL)
     {
         setError(OPEN_STG_ERROR_MESSAGE_INVALID_PARAMETER);
         return FALSE;
     }
-    OG_PROGRAM_DATA *ppd = getProgramData();
+    OG_PROGRAM_DATA_T *ppd = getProgramData();
     OG_PROGRAM_MODULE_PUBLIC *ppm = NULL;
     size_t sDisplay = 0, sRegistered = 0, sSturct = sizeof(OG_PROGRAM_MODULE_PUBLIC);
     char *pszDisplay = NULL, *pszRegistered = NULL;
-    OG_BOOL bIsStatic = FALSE, bMakeRegisteredNameAsDisplayName = FALSE;
+    OG_BOOL_T bIsStatic = FALSE, bMakeRegisteredNameAsDisplayName = FALSE;
     bIsStatic = pModule->ufModuleRegisteredFlag & OPEN_STG_FLAG_MODULE_ALLOC_STATIC_HANDLE;
     uint32_t uIndex;
     // 这里必须先分配内存再分配模块

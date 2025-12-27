@@ -10,7 +10,6 @@
     </PropertyGroup>
     <ItemGroup Condition="'$(MSBuildProjectExtension)' == '.vcxproj'">
         <PackageReference Include="VC-LTL">
-            <!--根据自己的情况选择VC-LTL版本-->
             <Version>5.2.2</Version>
         </PackageReference>
     </ItemGroup>

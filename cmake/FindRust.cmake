@@ -80,36 +80,33 @@ if(NOT EXISTS "${__RUST_TARGET_DIRECTORY}")
 endif()
 
 # Get current target
-if(NOT DEFINED __RUST_TOOLCHAIN)
-    if(DEFINED RUST_TOOLCHAIN)
-        set(__RUST_TOOLCHAIN "${RUST_TOOLCHAIN}")
-        execute_process(
+if(DEFINED RUST_TOOLCHAIN)
+    set(__RUST_TOOLCHAIN "${RUST_TOOLCHAIN}")
+    execute_process(
             COMMAND "${RUSTUP_EXECUTABLE_FILE_PATH}" "target" "list"
             WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
             OUTPUT_VARIABLE __RUSTUP_OUTPUT
-        )
+    )
 
-        if(NOT "${__RUSTUP_OUTPUT}" MATCHES "${__RUST_TOOLCHAIN}")
-            __RUST_FAILED_MESSAGE("Unknown toolchain :${__RUST_TOOLCHAIN}")
-        endif()
+    if(NOT "${__RUSTUP_OUTPUT}" MATCHES "${__RUST_TOOLCHAIN}")
+        __RUST_FAILED_MESSAGE("Unknown toolchain :${__RUST_TOOLCHAIN}")
+    endif()
 
-    else()
-        set(__RUST_TOOLCHAIN "")
-        execute_process(
+else()
+    set(__RUST_TOOLCHAIN "")
+    execute_process(
             COMMAND "${RUSTUP_EXECUTABLE_FILE_PATH}" "default"
             WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
             OUTPUT_VARIABLE __RUSTUP_OUTPUT
-        )
+    )
 
-        string(STRIP "${__RUSTUP_OUTPUT}" __RUSTUP_OUTPUT)
-        string(REGEX MATCH [[^((stable)|(beta)|(nightly))-]] __RUST_TOOLCHAIN_PREFIX "${__RUSTUP_OUTPUT}")
-        string(REGEX MATCH [[^((stable)|(beta)|(nightly))-[a-z0-9_]+-[a-z0-9_]+-[a-z0-9_]+(-[a-z0-9_]+)?]] __RUST_TOOLCHAIN "${__RUSTUP_OUTPUT}")
-        string(REPLACE "${__RUST_TOOLCHAIN_PREFIX}" "" __RUST_TOOLCHAIN "${__RUST_TOOLCHAIN}")
-    endif()
-
-    list(APPEND __RUST_BUILD_OPTIONS "--target" "${__RUST_TOOLCHAIN}")
-    set(__RUST_TOOLCHAIN "${__RUST_TOOLCHAIN}" CACHE STRING "rustup toolchain --target {value}")
+    string(STRIP "${__RUSTUP_OUTPUT}" __RUSTUP_OUTPUT)
+    string(REGEX MATCH [[^((stable)|(beta)|(nightly))-]] __RUST_TOOLCHAIN_PREFIX "${__RUSTUP_OUTPUT}")
+    string(REGEX MATCH [[^((stable)|(beta)|(nightly))-[a-z0-9_]+-[a-z0-9_]+-[a-z0-9_]+(-[a-z0-9_]+)?]] __RUST_TOOLCHAIN "${__RUSTUP_OUTPUT}")
+    string(REPLACE "${__RUST_TOOLCHAIN_PREFIX}" "" __RUST_TOOLCHAIN "${__RUST_TOOLCHAIN}")
 endif()
+
+list(APPEND __RUST_BUILD_OPTIONS "--target" "${__RUST_TOOLCHAIN}")
 
 __RUST_STATUS_MESSAGE("Current rustup toolchain :${__RUST_TOOLCHAIN}")
 
@@ -142,7 +139,7 @@ if(
 )
     set(__RUST_EXECUTABLE_FILE_EXTENSION ".exe")
     set(__RUST_STATIC_LIBRARY_FILE_EXTENSION ".lib")
-    set(__RUST_IMPROT_LIBRARY_FILE_EXTENSION ".lib")
+    set(__RUST_IMPROT_LIBRARY_FILE_EXTENSION ".dll.lib")
     set(__RUST_SHARED_LIBRARY_FILE_EXTENSION ".dll")
     set(__RUST_STATIC_LIBRARY_FILE_SUFFIX "")
     set(__RUST_SHARED_LIBRARY_FILE_SUFFIX "")
@@ -340,7 +337,8 @@ function(TARGET_LINK_SHARED_CRATE __target)
         "${CMAKE_SYSTEM_NAME}" STREQUAL "MSYS")
         foreach(__crate ${__CRATE_PUBLIC} ${__CRATE_PRIVATE})
             add_custom_command(TARGET "${__target}" POST_BUILD
-                COMMAND "${CMAKE_COMMAND}" "-E" "copy_if_different" "${${__crate}_DLL_FILE}" "$<TARGET_FILE_DIR:${__target}>")
+                COMMAND "${CMAKE_COMMAND}" "-E" "copy_if_different" "${${__crate}_DLL_FILE}" "$<TARGET_FILE_DIR:${__target}>"
+            )
         endforeach()
     endif()
 endfunction()

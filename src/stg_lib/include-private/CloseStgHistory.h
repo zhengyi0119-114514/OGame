@@ -14,7 +14,6 @@ extern "C"
         int64_t iSize;
 
     } OgStructWithSizeParameter;
-    typedef void (*OG_CDECL OgGetErrorMessageFunction)(OG_ERROR_CODE code, char *pszBuffer, uint64_t uLengthOfBuffer);
     typedef struct OgTagPublicPROGRAM_MODULE
     {
         int64_t iSize;
@@ -24,17 +23,17 @@ extern "C"
             const char *pszModuleRegisteredId;
             intptr_t iPlaceholder;
         };
-        OgGetErrorMessageFunction pfGetErrorMessage;
+        OG_FORMAT_ERROR_MESSAGE_FUNCTION_T pfGetErrorMessage;
         void *pvAdditionalData;
-        ModuleRegisteredFlag ufModuleRegisteredFlag;
-        uint32_t uModuleNamespace;
+        OG_MODULE_REGISTERED_FLAG_T ufModuleRegisteredFlag;
+        OG_ERROR_NAMESPACE_T uModuleNamespace;
     } OG_PROGRAM_MODULE_PUBLIC_VER1;
     typedef OG_PROGRAM_MODULE_PUBLIC_VER1 OG_PROGRAM_MODULE_PUBLIC;
 
     typedef struct OgTagPrivatePROGRAM_MODULE
     {
         OG_PROGRAM_MODULE_PUBLIC_VER1 pmModule;
-        OG_BOOL bIsUsed;
+        OG_BOOL_T bIsUsed;
     } OG_PROGRAM_MODULE_PRIVATE;
 #if defined __cplusplus
 }

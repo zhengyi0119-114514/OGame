@@ -1,7 +1,7 @@
 #include "CloseStg.h"
 #include <string.h>
 
-void setError(OG_ERROR_CODE ec)
+void setError(OG_ERROR_CODE_T ec)
 {
     OG_THREAD_LOCAL_STORAGE_STRUCT *ptlss = OgGetTLSStruct();
     ptlss->ecErrno = OgMakeError(OPEN_STG_NAMESPACE_CORE, ec);

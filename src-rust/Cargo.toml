@@ -6,11 +6,6 @@ edition = "2024"
 [dependencies]
 bitflags = "2.10.0"
 
-[dependencies.gtk]
-package = "gtk4"
-version = "0.10.3"
-features = ["v4_2"]
-
 [lib]
 crate-type = ["cdylib"]
 

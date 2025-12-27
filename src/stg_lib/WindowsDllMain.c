@@ -1,7 +1,7 @@
 #if defined _WIN32
+#include <windows.h>
 #include <OpenStgDefine.h>
 #include <stdio.h>
-#include <windows.h>
 
 OG_INTERNAL DWORD s_tls = 0;
 
@@ -16,23 +16,20 @@ BOOL WINAPI DllMain(HINSTANCE hinstDll, DWORD fdwReason, LPVOID lpvReserved)
         {
             return FALSE; // FIXME: 修你大爷修
         }
-        // fprintf_s(stderr, "WHAT DO TlsAlloc RETURN?,%d\n", (int)s_tls);
-        // break;
+        //  break;
+         /*主线程在调用DllMain(DLL_PROCESS_ATTACH)后不会调用DllMain(DLL_THREAD_ATTACH)*/
     }
     case DLL_THREAD_ATTACH: {
         OG_THREAD_LOCAL_STORAGE_STRUCT *ptlss = (OG_THREAD_LOCAL_STORAGE_STRUCT *)HeapAlloc(
             GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(OG_THREAD_LOCAL_STORAGE_STRUCT));
         if (ptlss != NULL)
         {
-            // fprintf_s(stderr, "%p As OG_THREAD_LOCAL_STORAGE_STRUCT in %d\n", (void *)ptlss, (int)GetCurrentThreadId());
             TlsSetValue(s_tls, (LPVOID)ptlss);
-            // fprintf_s(stderr, "%p is returned\n", TlsGetValue(s_tls));
         }
         break;
     }
     case DLL_THREAD_DETACH: {
         OG_THREAD_LOCAL_STORAGE_STRUCT *ptlss = (OG_THREAD_LOCAL_STORAGE_STRUCT *)TlsGetValue(s_tls);
-        fprintf_s(stderr, "%p is returned\n", (void *)ptlss);
         if (ptlss != NULL)
         {
             HeapFree(GetProcessHeap(), 0, (LPVOID)ptlss);
