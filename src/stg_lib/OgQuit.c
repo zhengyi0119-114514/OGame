@@ -2,19 +2,19 @@
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>
 
-OG_EXTERN OG_BOOL_T OG_CDECL  quitTSL();
-OG_BOOL_T quitSDL()
+OG_INTERNAL BOOL_T OG_CDECL crFreeTSL();
+BOOL_T crQ___SDL()
 {
     SDL_Quit();
     TTF_Quit();
     return OG_TRUE;
 }
 
-OG_BOOL_T OgQuit()
+BOOL_T OgQuit()
 {
-    OG_BOOL_T bResult = OG_TRUE;
-    bResult &= quitSDL();
-    bResult &= quitTSL();
-    bResult &= freeProgramData();
+    BOOL_T bResult = OG_TRUE;
+    bResult &= crDestroyModuleRegistrar();
+    bResult &= crQ___SDL();
+    bResult &= crFreeTSL();
     return bResult;
 }

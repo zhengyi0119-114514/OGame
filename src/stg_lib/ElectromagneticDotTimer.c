@@ -2,7 +2,7 @@
 
 #if defined WIN32 || WINDOWS32
 #include <windows.h>
-typedef struct OG_ELECTROMAGNETIC_DOT_TIMER_
+typedef struct TagOG_ELECTROMAGNETIC_DOT_TIMER
 {
     LARGE_INTEGER *rgliDotTable;
     LARGE_INTEGER liProcessorFrequency;
@@ -98,7 +98,7 @@ void OgElectromagneticDotTimerSkipATimeStamp(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt)
         }
     }
     liCache.QuadPart = liCurrentTime.QuadPart + liTimeSleepTarget.QuadPart;
-    dwMillisecondsToSleep = liTimeSleepTarget.QuadPart * 10 / pEdt->liProcessorFrequency.QuadPart;
+    dwMillisecondsToSleep = liTimeSleepTarget.QuadPart * 1000 / pEdt->liProcessorFrequency.QuadPart;
     Sleep(dwMillisecondsToSleep);
     while (TRUE)
     {
@@ -120,7 +120,7 @@ void OgElectromagneticDotTimerSkipATimeStamp(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt)
 #include <time.h>
 
 #define NUMBER_OF_NS_IN_PRE_SECOND ((int64_t)(1000000000))
-typedef struct OG_ELECTROMAGNETIC_DOT_TIMER_
+typedef struct TagOG_ELECTROMAGNETIC_DOT_TIMER
 {
     int64_t *piDotTable;
     struct timespec tsLast;

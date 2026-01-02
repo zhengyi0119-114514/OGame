@@ -10,13 +10,13 @@
 #endif
 #if defined __unix__ // POSIX
 OG_PRIVATE pthread_key_t s_pkPthreadKey = 0;
-#elif defined _WIN32
+#elif defined OPEN_STG_MACRO_IS_WINDOWS
 extern DWORD s_tls;
 #endif
 
-OG_BOOL_T inilTSL(uint64_t ufInitFlag)
+BOOL_T crInitTSL(uint64_t ufInitFlag)
 {
-#if defined _WIN32
+#if defined OPEN_STG_MACRO_IS_WINDOWS
     return OG_TRUE;
 #else
     int iStatus = 0;
@@ -30,9 +30,9 @@ failed:
     return OG_FALSE;
 #endif
 }
-OG_INTERNAL OG_BOOL_T OG_CDECL quitTSL(void)
+OG_INTERNAL BOOL_T OG_CDECL crFreeTSL(void)
 {
-#if defined _WIN32
+#if defined OPEN_STG_MACRO_IS_WINDOWS
     return OG_TRUE;
 #else
     int iStatus = 0;
@@ -43,9 +43,9 @@ OG_INTERNAL OG_BOOL_T OG_CDECL quitTSL(void)
     return TRUE;
 #endif
 }
-OG_THREAD_LOCAL_STORAGE_STRUCT *OgGetTLSStruct(void)
+OG_THREAD_LOCAL_STORAGE_STRUCT *OgCrGetTLSStruct(void)
 {
-#if defined _WIN32
+#if defined OPEN_STG_MACRO_IS_WINDOWS
     OG_THREAD_LOCAL_STORAGE_STRUCT *ptlss = (OG_THREAD_LOCAL_STORAGE_STRUCT *)TlsGetValue(s_tls);
     if (ptlss == NULL)
     {

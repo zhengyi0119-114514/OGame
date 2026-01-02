@@ -15,14 +15,15 @@ target_sources(
     PRIVATE
     ElectromagneticDotTimer.c
     GetErrorMessage.c
-    inlineFunctiom.c
     ModuleContatiner.c
     OgInit.c
     OgQuit.c
     ProgramStatic.c
-    RegisteredProgram.c
     SetError.c
     ThreadLocalStorage.c
+    UniversalRegistrar.c
     WindowsDllMain.c
+    initCore.c
+    inlineFunction.c
 )
 

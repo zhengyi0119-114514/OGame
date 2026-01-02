@@ -1,7 +1,7 @@
 #if defined _WIN32
-#include <windows.h>
 #include <OpenStgDefine.h>
-#include <stdio.h>
+#include <windows.h>
+
 
 OG_INTERNAL DWORD s_tls = 0;
 
@@ -17,7 +17,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDll, DWORD fdwReason, LPVOID lpvReserved)
             return FALSE; // FIXME: 修你大爷修
         }
         //  break;
-         /*主线程在调用DllMain(DLL_PROCESS_ATTACH)后不会调用DllMain(DLL_THREAD_ATTACH)*/
+        /*主线程在调用DllMain(DLL_PROCESS_ATTACH)后不会调用DllMain(DLL_THREAD_ATTACH)*/
     }
     case DLL_THREAD_ATTACH: {
         OG_THREAD_LOCAL_STORAGE_STRUCT *ptlss = (OG_THREAD_LOCAL_STORAGE_STRUCT *)HeapAlloc(
@@ -28,17 +28,17 @@ BOOL WINAPI DllMain(HINSTANCE hinstDll, DWORD fdwReason, LPVOID lpvReserved)
         }
         break;
     }
+    case DLL_PROCESS_DETACH: {
+        // Cleanup
+        TlsFree(s_tls);
+        break;
+    }
     case DLL_THREAD_DETACH: {
         OG_THREAD_LOCAL_STORAGE_STRUCT *ptlss = (OG_THREAD_LOCAL_STORAGE_STRUCT *)TlsGetValue(s_tls);
         if (ptlss != NULL)
         {
             HeapFree(GetProcessHeap(), 0, (LPVOID)ptlss);
         }
-        break;
-    }
-    case DLL_PROCESS_DETACH: {
-        // Cleanup
-        TlsFree(s_tls);
         break;
     }
     }

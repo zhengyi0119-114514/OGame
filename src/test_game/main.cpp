@@ -4,7 +4,7 @@
 int main(int argc, char **args)
 {
     SPDLOG_INFO("Program start");
-    if(OgInit(0))
+    if(!OgInit(0))
     {
         SPDLOG_ERROR("Failed to init og.");
     }

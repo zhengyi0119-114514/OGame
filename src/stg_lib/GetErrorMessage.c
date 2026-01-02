@@ -1,7 +1,7 @@
 #include "CloseStg.h"
 #include <string.h>
 
-void OgCrGetErrorMessage(OG_ERROR_CODE_T code, char *pszBuffer, uint64_t uLengthOfBuffer)
+void OgCrFormatErrorMessage(OG_ERROR_CODE_T code, char *pszBuffer, uint64_t uLengthOfBuffer)
 {
     switch (code)
     {
@@ -27,14 +27,13 @@ void OgCrGetErrorMessage(OG_ERROR_CODE_T code, char *pszBuffer, uint64_t uLength
         strcpy_s(pszBuffer, uLengthOfBuffer, "Module is not initalized.");
     }
     break;
+    case OPEN_STG_ERROR_MESSAGE_UNDEFINED_MEMORY_ERROR: {
+        strcpy_s(pszBuffer, uLengthOfBuffer, "Undefined behavior caused by memory allocation errors");
+    }
+    break;
     }
 }
-void OgSdlGetErrorMessage(OG_ERROR_CODE_T code, char *pszBuffer, uint64_t uLengthOfBuffer)
+void OgSdlFormatErrorMessage(OG_ERROR_CODE_T code, char *pszBuffer, uint64_t uLengthOfBuffer)
 {
-    strcpy_s(pszBuffer, uLengthOfBuffer, OgGetTLSStruct()->pszAdditionalErrorMessage);
-}
-void OgGetErrorMessage(OG_ERROR_T eError, char *pszBuffer, uint64_t uLengthOfBuffer)
-{
-    OG_ERROR_NAMESPACE_T ns = OgGetErrorNamespace(eError);
-    getProgramData()->rgModules[ns].pmModule.pfGetErrorMessage(OgGetErrorCode(eError), pszBuffer, uLengthOfBuffer);
+    strcpy_s(pszBuffer, uLengthOfBuffer, OgCrGetTLSStruct()->pszAdditionalErrorMessage);
 }
