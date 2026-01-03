@@ -16,10 +16,7 @@ find_package(PkgConfig QUIET)
 find_package(fmt REQUIRED CONFIG)
 find_package(Rust REQUIRED)
 find_package(ICU REQUIRED COMPONENTS i18n data io)
-
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    find_package(PThreads4W QUIET CONFIG)
-endif()
+find_package(PThreads4W QUIET CONFIG)
 
 if(PkgConfig_FOUND)
     if(UNIX)
@@ -28,10 +25,3 @@ if(PkgConfig_FOUND)
         pkg_check_modules(GTK4 QUIET IMPORTED_TARGET gtk4)
     endif()
 endif()
-
-# FetchContent_Declare(
-# Corrosion
-# GIT_REPOSITORY https://github.com/corrosion-rs/corrosion.git
-# GIT_TAG v0.5.2 # Optionally specify a commit hash, version tag or branch here
-# )
-# FetchContent_MakeAvailable(Corrosion)

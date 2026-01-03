@@ -167,10 +167,8 @@ OG_EXTERN OG_CR_MODULE_ITERATOR* OG_CDECL OgCrCreateModuleRegistrarIterator();
  */
 OG_EXTERN BOOL_T OG_CDECL OgCrModuleRegistrarIteratorNext(OG_CR_MODULE_ITERATOR* piter,OG_CR_PROGRAM_MODULE* pmod);
 /**
- * @brief 
- * 
- * @param piter 
- * @return OG_EXTERN 
+ * @brief 销毁模块注册器迭代器
+ * @param piter 要销毁的迭代器
  */
 OG_EXTERN void OG_CDECL OgCrDestoryModuleRegistrarIterator(OG_CR_MODULE_ITERATOR* piter);
 /**

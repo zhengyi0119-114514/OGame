@@ -18,6 +18,7 @@ target_link_libraries(open_stg_lib PUBLIC
     spdlog::spdlog
     $<TARGET_NAME_IF_EXISTS:PkgConfig::XDG_DESKTOP_PORTAL>
     $<TARGET_NAME_IF_EXISTS:PkgConfig::LIBSAFEC>
+    $<TARGET_NAME_IF_EXISTS:PThreads4W::PThreads4W>
 )
 TARGET_LINK_SHARED_CRATE(open_stg_lib PUBLIC ogame_logic_part)
 

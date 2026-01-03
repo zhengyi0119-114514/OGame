@@ -48,11 +48,11 @@ typedef uint32_t OG_ERROR_CODE_T;
 typedef unsigned char OG_BYTE_T;
 typedef signed char OG_SBYTE_T;
 typedef bool BOOL_T;
-#define OG_FALSE                                        false
-#define OG_TRUE                                         true
+#define OG_FALSE                                                false
+#define OG_TRUE                                                 true
 #if !defined TRUE &&!defined FALSE
-#define TRUE                                            OG_TRUE
-#define FALSE                                           OG_FALSE
+    #define TRUE                                                OG_TRUE
+    #define FALSE                                               OG_FALSE
 #endif
 typedef const char *OG_PCSTR_T;
 typedef char *OG_PSTR_T;

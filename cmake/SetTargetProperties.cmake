@@ -39,17 +39,19 @@ target_compile_options(
 target_compile_definitions(
     open_stg_lib
     PUBLIC
-    $<$<C_COMPILER_ID:MSVC>:_CRT_SECURE_NO_WARNINGS>
-    $<$<C_COMPILER_ID:MSVC>:__STDC_WANT_LIB_EXT1__>
+    $<$<CXX_COMPILER_ID:MSVC,Clang>:_CRT_SECURE_NO_WARNINGS>
+    $<$<PLATFORM_ID:Windows,WindowsPhone,WindowsStore,MSYS>:__STDC_WANT_LIB_EXT1__>
     $<$<PLATFORM_ID:Windows,WindowsPhone,WindowsStore,MSYS>:WIN32>
+    $<$<PLATFORM_ID:Windows,WindowsPhone,WindowsStore,MSYS>:OPEN_STG_MACRO_IS_WINDOWS=true>
     $<$<BOOL:${UNIX}>:POSIX=true>
-    $<$<CONFIG:Debug>:_DEBUG>
-    $<$<CONFIG:Debug>:DEBUG>
     $<$<BOOL:${XDG_DESKTOP_PORTAL_FOUND}>:OPEN_STG_MACRO_HAS_XDG_PORTAL=true>
     $<$<PLATFORM_ID:Linux>:OPEN_STG_MACRO_IS_LINUX=true>
     $<$<PLATFORM_ID:FreeBSD,NetBSD,OpenBSD,MirBSD>:OPEN_STG_MACRO_IS_BSD=true> #未测试
-    $<$<PLATFORM_ID:Windows,WindowsPhone,WindowsStore,MSYS>:OPEN_STG_MACRO_IS_WINDOWS=true>
     $<$<BOOL:${APPLE}>:OPEN_STG_MACRO_IS_APPLE=true>
+    $<$<CONFIG:Debug>:_DEBUG>
+    $<$<CONFIG:Debug>:DEBUG>
+    UINCODE
+    _UNICODE
 )
 
 

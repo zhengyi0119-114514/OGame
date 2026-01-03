@@ -14,7 +14,6 @@ else()
     set(__IS_CLANG FALSE)
 endif()
 
-
 if(${__IS_CLANG} AND NOT "${__LLD_FOUND}" STREQUAL "__LLD_FOUND-NOTFOUND")
     if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.29)
         set(CMAKE_LINKER_TYPE LLD)

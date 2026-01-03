@@ -24,10 +24,6 @@ target_sources(test_game PRIVATE src/empty.c)
 add_executable(unit_test)
 target_sources(unit_test PRIVATE src/empty.c)
 
-target_compile_definitions(
-    open_stg_lib PRIVATE UNICODE _UNICODE
-)
-
 ADD_CRATE(ogame_logic_part
     CRATE_TYPE "SHARED"
     SOURCE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"

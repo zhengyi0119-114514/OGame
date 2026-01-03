@@ -3,12 +3,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#if defined WIN32
+#endif
 BOOL_T OG_CDECL OgCrInit()
 {
     if (!crInitTSL(0))
     {
-        fprintf_s(stderr, "%s\n", strerror(errno));
+        char szErrorString[64];
+        strerror_s(szErrorString,sizeof(szErrorString),errno);
+        fprintf_s(stderr, "%s\n", szErrorString);
         _Exit(EXIT_FAILURE);
     }
     if (!crInitModuleRegistrar())
