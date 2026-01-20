@@ -11,16 +11,16 @@ typedef struct TagOG_ELECTROMAGNETIC_DOT_TIMER
     int8_t iDotFrequency;
 } OG_ELECTROMAGNETIC_DOT_TIMER;
 
-OG_ELECTROMAGNETIC_DOT_TIMER *OgCreateElectromagneticDotTimer(int8_t iDotFrequency)
+OG_ELECTROMAGNETIC_DOT_TIMER *OG_CDECL OgCrCreateElectromagneticDotTimer(int8_t iDotFrequency)
 {
     if (iDotFrequency < 1)
         return NULL;
     OG_ELECTROMAGNETIC_DOT_TIMER *pedt = NULL;
     LARGE_INTEGER *rgliDotTable = NULL, liProcessorFrequency, liStart;
-    //分配并初始化内存
+    // 分配并初始化内存
     pedt = (OG_ELECTROMAGNETIC_DOT_TIMER *)malloc(sizeof(OG_ELECTROMAGNETIC_DOT_TIMER));
-    rgliDotTable = (LARGE_INTEGER *)calloc(iDotFrequency+1, sizeof(LARGE_INTEGER));    // NOTE: 这里多分配一个对象
-    if ((pedt == NULL)||(rgliDotTable==NULL))
+    rgliDotTable = (LARGE_INTEGER *)calloc(iDotFrequency + 1, sizeof(LARGE_INTEGER)); // NOTE: 这里多分配一个对象
+    if ((pedt == NULL) || (rgliDotTable == NULL))
     {
         free((void *)pedt);
         free((void *)rgliDotTable);
@@ -43,7 +43,7 @@ OG_ELECTROMAGNETIC_DOT_TIMER *OgCreateElectromagneticDotTimer(int8_t iDotFrequen
     pedt->iDotFrequency = iDotFrequency;
     return (pedt);
 }
-void OgDestoryElectromagneticDotTimer(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt)
+void OgCrDestoryElectromagneticDotTimer(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt)
 {
     if (pEdt)
     {
@@ -52,13 +52,13 @@ void OgDestoryElectromagneticDotTimer(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt)
         free((void *)pEdt);
     }
 }
-int64_t OgElectromagneticDotTimerPullTask(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt)
+int64_t OgCrElectromagneticDotTimerPullTask(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt)
 {
     if (pEdt == NULL)
         return (0);
     int64_t iResult = 0;
     LARGE_INTEGER liCurrentTime;
-    LARGE_INTEGER liTimeDifference,liRemainingPart;
+    LARGE_INTEGER liTimeDifference, liRemainingPart;
     QueryPerformanceCounter(&liCurrentTime);
     liTimeDifference.QuadPart = liCurrentTime.QuadPart - pEdt->liLast.QuadPart;
     liRemainingPart.QuadPart = liTimeDifference.QuadPart % pEdt->liProcessorFrequency.QuadPart;
@@ -66,7 +66,7 @@ int64_t OgElectromagneticDotTimerPullTask(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt)
     iResult += liRemainingPart.QuadPart * pEdt->iDotFrequency / pEdt->liProcessorFrequency.QuadPart;
     return iResult;
 }
-void OgRefreshElectromagneticDotTimer(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt)
+void OgCrRefreshElectromagneticDotTimer(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt)
 {
     if (pEdt == NULL)
         return;
@@ -75,7 +75,7 @@ void OgRefreshElectromagneticDotTimer(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt)
     pEdt->liLast = liCurrentTime;
     pEdt->liStart = liCurrentTime;
 }
-void OgElectromagneticDotTimerSkipATimeStamp(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt)
+void OgCrElectromagneticDotTimerSkipATimeStamp(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt)
 {
     if (pEdt == NULL)
         return;
@@ -89,9 +89,9 @@ void OgElectromagneticDotTimerSkipATimeStamp(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt)
     QueryPerformanceCounter(&liCurrentTime);
     liTimeDifference.QuadPart = liCurrentTime.QuadPart - pEdt->liStart.QuadPart;
     liTimeDifference.QuadPart %= pEdt->liProcessorFrequency.QuadPart;
-    for (uint16_t uIndex = 0,uIndexMax = pEdt->iDotFrequency+1; uIndex < uIndexMax; uIndex++)
+    for (uint16_t uIndex = 0, uIndexMax = pEdt->iDotFrequency + 1; uIndex < uIndexMax; uIndex++)
     {
-        if (( pEdt->rgliDotTable[uIndex].QuadPart) < liTimeDifference.QuadPart &&
+        if ((pEdt->rgliDotTable[uIndex].QuadPart) < liTimeDifference.QuadPart &&
             (liTimeDifference.QuadPart <= (liCache.QuadPart = pEdt->rgliDotTable[uIndex + 1].QuadPart)))
         {
             liTimeSleepTarget.QuadPart = liCache.QuadPart - liTimeDifference.QuadPart;
@@ -156,7 +156,7 @@ void TimespecDifference(struct timespec *ptsSubtrahend, struct timespec *ptsRedu
     ptsOutput->tv_sec = iSecondsDifference;
     ptsOutput->tv_nsec = iNanoSecondDifference;
 }
-OG_ELECTROMAGNETIC_DOT_TIMER *OgCreateElectromagneticDotTimer(int8_t iDotFrequency)
+OG_ELECTROMAGNETIC_DOT_TIMER *OgCrCreateElectromagneticDotTimer(int8_t iDotFrequency)
 {
     size_t sSizeOfEdtStruct = sizeof(OG_ELECTROMAGNETIC_DOT_TIMER);
     size_t sSizeOfDotTable = sizeof(clock_t) * (iDotFrequency + 1); /*<<这里故意多添加了一个元素 */
@@ -185,14 +185,14 @@ OG_ELECTROMAGNETIC_DOT_TIMER *OgCreateElectromagneticDotTimer(int8_t iDotFrequen
     }
     return pEdt;
 }
-void OgDestoryElectromagneticDotTimer(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt)
+void OgCrDestoryElectromagneticDotTimer(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt)
 {
     if (!pEdt)
         return;
     free((void *)pEdt->piDotTable);
     free((void *)pEdt);
 }
-int64_t OgElectromagneticDotTimerPullTask(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt)
+int64_t OgCrElectromagneticDotTimerPullTask(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt)
 {
     if (!pEdt)
         return 0;
@@ -212,7 +212,7 @@ int64_t OgElectromagneticDotTimerPullTask(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt)
     return 0;
 }
 
-void OgElectromagneticDotTimerSkipATimeStamp(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt)
+void OgCrElectromagneticDotTimerSkipATimeStamp(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt)
 {
     if (!pEdt)
         return;
@@ -240,7 +240,7 @@ void OgElectromagneticDotTimerSkipATimeStamp(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt)
     // 清空队列
     pEdt->tsLast = tsCurrentTime;
 }
-void OgRefreshElectromagneticDotTimer(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt)
+void OgCrRefreshElectromagneticDotTimer(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt)
 {
     if (!pEdt)
         return;

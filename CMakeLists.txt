@@ -1,4 +1,9 @@
 cmake_minimum_required(VERSION 3.28)
+
+if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
+    message(FATAL_ERROR "请务必别在源代码构建捏，亲。")
+endif()
+
 project(open_stg VERSION 0.1.0)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" "${CMAKE_SOURCE_DIR}")
@@ -8,15 +13,11 @@ include(GNUInstallDirs)
 
 option(USE_SDL_CLOCK "Use SDL3's clock instead of system clock" FALSE)
 
-
 add_library(open_stg_lib SHARED src/empty.c)
-
-if(NOT EXISTS "${CMAKE_BINARY_DIR}/include")
-    file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/include")
-endif()
-
-configure_file("${CMAKE_SOURCE_DIR}/cmake/ProjectInformation.h.in" "${CMAKE_BINARY_DIR}/include/ProjectImformation.h")
-target_include_directories(open_stg_lib PUBLIC "${CMAKE_BINARY_DIR}/include")
+add_library(open_stg_base_lib SHARED src/empty.c)
+add_library(open_stg_sdl_lib SHARED src/empty.c)
+add_library(open_stg_net_lib SHARED src/empty.c)
+add_library(open_stg_shared INTERFACE)
 
 add_executable(test_game)
 target_sources(test_game PRIVATE src/empty.c)
@@ -24,9 +25,10 @@ target_sources(test_game PRIVATE src/empty.c)
 add_executable(unit_test)
 target_sources(unit_test PRIVATE src/empty.c)
 
-ADD_CRATE(ogame_logic_part
+ADD_CRATE(open_stg_logic_lib
     CRATE_TYPE "SHARED"
     SOURCE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    DEPENDS open_stg_base_lib
 )
 
 add_subdirectory(src/stg_lib)
@@ -47,7 +49,6 @@ add_custom_command(
     COMMAND "${CMAKE_COMMAND}" "-E" "copy_directory_if_different" "${RESOURCE_DIR}" "$<TARGET_FILE_DIR:test_game>/resources"
 )
 add_custom_command(
-    TARGET open_stg_lib
-    PRE_BUILD
+    TARGET test_game PRE_BUILD
     COMMAND "${CMAKE_COMMAND}" "-E" "copy" "${CMAKE_CURRENT_SOURCE_DIR}/Directory.Build.props" "${CMAKE_BINARY_DIR}/Directory.Build.props"
 )

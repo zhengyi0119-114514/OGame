@@ -2,111 +2,139 @@
     "version": 2,
     "configurePresets": [
         {
-            "name": "vcpkg-visula-studio-debug",
+            "name": "vcpkg-visula-studio",
             "generator": "Visual Studio 17 2022",
             "binaryDir": "${sourceDir}/build/",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
                 "CMAKE_C_COMPILER": "cl.exe",
                 "CMAKE_CXX_COMPILER": "cl.exe",
-                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-                "CMAKE_INSTALL_PREFIX": " ${sourceDir}/build/install"
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+            },
+            "environment": {
+                "RUST_BUILD_USE_VCPKG": "1"
             }
         },
         {
-            "name": "vcpkg-gnu-debug",
-            "generator": "Ninja",
+            "name": "vcpkg-gnu",
+            "generator": "Ninja Multi-Config",
             "binaryDir": "${sourceDir}/build/",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_C_COMPILER": "gcc",
-                "CMAKE_CXX_COMPILER": "g++",
-                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-                "CMAKE_INSTALL_PREFIX": " ${sourceDir}/build/install"
-            }
-        },
-        {
-            "name": "vcpkg-gnu-clang-debug",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build/",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_C_COMPILER": "clang",
-                "CMAKE_CXX_COMPILER": "clang++",
-                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": true,
-                "CMAKE_INSTALL_PREFIX": " ${sourceDir}/build/install"
-            }
-        },
-        {
-            "name": "vcpkg-gnu-release",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build/",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
                 "CMAKE_C_COMPILER": "gcc",
                 "CMAKE_CXX_COMPILER": "g++",
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+            },
+            "environment": {
+                "RUST_BUILD_USE_VCPKG": "1"
             }
         },
         {
-            "name": "vcpkg-gnu-clang-release",
-            "generator": "Ninja",
+            "name": "vcpkg-clang",
+            "generator": "Ninja Multi-Config",
             "binaryDir": "${sourceDir}/build/",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
                 "CMAKE_C_COMPILER": "clang",
                 "CMAKE_CXX_COMPILER": "clang++",
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": true,
-                "CMAKE_INSTALL_PREFIX": " ${sourceDir}/build/install"
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true
+            },
+            "environment": {
+                "RUST_BUILD_USE_VCPKG": "1"
             }
         },
         {
-            "name": "sys-gnu-clang-debug",
-            "generator": "Ninja",
+            "name": "sys-gnu-clang",
+            "generator": "Ninja Multi-Config",
             "binaryDir": "${sourceDir}/build/",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
                 "CMAKE_C_COMPILER": "clang",
                 "CMAKE_CXX_COMPILER": "clang++",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": true,
-                "CMAKE_INSTALL_PREFIX": " ${sourceDir}/build/install"
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true
             }
         },
         {
-            "name": "sys-gnu-clang-release",
+            "name": "sys-gnu",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
-                "CMAKE_C_COMPILER": "clang",
-                "CMAKE_CXX_COMPILER": "clang++",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": true,
-                "CMAKE_INSTALL_PREFIX": " ${sourceDir}/build/install"
-            }
-        },
-        {
-            "name": "sys-gnu-release",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build/",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
                 "CMAKE_C_COMPILER": "gcc",
-                "CMAKE_CXX_COMPILER": "g++",
-                "CMAKE_INSTALL_PREFIX": " ${sourceDir}/build/install"
+                "CMAKE_CXX_COMPILER": "g++"
             }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "vcpkg-debug",
+            "displayName": "Debug_VS",
+            "configuration": "Debug",
+            "configurePreset": "vcpkg-visula-studio",
+            "jobs": 4
+        },
+        {
+            "name": "vcpkg-release",
+            "displayName": "Release_VS",
+            "configuration": "Release",
+            "configurePreset": "vcpkg-visula-studio",
+            "jobs": 4
+        },
+        {
+            "name": "vcpkg-gnu-debug",
+            "displayName": "Debug_GNU",
+            "configuration": "Debug",
+            "configurePreset": "vcpkg-gnu"
+        },
+        {
+            "name": "vcpkg-gnu-release",
+            "displayName": "Release_GNU",
+            "configuration": "Release",
+            "configurePreset": "vcpkg-gnu"
+        },
+        {
+            "name": "vcpkg-clang-debug",
+            "displayName": "Debug_LLVM",
+            "configuration": "Debug",
+            "configurePreset": "vcpkg-clang"
+        },
+        {
+            "name": "vcpkg-clang-release",
+            "displayName": "Release_LLVM",
+            "configuration": "Release",
+            "configurePreset": "vcpkg-clang"
+        },
+        {
+            "name": "sys-release",
+            "displayName": "Release_VS",
+            "configuration": "Release",
+            "configurePreset": "vcpkg-visula-studio",
+            "jobs": 4
         },
         {
             "name": "sys-gnu-debug",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build/",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_C_COMPILER": "gcc",
-                "CMAKE_CXX_COMPILER": "g++",
-                "CMAKE_INSTALL_PREFIX": " ${sourceDir}/build/install"
-            }
+            "displayName": "Debug_GNU",
+            "configuration": "Debug",
+            "configurePreset": "sys-gnu"
+        },
+        {
+            "name": "sys-gnu-release",
+            "displayName": "Release_GNU",
+            "configuration": "Release",
+            "configurePreset": "sys-gnu"
+        },
+        {
+            "name": "sys-gnu-clang-debug",
+            "displayName": "Debug_LLVM",
+            "configuration": "Debug",
+            "configurePreset": "sys-gnu-clang"
+        },
+        {
+            "name": "sys-gnu-clang-release",
+            "displayName": "Debug_LLVM",
+            "configuration": "Debug",
+            "configurePreset": "sys-gnu-clang"
         }
     ]
 }

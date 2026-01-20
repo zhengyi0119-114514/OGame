@@ -24,15 +24,20 @@ OG_CR_UNIVERSAL_REGISTRAR *OG_CDECL OgCrCreateUniversalRegistrar(const OG_CR_UNI
     uint32_t uPreAllocatedCount = puri->uPreAllocatedCount, uItemStructureSize = puri->uItemStructureSize;
     void *rgItems = calloc(uPreAllocatedCount, uItemStructureSize);
     BOOL_T *rgStatus = (BOOL_T *)calloc(uPreAllocatedCount, sizeof(BOOL_T));
-    if (rgItems == NULL || rgStatus == NULL || pur == NULL)
+    if (pur == NULL||rgItems == NULL || rgStatus == NULL)
     {
         free(rgItems);
         free((void *)rgStatus);
         free((void *)pur);
+        setCrRecoverableError(OPEN_STG_ERROR_MESSAGE_MEMORY_ERROR);
+        return NULL;
     }
-    memset((void *)pur, 0, sizeof(OG_CR_UNIVERSAL_REGISTRAR));
-    memset(rgItems, 0, uPreAllocatedCount * uItemStructureSize);
-    memset((void *)rgStatus, 0, uPreAllocatedCount);
+    if (OPEN_STG_MACRO_IS_DEBUG)
+    {
+        memset((void *)pur, 0, sizeof(OG_CR_UNIVERSAL_REGISTRAR));
+        memset(rgItems, 0x2B, uPreAllocatedCount * uItemStructureSize);
+        memset((void *)rgStatus, 0, uPreAllocatedCount);
+    }
     pur->rgItems = rgItems;
     pur->rgStatus = rgStatus;
     pur->uItemStructureSize = uItemStructureSize;
@@ -69,7 +74,7 @@ BOOL_T OG_CDECL OgCrUniversalRegistrarReserveItems(OG_CR_UNIVERSAL_REGISTRAR *pu
     }
     if ((pur->ufRegistrarFlag & 1) == 0)
     {
-        void *pNewMomery = rgNewItems + uItemStructureSize * pur->uCountOfReservedItem;
+        void *pNewMomery = (BYTE_T *)rgNewItems + uItemStructureSize * pur->uCountOfReservedItem;
         memset((void *)pNewMomery, 0x3B, uReserveCount * uItemStructureSize);
     }
     memset(rgNewStatus + pur->uCountOfReservedItem * sizeof(BOOL_T), 0, uReserveCount * sizeof(BOOL_T));
@@ -106,7 +111,7 @@ int64_t OG_CDECL OgCrUniversalRegistrarAllocateItem(OG_CR_UNIVERSAL_REGISTRAR *p
             pur->rgStatus[uIndex] = TRUE;
             if (pOutput != NULL)
             {
-                (*pOutput) = pur->rgItems + uIndex * pur->uItemStructureSize;
+                (*pOutput) = (BYTE_T *)pur->rgItems + uIndex * pur->uItemStructureSize;
             }
             return uIndex;
         }
@@ -119,7 +124,7 @@ int64_t OG_CDECL OgCrUniversalRegistrarAllocateItem(OG_CR_UNIVERSAL_REGISTRAR *p
     pur->rgStatus[uNextIndex] = TRUE;
     if (pOutput != NULL)
     {
-        (*pOutput) = pur->rgItems + uNextIndex * pur->uItemStructureSize;
+        (*pOutput) = (BYTE_T *)pur->rgItems + uNextIndex * pur->uItemStructureSize;
     }
     return uNextIndex;
 }
@@ -146,7 +151,7 @@ int64_t OG_CDECL OgCrUniversalRegistrarAllocatePreallocatedItem(OG_CR_UNIVERSAL_
     pur->rgStatus[uPreAllocatedIndex] = TRUE;
     if (pOutput != NULL)
     {
-        (*pOutput) = pur->rgItems + uPreAllocatedIndex * pur->uItemStructureSize;
+        (*pOutput) = (BYTE_T *)pur->rgItems + uPreAllocatedIndex * pur->uItemStructureSize;
     }
     return uPreAllocatedIndex;
 }
@@ -167,11 +172,11 @@ BOOL_T OG_CDECL OgCrUniversalRegistrarFreeItem(OG_CR_UNIVERSAL_REGISTRAR *pur, u
     }
     if (pur->pfDestoryMemberFunction != NULL)
     {
-        pur->pfDestoryMemberFunction(pur->rgItems + uIndex * pur->uItemStructureSize);
+        pur->pfDestoryMemberFunction((BYTE_T *)pur->rgItems + uIndex * pur->uItemStructureSize);
     }
     if ((pur->ufRegistrarFlag & OPEN_STG_FLAG_UNIVERSAL_REGISTRAR_NOT_INITIALIZED) == 0)
     {
-        memset((void *)(pur->rgItems + uIndex * pur->uItemStructureSize), 0, pur->uItemStructureSize);
+        memset((void *)((BYTE_T *)pur->rgItems + uIndex * pur->uItemStructureSize), 0, pur->uItemStructureSize);
     }
     pur->rgStatus[uIndex] = FALSE;
     return (TRUE);
@@ -190,7 +195,7 @@ void *OG_CDECL OgCrUniversalRegistrarGetItem(OG_CR_UNIVERSAL_REGISTRAR *pur, uin
     }
     if (pur->rgStatus[uIndex])
     {
-        return pur->rgItems + pur->uItemStructureSize * uIndex;
+        return (BYTE_T *)pur->rgItems + pur->uItemStructureSize * uIndex;
     }
     else
     {

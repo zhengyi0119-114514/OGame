@@ -3,25 +3,54 @@ target_link_libraries(
     open_stg_lib
     spdlog::spdlog
 )
-TARGET_LINK_SHARED_CRATE(open_stg_lib PUBLIC ogame_logic_part)
 
-target_link_libraries(open_stg_lib PUBLIC
-    Boost::json
+if(NOT EXISTS "${CMAKE_BINARY_DIR}/include")
+    file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/include")
+endif()
+
+configure_file("${CMAKE_SOURCE_DIR}/cmake/ProjectInformation.h.in" "${CMAKE_BINARY_DIR}/include/ProjectImformation.h")
+target_include_directories(open_stg_shared INTERFACE "${CMAKE_BINARY_DIR}/include")
+target_link_libraries(open_stg_shared
+    INTERFACE
+    fmt::fmt
+    ICU::data
+    ICU::i18n
+    ICU::io
     ${LUA_LIBRARIES}
+)
+target_link_libraries(open_stg_base_lib
+    PUBLIC
+    Boost::json
+    $<TARGET_NAME_IF_EXISTS:PkgConfig::LIBSAFEC>
+    $<TARGET_NAME_IF_EXISTS:PThreads4W::PThreads4W>
+    PRIVATE
+    open_stg_shared
+)
+target_include_directories(
+    open_stg_shared
+    INTERFACE
+    ${LUA_INCLUDE_DIR}
+)
+target_link_libraries(open_stg_sdl_lib
+    PRIVATE
     SDL3::SDL3
     SDL3_ttf::SDL3_ttf
     SDL3_image::SDL3_image
-    $<IF:$<TARGET_EXISTS:ICU::dt>,ICU::dt,ICU::data>
-    $<IF:$<TARGET_EXISTS:ICU::in>,ICU::in,ICU::i18n>
-    ICU::io
-    fmt::fmt
-    spdlog::spdlog
     $<TARGET_NAME_IF_EXISTS:PkgConfig::XDG_DESKTOP_PORTAL>
-    $<TARGET_NAME_IF_EXISTS:PkgConfig::LIBSAFEC>
-    $<TARGET_NAME_IF_EXISTS:PThreads4W::PThreads4W>
+    open_stg_shared
+    PUBLIC
+    open_stg_base_lib
 )
-TARGET_LINK_SHARED_CRATE(open_stg_lib PUBLIC ogame_logic_part)
-
-target_include_directories(open_stg_lib PUBLIC
-    ${LUA_INCLUDE_DIR}
+target_link_libraries(open_stg_net_lib PUBLIC
+    open_stg_base_lib
+    PRIVATE
+    open_stg_shared
+)
+target_link_libraries(
+    open_stg_lib
+    PUBLIC
+    open_stg_base_lib
+    open_stg_sdl_lib
+    open_stg_net_lib
+    open_stg_logic_lib
 )

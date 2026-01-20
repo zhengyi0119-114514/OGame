@@ -17,11 +17,11 @@ extern "C"
 #endif
     typedef struct TagOG_ELECTROMAGNETIC_DOT_TIMER OG_ELECTROMAGNETIC_DOT_TIMER;
     // 计时器
-    OG_EXPORT OG_ELECTROMAGNETIC_DOT_TIMER *OG_CDECL OgCreateElectromagneticDotTimer(int8_t iDotFrequency);
-    OG_EXPORT int64_t OG_CDECL OgElectromagneticDotTimerPullTask(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt);
-    OG_EXPORT void OG_CDECL OgElectromagneticDotTimerSkipATimeStamp(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt);
-    OG_EXPORT void OG_CDECL OgRefreshElectromagneticDotTimer(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt);
-    OG_EXPORT void OG_CDECL OgDestoryElectromagneticDotTimer(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt);
+    OG_EXPORT OG_ELECTROMAGNETIC_DOT_TIMER *OG_CDECL OgCrCreateElectromagneticDotTimer(int8_t iDotFrequency);
+    OG_EXPORT int64_t OG_CDECL OgCrElectromagneticDotTimerPullTask(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt);
+    OG_EXPORT void OG_CDECL OgCrElectromagneticDotTimerSkipATimeStamp(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt);
+    OG_EXPORT void OG_CDECL OgCrRefreshElectromagneticDotTimer(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt);
+    OG_EXPORT void OG_CDECL OgCrDestoryElectromagneticDotTimer(OG_ELECTROMAGNETIC_DOT_TIMER *pEdt);
     // 初始化
     OG_EXPORT BOOL_T OG_CDECL OgInit(uint64_t ufInitFlag);
     OG_EXPORT BOOL_T OG_CDECL OgQuit(void);
@@ -78,7 +78,6 @@ extern "C"
     /*******
      * SDL *
      ******/
-    OG_INTERNAL BOOL_T OG_CDECL ghInitSDL(void);
 
 #ifdef __cplusplus
 }

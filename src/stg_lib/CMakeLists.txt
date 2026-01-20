@@ -1,17 +1,17 @@
-target_sources(open_stg_lib
+target_sources(open_stg_base_lib
     PRIVATE "${CMAKE_BINARY_DIR}/include/ProjectImformation.h"
 )
-target_include_directories(open_stg_lib PRIVATE "include-private")
-target_include_directories(open_stg_lib PUBLIC SYSTEM include)
+target_include_directories(open_stg_base_lib PRIVATE "include-private")
+target_include_directories(open_stg_base_lib PUBLIC SYSTEM include)
 target_sources(
-    open_stg_lib
+    open_stg_base_lib
     PUBLIC FILE_SET HEADERS
     FILES
-    include/OpenStg.h
+    include/OpenStgCore.h
     include/OpenStgDefine.h
 )
 target_sources(
-    open_stg_lib
+    open_stg_base_lib
     PRIVATE
     ElectromagneticDotTimer.c
     GetErrorMessage.c

@@ -40,7 +40,7 @@ void OgFormatErrorMessage(OG_ERROR_T eError, char *pszBuffer, uint64_t uLengthOf
 }
 BOOL_T OG_CDECL OgCrRegisterProgramModule(const OG_CR_PROGRAM_MODULE *mod, uint32_t *puNamespaceOutput)
 {
-    if (mod == NULL)
+    if (mod == NULL || mod->pszModuleRegisteredName == NULL)
     {
         setCrRecoverableError(OPEN_STG_ERROR_MESSAGE_INVALID_PARAMETER);
         return FALSE;
@@ -64,28 +64,27 @@ BOOL_T OG_CDECL OgCrRegisterProgramModule(const OG_CR_PROGRAM_MODULE *mod, uint3
     }
     OG_MODULE_NAMESPACE_T uModuleNamespace = (uint32_t)iItemIndex;
     char *pszRegisteredName = NULL, *pszDisplayName = NULL;
-    size_t sRegisteredNameStringCount = strlen(mod->pszModuleRegisteredName) + 1,
-           sDisplayNameStringCount = strlen(mod->pszModuleDisplayName) + 1;
+    const char*pszDispalyNameSource = NULL;
+    size_t sCountOfRegisteredName = strlen(mod->pszModuleRegisteredName) + 1,sCountOfDisplayName = 0;
     if (mod->pszModuleDisplayName == NULL)
     {
-        if ((pszDisplayName = (char *)malloc(sRegisteredNameStringCount)) == NULL)
-        {
-            setCrRecoverableError(OPEN_STG_ERROR_MESSAGE_MEMORY_ERROR);
-            return FALSE;
-        }
-        sDisplayNameStringCount = sRegisteredNameStringCount;
-        strcpy_s(pszDisplayName, sDisplayNameStringCount, mod->pszModuleRegisteredName);
+        pszDispalyNameSource = mod->pszModuleRegisteredName;
     }
     else
     {
-        if ((pszDisplayName = (char *)malloc(sDisplayNameStringCount)) == NULL)
-        {
-            free((void *)pszDisplayName);
-            setCrRecoverableError(OPEN_STG_ERROR_MESSAGE_MEMORY_ERROR);
-            return FALSE;
-        }
-        strcpy_s(pszRegisteredName, sDisplayNameStringCount, mod->pszModuleDisplayName);
+        pszDispalyNameSource = mod->pszModuleDisplayName;
     }
+    sCountOfDisplayName = strlen(pszDispalyNameSource) + 1;
+    if ((pszDisplayName = (char*)malloc(sCountOfDisplayName)) == NULL || 
+        (pszRegisteredName = (char*)malloc(sCountOfRegisteredName)) == NULL)
+    {
+        free((void*)pszDisplayName);
+        free((void *)pszRegisteredName);
+        setCrRecoverableError(OPEN_STG_ERROR_MESSAGE_MEMORY_ERROR);
+        return FALSE;
+    }
+    strcpy_s(pszDisplayName, sCountOfDisplayName, pszDispalyNameSource);
+    strcpy_s(pszRegisteredName, sCountOfRegisteredName, mod->pszModuleRegisteredName);
     ppm->pszDisplayName = pszDisplayName;
     ppm->pszRegisteredName = pszRegisteredName;
     ppm->pfFormatErrorMessage = mod->pfFormatErrorMessage;
@@ -149,4 +148,28 @@ void OG_CDECL OgCrDestoryModuleRegistrarIterator(OG_CR_MODULE_ITERATOR *piter)
     }
     OgCrDestoryUniversalRegistrarIterator(piter->puri);
     free((void *)piter);
+}
+BOOL_T OG_CDECL OgCrUnregisterProgramModule(const char* pszModuleRegisteredName)
+{
+    OG_CR_UNIVERSAL_REGISTRAR_ITERATOR *puri = NULL;
+    OG_CR_PV_PROGRAM_MODULE *pm = NULL;
+    if ((puri = OgCrCreateUniversalRegistrarIterator(s_urModuleRegistrar)) == NULL)
+    {
+        return FALSE;
+    }
+    while ((pm = (OG_CR_PV_PROGRAM_MODULE*)OgCrUniversalRegistrarIteratorNext(puri)) != NULL)
+    {
+        if (strcmp(pm->pszRegisteredName, pszModuleRegisteredName) == 0)
+        {
+            if (OgCrUniversalRegistrarFreeItem(s_urModuleRegistrar, pm->uModuleNamespace))
+            {
+                return TRUE;
+            }
+            else
+            {
+                return FALSE;
+            }
+        }
+    }
+    return FALSE;
 }

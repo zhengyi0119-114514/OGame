@@ -95,9 +95,9 @@ if(DEFINED RUST_TOOLCHAIN)
 else()
     set(__RUST_TOOLCHAIN "")
     execute_process(
-            COMMAND "${RUSTUP_EXECUTABLE_FILE_PATH}" "default"
-            WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
-            OUTPUT_VARIABLE __RUSTUP_OUTPUT
+        COMMAND "${RUSTUP_EXECUTABLE_FILE_PATH}" "default"
+        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+        OUTPUT_VARIABLE __RUSTUP_OUTPUT
     )
 
     string(STRIP "${__RUSTUP_OUTPUT}" __RUSTUP_OUTPUT)
@@ -190,7 +190,7 @@ function(__ADD_EXECUTABLE_CRATE __crate __source_dir)
     # Make the imported target depend on the build target
 endfunction()
 
-function(__ADD_STATIC_LIBRARY_CRATE __crate __source_dir)
+function(__ADD_STATIC_LIBRARY_CRATE __crate __source_dir __depends)
     set("${__crate}_BINARY_FILE" "${RUST_CRATE_BINARY_DIR}/${__RUST_STATIC_LIBRARY_FILE_SUFFIX}${__crate}${__RUST_STATIC_LIBRARY_FILE_EXTENSION}"
         CACHE FILEPATH "Rust crate binary file" FORCE
     )
@@ -201,12 +201,13 @@ function(__ADD_STATIC_LIBRARY_CRATE __crate __source_dir)
         OUTPUT ${${__crate}_BINARY_FILE}
         COMMAND ${__COMMAND}
         WORKING_DIRECTORY "${__source_dir}"
+        DEPENDS ${__depends}
         COMMENT "Building rust crate ${__crate} target_dir:${__RUST_TARGET_DIRECTORY}"
     )
     add_custom_target(
         "_${__crate}_build" ALL
         COMMAND ${__COMMAND}
-        DEPENDS ${${__crate}_BINARY_FILE}
+        DEPENDS ${${__crate}_BINARY_FILE} ${__depends}
         WORKING_DIRECTORY "${__source_dir}"
         COMMENT "Building rust crate ${__crate} target_dir:${__RUST_TARGET_DIRECTORY}"
     )
@@ -217,7 +218,7 @@ function(__ADD_STATIC_LIBRARY_CRATE __crate __source_dir)
     )
 endfunction()
 
-function(__ADD_SHARED_LIBRARY_CRATE __crate __source_dir)
+function(__ADD_SHARED_LIBRARY_CRATE __crate __source_dir __depends)
     if(
         "${CMAKE_SYSTEM_NAME}" STREQUAL "Windows" OR
         "${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsPhone" OR
@@ -225,7 +226,7 @@ function(__ADD_SHARED_LIBRARY_CRATE __crate __source_dir)
         "${CMAKE_SYSTEM_NAME}" STREQUAL "MSYS" OR
         "${CMAKE_SYSTEM_NAME}" STREQUAL "CYGWIN"
     )
-        set("${__crate}_IMPORTED_LIBRARY" "${RUST_CRATE_BINARY_DIR}/${__RUST_STATIC_LIBRARY_FILE_SUFFIX}${__crate}${__RUST_IMPROT_LIBRARY_FILE_EXTENSION}" CACHE FILEPATH "lib<DLL_NAME>.dll.a or <DLL_NAME>.lib" FORCE)
+        set("${__crate}_IMPORTED_LIBRARY" "${RUST_CRATE_BINARY_DIR}/${__RUST_STATIC_LIBRARY_FILE_SUFFIX}${__crate}${__RUST_IMPROT_LIBRARY_FILE_EXTENSION}" CACHE FILEPATH "lib<DLL_NAME>.dll.a or <DLL_NAME>.dll.lib" FORCE)
         set("${__crate}_DLL_FILE" "${RUST_CRATE_BINARY_DIR}/${__RUST_SHARED_LIBRARY_FILE_SUFFIX}${__crate}${__RUST_SHARED_LIBRARY_FILE_EXTENSION}" CACHE FILEPATH "<DLL_NAME>.dll" FORCE)
         set("${__crate}_BINARY_FILE" "${${__crate}_IMPORTED_LIBRARY}" "${${__crate}_DLL_FILE}" CACHE FILEPATH "Rust crate binary file" FORCE)
         set(__COMMAND
@@ -235,12 +236,13 @@ function(__ADD_SHARED_LIBRARY_CRATE __crate __source_dir)
             OUTPUT ${${__crate}_BINARY_FILE}
             COMMAND ${__COMMAND}
             WORKING_DIRECTORY "${__source_dir}"
+            DEPENDS ${__depends}
             COMMENT "Building rust crate ${__crate} target_dir:${__RUST_TARGET_DIRECTORY}"
         )
         add_custom_target(
             "_${__crate}_build" ALL
             COMMAND ${__COMMAND}
-            DEPENDS ${${__crate}_BINARY_FILE}
+            DEPENDS ${${__crate}_BINARY_FILE} ${__depends}
             WORKING_DIRECTORY "${__source_dir}"
             COMMENT "Building rust crate ${__crate} target_dir:${__RUST_TARGET_DIRECTORY}"
         )
@@ -263,12 +265,14 @@ function(__ADD_SHARED_LIBRARY_CRATE __crate __source_dir)
             OUTPUT "${${__crate}_BINARY_FILE}"
             COMMAND ${__COMMAND}
             WORKING_DIRECTORY "${__source_dir}"
+            DEPENDS ${__depends}
             COMMENT "Building rust crate ${__crate} target_dir:${__RUST_TARGET_DIRECTORY}"
         )
         add_custom_target("_${__crate}_build" ALL
             COMMAND ${__COMMAND}
             DEPENDS ${${__crate}_BINARY_FILE}
             WORKING_DIRECTORY "${__source_dir}"
+            DEPENDS ${__depends}
             COMMENT "Building rust crate ${__crate} target_dir:${__RUST_TARGET_DIRECTORY}"
         )
         add_library("${__crate}" SHARED IMPORTED GLOBAL)
@@ -283,10 +287,11 @@ endfunction()
 function(ADD_CRATE __crate)
     set("${__crate}_BINARY_FILE" "" CACHE FILEPATH "Rust crate binary file" FORCE)
 
+    # set("${__crate}_DEPENDS" "" CACHE STRINGS "Rust crate dependencies")
     cmake_parse_arguments(__CRATE
         "OFFLINE;LOCKED" # Options
         "SOURCE_DIRECTORY;CRATE_TYPE" # One value keywords
-        "" # Multi value keywords
+        "DEPENDS" # Multi value keywords
         ${ARGV}
     )
 
@@ -303,18 +308,18 @@ function(ADD_CRATE __crate)
         "${__CRATE_CRATE_TYPE}" STREQUAL "cdylib" OR
         "${__CRATE_CRATE_TYPE}" STREQUAL "SHARED"
     )
-        __ADD_SHARED_LIBRARY_CRATE("${__crate}" "${__SOURCE_DIR}")
+        __ADD_SHARED_LIBRARY_CRATE("${__crate}" "${__SOURCE_DIR}" "${__CRATE_DEPENDS}")
     elseif(
         "${__CRATE_CRATE_TYPE}" STREQUAL "staticlib" OR
         "${__CRATE_CRATE_TYPE}" STREQUAL "STATIC"
     )
-        __ADD_STATIC_LIBRARY_CRATE("${__crate}" "${__SOURCE_DIR}")
+        __ADD_STATIC_LIBRARY_CRATE("${__crate}" "${__SOURCE_DIR}" "${__CRATE_DEPENDS}")
     elseif(
         "${__CRATE_CRATE_TYPE}" STREQUAL "bin" OR
         "${__CRATE_CRATE_TYPE}" STREQUAL "exe" OR
         "${__CRATE_CRATE_TYPE}" STREQUAL "EXECUTABLE"
     )
-        __ADD_EXECUTABLE_CRATE("${__crate}" "${__SOURCE_DIR}")
+        __ADD_EXECUTABLE_CRATE("${__crate}" "${__SOURCE_DIR}" "${__CRATE_DEPENDS}")
     else()
         __RUST_FAILED_MESSAGE("Unsupported CRATE_TYPE :${__CRATE_CRATE_TYPE},it must be one of [cdylib|SHARED|staticlib|STATIC|bin|EXECUTABLE]")
     endif()

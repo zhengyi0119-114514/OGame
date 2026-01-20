@@ -45,8 +45,8 @@ typedef uint32_t OG_ERROR_CODE_T;
 #define OgCrGetErrorNamesoace(error)                            ((OG_MODULE_NAMESPACE_T)((error) >> 32))
 #define OgCrGetErrorCode(error)                                 ((OG_ERROR_CODE_T)((error) & 0xFFFFFFFFULL))
 
-typedef unsigned char OG_BYTE_T;
-typedef signed char OG_SBYTE_T;
+typedef unsigned char BYTE_T;
+typedef signed char SBYTE_T;
 typedef bool BOOL_T;
 #define OG_FALSE                                                false
 #define OG_TRUE                                                 true
@@ -54,11 +54,8 @@ typedef bool BOOL_T;
     #define TRUE                                                OG_TRUE
     #define FALSE                                               OG_FALSE
 #endif
-typedef const char *OG_PCSTR_T;
-typedef char *OG_PSTR_T;
 
-
-#define OPEN_STG_CONST_ADDITIONAL_ERROR_MESSAGE_STRING_LENGTH   ((uint64_t)UINT64_C(128))
+#define OPEN_STG_CONST_ADDITIONAL_ERROR_MESSAGE_STRING_LENGTH   (UINT64_C(128))
 
 #define OPEN_STG_NAMESPACE_CORE                                 ((OG_MODULE_NAMESPACE_T)OG_MODULE_NAMESPACE_C(0x1))
 #define OPEN_STG_NAMESPACE_SDL3                                 ((OG_MODULE_NAMESPACE_T)OG_MODULE_NAMESPACE_C(0x2)) 

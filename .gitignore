@@ -26,6 +26,12 @@ CMakeUserPresets.json
 _ReSharper*
 *.log
 vc*
+# *.vcxproj
+# *.vcxproj.filters
+# *.td
+# x86/
+# x64/
+
 
 # OS Generated Files
 .DS_Store
