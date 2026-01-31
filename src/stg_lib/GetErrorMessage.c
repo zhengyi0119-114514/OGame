@@ -1,4 +1,4 @@
-#include "CloseStg.h"
+#include "CloseStgCore.h"
 #include <string.h>
 
 void OgCrFormatErrorMessage(OG_ERROR_CODE_T code, char *pszBuffer, uint64_t uLengthOfBuffer)
@@ -20,7 +20,10 @@ void OgCrFormatErrorMessage(OG_ERROR_CODE_T code, char *pszBuffer, uint64_t uLen
     }
     break;
     case OPEN_STG_ERROR_MESSAGE_MODULE_EXIST: {
-        strcpy_s(pszBuffer, uLengthOfBuffer, "Module exist");
+        strcpy_s(pszBuffer, uLengthOfBuffer, "Module exist.");
+    }
+    case OPEN_STG_ERROR_MESSAGE_MODULE_NOT_EXIST: {
+        strcpy_s(pszBuffer,uLengthOfBuffer,"Module not exist.");
     }
     break;
     case OPEN_STG_ERROR_MESSAGE_NOT_INITIALIZED: {
@@ -33,7 +36,4 @@ void OgCrFormatErrorMessage(OG_ERROR_CODE_T code, char *pszBuffer, uint64_t uLen
     break;
     }
 }
-void OgSdlFormatErrorMessage(OG_ERROR_CODE_T code, char *pszBuffer, uint64_t uLengthOfBuffer)
-{
-    strcpy_s(pszBuffer, uLengthOfBuffer, OgCrGetTLSStruct()->pszAdditionalErrorMessage);
-}
+

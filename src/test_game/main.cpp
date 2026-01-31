@@ -4,11 +4,11 @@
 int main(int argc, char **args)
 {
     SPDLOG_INFO("Program start");
-    if(!OgInit(0))
+    if(!OgCrInit())
     {
         SPDLOG_ERROR("Failed to init og.");
     }
-    OG_ELECTROMAGNETIC_DOT_TIMER *pedt = OgCrCreateElectromagneticDotTimer(10);
+    OG_CR_ELECTROMAGNETIC_DOT_TIMER *pedt = OgCrCreateElectromagneticDotTimer(10);
     OgCrRefreshElectromagneticDotTimer(pedt);
     for (size_t sIndex = 0; sIndex < 31; sIndex++)
     {
@@ -20,5 +20,4 @@ int main(int argc, char **args)
         OgCrElectromagneticDotTimerSkipATimeStamp(pedt);
     }
     OgCrDestoryElectromagneticDotTimer(pedt);
-    OgQuit();
 }

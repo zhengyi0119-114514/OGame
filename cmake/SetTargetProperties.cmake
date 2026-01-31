@@ -19,7 +19,7 @@ set_target_properties(open_stg_base_lib
     C_EXTENSIONS TRUE
     POSITION_INDEPENDENT_CODE TRUE
 )
-set_target_properties(open_stg_sdl_lib
+set_target_properties(open_stg_graphics_lib
     PROPERTIES
     CXX_STANDARD 20
     CXX_STANDARD_REQUIRED TRUE
@@ -59,7 +59,14 @@ target_compile_options(
     open_stg_shared
     INTERFACE
     $<$<AND:$<C_COMPILER_ID:GNU,AppleClang,ARMClang,CrayClang,TIClang,IntelLLVM,Clang>,$<CONFIG:Release>>:-Ofast>
+    $<$<C_COMPILER_ID:GNU,AppleClang,ARMClang,CrayClang,TIClang,IntelLLVM,Clang,GNU>:-Wall;-Wextra>
     $<$<AND:$<C_COMPILER_ID:MSVC>,$<CONFIG:Release>>:/Ox>
+    $<$<C_COMPILER_ID:MSVC>:/W4>
+)
+target_link_options(
+    open_stg_shared
+    INTERFACE 
+    $<$<AND:$<BOOL:${UNIX}>,$<C_COMPILER_ID:GUN,Clang>>:-rdynamic>
 )
 target_compile_definitions(
     open_stg_base_lib

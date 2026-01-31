@@ -1,4 +1,4 @@
-#include "CloseStg.h"
+#include "CloseStgCore.h"
 #include "CloseStgHistory.h"
 #include <pthread.h>
 #include <stdio.h>
@@ -10,13 +10,13 @@
 #endif
 #if defined __unix__ // POSIX
 OG_PRIVATE pthread_key_t s_pkPthreadKey = 0;
-#elif defined OPEN_STG_MACRO_IS_WINDOWS
+#elif OPEN_STG_MACRO_IS_WINDOWS
 extern DWORD s_tls;
 #endif
 
-BOOL_T crInitTSL(uint64_t ufInitFlag)
+BOOL_T ogCrPvInitTSL()
 {
-#if defined OPEN_STG_MACRO_IS_WINDOWS
+#if OPEN_STG_MACRO_IS_WINDOWS
     return OG_TRUE;
 #else
     int iStatus = 0;
@@ -30,9 +30,9 @@ failed:
     return OG_FALSE;
 #endif
 }
-OG_INTERNAL BOOL_T OG_CDECL crFreeTSL(void)
+OG_INTERNAL BOOL_T OG_API ogCrPvFreeTSL(void)
 {
-#if defined OPEN_STG_MACRO_IS_WINDOWS
+#if OPEN_STG_MACRO_IS_WINDOWS
     return OG_TRUE;
 #else
     int iStatus = 0;
@@ -43,10 +43,10 @@ OG_INTERNAL BOOL_T OG_CDECL crFreeTSL(void)
     return TRUE;
 #endif
 }
-OG_THREAD_LOCAL_STORAGE_STRUCT *OgCrGetTLSStruct(void)
+OG_CR_THREAD_LOCAL_STORAGE_STRUCT *OgCrGetTLSStruct(void)
 {
-#if defined OPEN_STG_MACRO_IS_WINDOWS
-    OG_THREAD_LOCAL_STORAGE_STRUCT *ptlss = (OG_THREAD_LOCAL_STORAGE_STRUCT *)TlsGetValue(s_tls);
+#if OPEN_STG_MACRO_IS_WINDOWS
+    OG_CR_THREAD_LOCAL_STORAGE_STRUCT *ptlss = (OG_CR_THREAD_LOCAL_STORAGE_STRUCT *)TlsGetValue(s_tls);
     if (ptlss == NULL)
     {
         // FIXME: 有空去查查DllMain()
@@ -54,16 +54,19 @@ OG_THREAD_LOCAL_STORAGE_STRUCT *OgCrGetTLSStruct(void)
     }
     return ptlss;
 #else
-    OG_THREAD_LOCAL_STORAGE_STRUCT *ptlss = (OG_THREAD_LOCAL_STORAGE_STRUCT *)pthread_getspecific(s_pkPthreadKey);
+    OG_CR_THREAD_LOCAL_STORAGE_STRUCT *ptlss = (OG_CR_THREAD_LOCAL_STORAGE_STRUCT *)pthread_getspecific(s_pkPthreadKey);
     if (ptlss == NULL)
     {
-        int iStatus = 0;
-        size_t sSizeOfTLSSturct = sizeof(OG_THREAD_LOCAL_STORAGE_STRUCT);
-        ptlss = (OG_THREAD_LOCAL_STORAGE_STRUCT *)malloc(sSizeOfTLSSturct);
+        size_t sSizeOfTLSSturct = sizeof(OG_CR_THREAD_LOCAL_STORAGE_STRUCT);
+        ptlss = (OG_CR_THREAD_LOCAL_STORAGE_STRUCT *)malloc(sSizeOfTLSSturct);
         memset((void *)ptlss, 0, sSizeOfTLSSturct);
         pthread_setspecific(s_pkPthreadKey, (void *)ptlss);
     }
     return ptlss;
 #endif
+}
+char* OG_API OgCrGetCharBuffer(void)
+{
+    return OgCrGetTLSStruct()->szUniversalBuffer;
 }
 // NOTE: 实现将放置在DllMain中,Windows实现将不采用PThread

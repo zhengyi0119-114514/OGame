@@ -20,18 +20,18 @@ target_link_libraries(open_stg_shared
 )
 target_link_libraries(open_stg_base_lib
     PUBLIC
-    Boost::json
     $<TARGET_NAME_IF_EXISTS:PkgConfig::LIBSAFEC>
     $<TARGET_NAME_IF_EXISTS:PThreads4W::PThreads4W>
     PRIVATE
     open_stg_shared
+    Boost::json
 )
 target_include_directories(
     open_stg_shared
     INTERFACE
     ${LUA_INCLUDE_DIR}
 )
-target_link_libraries(open_stg_sdl_lib
+target_link_libraries(open_stg_graphics_lib
     PRIVATE
     SDL3::SDL3
     SDL3_ttf::SDL3_ttf
@@ -50,7 +50,7 @@ target_link_libraries(
     open_stg_lib
     PUBLIC
     open_stg_base_lib
-    open_stg_sdl_lib
+    open_stg_graphics_lib
     open_stg_net_lib
     open_stg_logic_lib
 )

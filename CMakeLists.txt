@@ -15,21 +15,25 @@ option(USE_SDL_CLOCK "Use SDL3's clock instead of system clock" FALSE)
 
 add_library(open_stg_lib SHARED src/empty.c)
 add_library(open_stg_base_lib SHARED src/empty.c)
-add_library(open_stg_sdl_lib SHARED src/empty.c)
+add_library(open_stg_graphics_lib SHARED src/empty.c)
 add_library(open_stg_net_lib SHARED src/empty.c)
 add_library(open_stg_shared INTERFACE)
+ADD_CRATE(open_stg_base_lib_wap
+    CRATE_TYPE "SHARED"
+    SOURCE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    DEPENDS open_stg_base_lib 
+)
+ADD_CRATE(open_stg_logic_lib
+    CRATE_TYPE "SHARED"
+    SOURCE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    DEPENDS open_stg_base_lib open_stg_base_lib_wap
+)
 
 add_executable(test_game)
 target_sources(test_game PRIVATE src/empty.c)
 
 add_executable(unit_test)
 target_sources(unit_test PRIVATE src/empty.c)
-
-ADD_CRATE(open_stg_logic_lib
-    CRATE_TYPE "SHARED"
-    SOURCE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-    DEPENDS open_stg_base_lib
-)
 
 add_subdirectory(src/stg_lib)
 add_subdirectory(src/test_game)
@@ -42,7 +46,6 @@ add_subdirectory(tests)
 
 # 定义资源文件路径
 set(RESOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/resources")
-
 # 如果是 Windows/MSVC，使用 copy_directory
 add_custom_command(
     TARGET test_game POST_BUILD
