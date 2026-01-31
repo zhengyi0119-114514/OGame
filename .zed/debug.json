@@ -1,0 +1,18 @@
+[
+  {
+    "label": "Debug test_game (CoreLLDB)",
+    "adapter": "CodeLLDB",
+    "request": "launch",
+    "program": "$ZED_WORKTREE_ROOT/build/Debug/test_game",
+    "build":"CMake Build All (DEBUG)",
+    "cwd": "$ZED_WORKTREE_ROOT/build/Debug"
+  },
+  {
+    "label": "Debug test_game (GDB)",
+    "adapter": "GDB",
+    "request": "launch",
+    "program": "$ZED_WORKTREE_ROOT/build/Debug/test_game",
+    "build":"CMake Build All (DEBUG)",
+    "cwd": "$ZED_WORKTREE_ROOT/build/Debug"
+  }
+]

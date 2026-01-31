@@ -1,0 +1,13 @@
+[package]
+name = "open_stg_base_lib_wap"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+bitflags = "2.10.0"
+
+[build-dependencies]
+build_scripts = { path = "../build_scripts" }
+
+[lib]
+crate-type = ["cdylib"]

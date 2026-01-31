@@ -1,0 +1,14 @@
+[package]
+name = "open_stg_logic_lib"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+bitflags = "2.10.0"
+open_stg_base_lib_wap ={ path = "../open_stg_base_lib_wap"}
+
+[build-dependencies]
+build_scripts = { path = "../build_scripts" }
+
+[lib]
+crate-type = ["cdylib"]
