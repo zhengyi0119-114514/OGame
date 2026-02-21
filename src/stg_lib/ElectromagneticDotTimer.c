@@ -1,6 +1,6 @@
-#include "CloseStgCore.h"
+#include "OpenStg/CloseStgCore.h"
 
-#if defined WIN32 || WINDOWS32
+#if OPEN_STG_MACRO_IS_WINDOWS
 #include <windows.h>
 typedef struct TagOgCrELECTROMAGNETIC_DOT_TIMER
 {

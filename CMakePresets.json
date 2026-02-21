@@ -1,5 +1,5 @@
 {
-    "version": 2,
+    "version": 3,
     "configurePresets": [
         {
             "name": "vcpkg-visula-studio",
@@ -30,7 +30,7 @@
             }
         },
         {
-            "name": "vcpkg-clang",
+            "name": "vcpkg-llvm",
             "generator": "Ninja Multi-Config",
             "binaryDir": "${sourceDir}/build/",
             "cacheVariables": {
@@ -45,7 +45,7 @@
             }
         },
         {
-            "name": "sys-gnu-clang",
+            "name": "sys-llvm",
             "generator": "Ninja Multi-Config",
             "binaryDir": "${sourceDir}/build/",
             "cacheVariables": {
@@ -72,14 +72,18 @@
             "displayName": "Debug_VS",
             "configuration": "Debug",
             "configurePreset": "vcpkg-visula-studio",
-            "jobs": 4
+            "nativeToolOptions": [
+                "-Restore"
+            ]
         },
         {
             "name": "vcpkg-release",
             "displayName": "Release_VS",
             "configuration": "Release",
             "configurePreset": "vcpkg-visula-studio",
-            "jobs": 4
+            "nativeToolOptions": [
+                "-Restore"
+            ]
         },
         {
             "name": "vcpkg-gnu-debug",
@@ -94,23 +98,22 @@
             "configurePreset": "vcpkg-gnu"
         },
         {
-            "name": "vcpkg-clang-debug",
+            "name": "vcpkg-llvm-debug",
             "displayName": "Debug_LLVM",
             "configuration": "Debug",
-            "configurePreset": "vcpkg-clang"
+            "configurePreset": "vcpkg-llvm"
         },
         {
-            "name": "vcpkg-clang-release",
+            "name": "vcpkg-llvm-release",
             "displayName": "Release_LLVM",
             "configuration": "Release",
-            "configurePreset": "vcpkg-clang"
+            "configurePreset": "vcpkg-llvm"
         },
         {
             "name": "sys-release",
             "displayName": "Release_VS",
             "configuration": "Release",
-            "configurePreset": "vcpkg-visula-studio",
-            "jobs": 4
+            "configurePreset": "vcpkg-visula-studio"
         },
         {
             "name": "sys-gnu-debug",
@@ -125,16 +128,16 @@
             "configurePreset": "sys-gnu"
         },
         {
-            "name": "sys-gnu-clang-debug",
+            "name": "sys-llvm-debug",
             "displayName": "Debug_LLVM",
             "configuration": "Debug",
-            "configurePreset": "sys-gnu-clang"
+            "configurePreset": "sys-llvm"
         },
         {
-            "name": "sys-gnu-clang-release",
-            "displayName": "Debug_LLVM",
-            "configuration": "Debug",
-            "configurePreset": "sys-gnu-clang"
+            "name": "sys-llvm-release",
+            "displayName": "Release_LLVM",
+            "configuration": "Release",
+            "configurePreset": "sys-llvm"
         }
     ]
 }

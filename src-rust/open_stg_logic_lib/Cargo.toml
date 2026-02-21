@@ -5,10 +5,15 @@ edition = "2024"
 
 [dependencies]
 bitflags = "2.10.0"
-open_stg_base_lib_wap ={ path = "../open_stg_base_lib_wap"}
+open_stg_base_lib_wapper ={ path = "../open_stg_base_lib"}
+thunk-rs = "0.3.5"
+vc-ltl = "5.3.1"
 
 [build-dependencies]
 build_scripts = { path = "../build_scripts" }
 
 [lib]
 crate-type = ["cdylib"]
+
+[features]
+thunk-rs = ["lib"]

@@ -1,3 +1,4 @@
-pub extern "C" fn add(first: i32, second: i32) -> i32 {
-    return first + second;
+#[unsafe(export_name = "OgLgAdd")]
+pub extern "C" fn add(f: i32, s: i32) -> i32 {
+    f + s
 }

@@ -21,3 +21,7 @@ if(${__IS_CLANG} AND NOT "${__LLD_FOUND}" STREQUAL "__LLD_FOUND-NOTFOUND")
         add_link_options("-fuse-ld=lld")
     endif()
 endif()
+
+cmake_host_system_information(RESULT __parallel QUERY NUMBER_OF_LOGICAL_CORES)
+set(CMAKE_BUILD_PARALLEL_LEVEL ${__parallel})
+message(STATUS "parallel:${__parallel}")

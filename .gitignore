@@ -60,7 +60,7 @@ _deps
 .cache/
 .ccls-cache/
 vcpkg_installed/
-
+CMakeUserPresets.json
 # cargo
 # will have compiled files and executables
 debug/

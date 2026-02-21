@@ -1,23 +1,26 @@
-#include "CloseStgCore.h"
+#include "OpenStg/CloseStgCore.h"
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-/**
- * @brief 模块注册器局部变量，成员是OG_CR_PV_PROGRAM_MODULE
- *
- */
-OG_PRIVATE OG_CR_UNIVERSAL_REGISTRAR *s_urModuleRegistrar = NULL;
+#include <stdalign.h>
+
+alignas(64) struct S1
+{
+    int x;
+};
+
+// __STDC_VERSION__
 void OG_API freeProgramModule(void *pvModule)
 {
     OG_CR_PV_PROGRAM_MODULE *ppm = (OG_CR_PV_PROGRAM_MODULE *)pvModule;
-    if (ppm->pvAdditionalData != NULL && ppm->pfFreeFunc != NULL)
+    if (ppm->pvAdditionalData != NULL && ppm->fnFreeFunc != NULL)
     {
-        ppm->pfFreeFunc(ppm->pvAdditionalData);
+        ppm->fnFreeFunc(ppm->pvAdditionalData);
     }
-    if (ppm->pfDestoryProgramModule != NULL)
+    if (ppm->fnDestoryProgramModule != NULL)
     {
-        ppm->pfDestoryProgramModule();
+        ppm->fnDestoryProgramModule();
     }
     free((void *)ppm->pszDisplayName);
     ppm->pszDisplayName = NULL;
@@ -30,9 +33,9 @@ BOOL_T OG_API ogCrPvInitModuleRegistrar(void)
     uri.uSize = sizeof(OG_CR_UNIVERSAL_REGISTRAR_INFORMATION);
     uri.pfDestoryMember = &freeProgramModule;
     uri.pszStructureName = NULL;
-    uri.uItemStructureSize = sizeof(OG_CR_PV_PROGRAM_MODULE);
+    uri.uUnitStructureSize = sizeof(OG_CR_PV_PROGRAM_MODULE);
     uri.uPreAllocatedCount = 3;
-    if ((s_urModuleRegistrar = OgCrCreateUniversalRegistrar(&uri)) == NULL)
+    if ((ogCrPvGetProgramStaticVariables()->urModuleRegistrar = OgCrCreateUniversalRegistrar(&uri)) == NULL)
     {
         return FALSE;
     }
@@ -42,25 +45,32 @@ void OgFormatErrorMessage(OG_ERROR_T eError, char *pszBuffer, uint64_t uLengthOf
 {
     if (pszBuffer == NULL)
         return;
-    OG_CR_PV_PROGRAM_MODULE *ppm =
-        (OG_CR_PV_PROGRAM_MODULE *)OgCrUniversalRegistrarGetItem(s_urModuleRegistrar, OgCrGetErrorNamesoace(eError));
-    if (ppm->pfFormatErrorMessage != NULL)
+    if (OgCrGetErrorNamesoace(eError))
     {
-        ppm->pfFormatErrorMessage(OgCrGetErrorCode(eError), pszBuffer, uLengthOfBuffer);
+        OgCrFormatErrorMessage(OgCrGetErrorCode(eError), pszBuffer, uLengthOfBuffer);
+        return;
+    }
+    OG_CR_PV_PROGRAM_MODULE *ppm =
+        (OG_CR_PV_PROGRAM_MODULE *)OgCrUniversalRegistrarGetItem(ogCrPvGetProgramStaticVariables()->urModuleRegistrar, OgCrGetErrorNamesoace(eError));
+    if (ppm->fnFormatErrorMessage != NULL)
+    {
+        ppm->fnFormatErrorMessage(OgCrGetErrorCode(eError), pszBuffer, uLengthOfBuffer);
     }
 }
 BOOL_T OG_API OgCrRegisterProgramModule(const OG_CR_PROGRAM_MODULE *mod, uint32_t *puNamespaceOutput)
 {
     if (mod == NULL || mod->pszModuleRegisteredName == NULL)
     {
-        OgCrSetRecoverableError(OgCrMakeError(OPEN_STG_NAMESPACE_CORE,OPEN_STG_ERROR_MESSAGE_INVALID_PARAMETER));
+        OgCrSetRecoverableError(OgCrMakeError(OPEN_STG_NAMESPACE_CORE, OPEN_STG_ERROR_CODE_CORE_INVALID_PARAMETER));
         return FALSE;
     }
-    int64_t iItemIndex;
+    int64_t iItemIndex, iReservedCount = OgCrUniversalRegistrarGetReservedItemCount(ogCrPvGetProgramStaticVariables()->urModuleRegistrar),
+                        iAllocatedCount = OgCrUniversalRegistrarGetAllocatedItemCount(ogCrPvGetProgramStaticVariables()->urModuleRegistrar),
+                        iDifferent = iAllocatedCount - iReservedCount;
     OG_CR_PV_PROGRAM_MODULE *ppm;
     if ((mod->ufModuleRegisteredFlag & OPEN_STG_FLAG_MODULE_ALLOC_STATIC_HANDLE) != 0)
     {
-        if ((iItemIndex = OgCrUniversalRegistrarAllocatePreallocatedItem(s_urModuleRegistrar, mod->uModuleNamespace,
+        if ((iItemIndex = OgCrUniversalRegistrarAllocatePreallocatedItem(ogCrPvGetProgramStaticVariables()->urModuleRegistrar, mod->uModuleNamespace,
                                                                          (void **)&ppm)) < 0)
         {
             return FALSE;
@@ -68,7 +78,10 @@ BOOL_T OG_API OgCrRegisterProgramModule(const OG_CR_PROGRAM_MODULE *mod, uint32_
     }
     else
     {
-        if ((iItemIndex = OgCrUniversalRegistrarAllocateItem(s_urModuleRegistrar, (void **)&ppm)) < 0)
+        if ((iDifferent))
+        {
+        }
+        if ((iItemIndex = OgCrUniversalRegistrarAllocateItem(ogCrPvGetProgramStaticVariables()->urModuleRegistrar, (void **)&ppm)) < 0)
         {
             return FALSE;
         }
@@ -91,15 +104,17 @@ BOOL_T OG_API OgCrRegisterProgramModule(const OG_CR_PROGRAM_MODULE *mod, uint32_
     {
         free((void *)pszDisplayName);
         free((void *)pszRegisteredName);
-        OgCrSetRecoverableError(OgCrMakeError(OPEN_STG_NAMESPACE_CORE,OPEN_STG_ERROR_MESSAGE_MEMORY_ERROR));
+        OgCrSetRecoverableError(OgCrMakeError(OPEN_STG_NAMESPACE_CORE, OPEN_STG_ERROR_CODE_CORE_MEMORY_ERROR));
         return FALSE;
     }
     strcpy_s(pszDisplayName, sCountOfDisplayName, pszDispalyNameSource);
     strcpy_s(pszRegisteredName, sCountOfRegisteredName, mod->pszModuleRegisteredName);
     ppm->pszDisplayName = pszDisplayName;
     ppm->pszRegisteredName = pszRegisteredName;
-    ppm->pfFormatErrorMessage = mod->pfFormatErrorMessage;
-    ppm->pfDestoryProgramModule = mod->pfDestoryProgramModule;
+    ppm->fnFormatErrorMessage = mod->fnFormatErrorMessage;
+    ppm->fnDestoryProgramModule = mod->fnDestoryProgramModule;
+    ppm->fnFreeFunc = mod->fnFreeFunc;
+    ppm->fnPostInitalzationFunction = mod->fnPostInitalzationFunction;
     // FIXME: 创建新的模块索引
     ppm->ufPermissions = 0;
     ppm->uModuleNamespace = uModuleNamespace;
@@ -109,7 +124,7 @@ BOOL_T OG_API OgCrRegisterProgramModule(const OG_CR_PROGRAM_MODULE *mod, uint32_
 }
 BOOL_T OG_API crDestroyModuleRegistrar(void)
 {
-    OgCrDestoryUniversalRegistrar(s_urModuleRegistrar);
+    OgCrDestoryUniversalRegistrar(ogCrPvGetProgramStaticVariables()->urModuleRegistrar);
     return TRUE;
 }
 typedef struct TagOgCrPROGRAM_MODULE_ITREATOR
@@ -121,10 +136,10 @@ OG_CR_PROGRAM_MODULE_ITERATOR *OG_API OgCrCreateProgramModuleRegistrarIterator()
     OG_CR_PROGRAM_MODULE_ITERATOR *pmi = (OG_CR_PROGRAM_MODULE_ITERATOR *)malloc(sizeof(OG_CR_PROGRAM_MODULE_ITERATOR));
     if (pmi == NULL)
     {
-        OgCrSetRecoverableError(OgCrMakeError(OPEN_STG_NAMESPACE_CORE,OPEN_STG_ERROR_MESSAGE_MEMORY_ERROR));
+        OgCrSetRecoverableError(OgCrMakeError(OPEN_STG_NAMESPACE_CORE, OPEN_STG_ERROR_CODE_CORE_MEMORY_ERROR));
         return NULL;
     }
-    pmi->puri = OgCrCreateUniversalRegistrarIterator(s_urModuleRegistrar);
+    pmi->puri = OgCrCreateUniversalRegistrarIterator(ogCrPvGetProgramStaticVariables()->urModuleRegistrar);
     if (pmi->puri == NULL)
     {
         free(pmi);
@@ -132,23 +147,24 @@ OG_CR_PROGRAM_MODULE_ITERATOR *OG_API OgCrCreateProgramModuleRegistrarIterator()
     }
     return pmi;
 }
-BOOL_T OG_API OgCrProgramModuleRegistrarIteratorNext(OG_CR_PROGRAM_MODULE_ITERATOR *piter, OG_CR_PROGRAM_MODULE *pmod)
+BOOL_T OG_API OgCrProgramModuleRegistrarIteratorNext(OG_CR_PROGRAM_MODULE_ITERATOR *pIterator,
+                                                     OG_CR_PROGRAM_MODULE *pModule)
 {
-    if (piter == NULL || pmod == NULL)
+    if (pIterator == NULL || pModule == NULL)
     {
-        OgCrSetRecoverableError(OgCrMakeError(OPEN_STG_NAMESPACE_CORE,OPEN_STG_ERROR_MESSAGE_INVALID_PARAMETER));
+        OgCrSetRecoverableError(OgCrMakeError(OPEN_STG_NAMESPACE_CORE, OPEN_STG_ERROR_CODE_CORE_INVALID_PARAMETER));
         return FALSE;
     }
     OG_CR_PV_PROGRAM_MODULE *ppvmod = NULL;
-    while ((ppvmod = (OG_CR_PV_PROGRAM_MODULE *)OgCrUniversalRegistrarIteratorNext(piter->puri)) != NULL)
+    while ((ppvmod = (OG_CR_PV_PROGRAM_MODULE *)OgCrUniversalRegistrarIteratorNext(pIterator->puri)) != NULL)
     {
-        pmod->ufModuleRegisteredFlag = ppvmod->ufFlag;
-        pmod->pszModuleDisplayName = ppvmod->pszDisplayName;
-        pmod->pszModuleRegisteredName = ppvmod->pszRegisteredName;
-        pmod->pfFormatErrorMessage = ppvmod->pfFormatErrorMessage;
-        pmod->rgpszDependenciesRegisteredName = NULL;
-        pmod->uCountOfDependencies = 0;
-        pmod->uModuleNamespace = ppvmod->uModuleNamespace;
+        pModule->ufModuleRegisteredFlag = ppvmod->ufFlag;
+        pModule->pszModuleDisplayName = ppvmod->pszDisplayName;
+        pModule->pszModuleRegisteredName = ppvmod->pszRegisteredName;
+        pModule->fnFormatErrorMessage = ppvmod->fnFormatErrorMessage;
+        pModule->rgpszDependenciesRegisteredName = NULL;
+        pModule->uCountOfDependencies = 0;
+        pModule->uModuleNamespace = ppvmod->uModuleNamespace;
     }
     return TRUE;
 }
@@ -165,7 +181,7 @@ BOOL_T OG_API OgCrUnregisterProgramModule(const char *pszModuleRegisteredName)
 {
     OG_CR_UNIVERSAL_REGISTRAR_ITERATOR *puri = NULL;
     OG_CR_PV_PROGRAM_MODULE *pm = NULL;
-    if ((puri = OgCrCreateUniversalRegistrarIterator(s_urModuleRegistrar)) == NULL)
+    if ((puri = OgCrCreateUniversalRegistrarIterator(ogCrPvGetProgramStaticVariables()->urModuleRegistrar)) == NULL)
     {
         return FALSE;
     }
@@ -173,7 +189,7 @@ BOOL_T OG_API OgCrUnregisterProgramModule(const char *pszModuleRegisteredName)
     {
         if (strcmp(pm->pszRegisteredName, pszModuleRegisteredName) == 0)
         {
-            if (OgCrUniversalRegistrarFreeItem(s_urModuleRegistrar, pm->uModuleNamespace))
+            if (OgCrUniversalRegistrarFreeItem(ogCrPvGetProgramStaticVariables()->urModuleRegistrar, pm->uModuleNamespace))
             {
                 return TRUE;
             }
@@ -187,11 +203,11 @@ BOOL_T OG_API OgCrUnregisterProgramModule(const char *pszModuleRegisteredName)
 }
 PTR_PROGRAM_MODULE OgCrGetProgramModulePointerByNamespace(OG_MODULE_NAMESPACE_T uNamespace)
 {
-    return (PTR_PROGRAM_MODULE)OgCrUniversalRegistrarGetItem(s_urModuleRegistrar, uNamespace);
+    return (PTR_PROGRAM_MODULE)OgCrUniversalRegistrarGetItem(ogCrPvGetProgramStaticVariables()->urModuleRegistrar, uNamespace);
 }
 PTR_PROGRAM_MODULE OG_API OgCrGetProgramModulePointerByRegistrerdName(const char *pszRegisteredName)
 {
-    OG_CR_UNIVERSAL_REGISTRAR_ITERATOR *pIter = OgCrCreateUniversalRegistrarIterator(s_urModuleRegistrar);
+    OG_CR_UNIVERSAL_REGISTRAR_ITERATOR *pIter = OgCrCreateUniversalRegistrarIterator(ogCrPvGetProgramStaticVariables()->urModuleRegistrar);
     if (pIter == NULL)
     {
         return 0;
@@ -210,7 +226,7 @@ void *OG_API OgCrGetProgramModuleAdditionalData(PTR_PROGRAM_MODULE pModule)
 {
     if (pModule == NULL)
     {
-        OgCrSetRecoverableError(OgCrMakeError(OPEN_STG_NAMESPACE_CORE,OPEN_STG_ERROR_MESSAGE_INVALID_PARAMETER));
+        OgCrSetRecoverableError(OgCrMakeError(OPEN_STG_NAMESPACE_CORE, OPEN_STG_ERROR_CODE_CORE_INVALID_PARAMETER));
         return NULL;
     }
     return ((OG_CR_PV_PROGRAM_MODULE *)pModule)->pvAdditionalData;

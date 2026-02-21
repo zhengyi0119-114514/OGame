@@ -1,5 +1,5 @@
-#include "CloseStgCore.h"
-#include "CloseStgHistory.h"
+#include "OpenStg/CloseStgCore.h"
+#include "OpenStg/CloseStgHistory.h"
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,6 +51,7 @@ OG_CR_THREAD_LOCAL_STORAGE_STRUCT *OgCrGetTLSStruct(void)
     {
         // FIXME: 有空去查查DllMain()
         fprintf_s(stderr, "%p As TlsGetValue in thread_id %d\n", (void *)ptlss, (int)GetCurrentThreadId());
+        OgCrPrintStackTrace();
     }
     return ptlss;
 #else

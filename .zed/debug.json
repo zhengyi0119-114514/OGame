@@ -1,6 +1,6 @@
 [
   {
-    "label": "Debug test_game (CoreLLDB)",
+    "label": "Debug test_game (LLDB_DAP)",
     "adapter": "CodeLLDB",
     "request": "launch",
     "program": "$ZED_WORKTREE_ROOT/build/Debug/test_game",

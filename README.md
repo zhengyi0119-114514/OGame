@@ -13,9 +13,9 @@
   - ~~单纯反人类的代码风格~~
   - ~~无处不在的梗~~
   - ~~追求极端鲁棒性的神仙设计~~
+  - ~~比你的生命周期都长的CMakeLists.txt~~
+  - ~~神奇的理论兼容性~~
 - ~~反复横跳的程序设计~~
-
-
 
 ## ℬ𝒶𝓀𝒶
 
@@ -59,33 +59,33 @@
 ~~我不能保证你要等多久~~  
 如果你在中国大陆地区不开(反向)代理的话还是算了
 
-### ArchLinux / Manjaro
+### ArchLinux / Manjaro / Archlinux(WSL)
 
 本项目严重依赖C11的SafeCLib,但AUR的**aur/libsafec 1:3.7.1-1**无法使用,所以请自行安装:  
 [LibSafeC](https://github.com/rurban/safeclib)
 
 ``` bash
-sudo pacman -S gtk4 boost lua sdl3 sdl3_ttf vulkan-devel #vulkan-devel Optional
-yay -S sdl3_image 
+doas pacman -S boost fmt icu lua sdl3 sdl3_{image,ttf} gtk4 vulkan-devel #vulkan-devel Optional
+```
+or
+``` bash
+sudo pacman -S boost fmt icu lua sdl3 sdl3_{image,ttf} gtk4 vulkan-devel #vulkan-devel Optional
 ```
 
-### OpenSUSE Tumbleweed
+### Windows-MSYS2
 
-本项目严重依赖C11的SafeCLib,无法在官方仓库找到,所以请自行安装:  
-[LibSafeC on Build Service](https://build.opensuse.org/package/show/home:PerryWerneck/libsafec)
+推荐使用CLANG64/UCRT64环境,此处以CLANG64环境为例
 
-```bash
-sudo zypper install gtest qt6-base-common-devel lua boost-devel
-```
-
-SDL3 : OpenSUSE Tumbleweed对新的SDL3及其附加组建支持良好  
-
-```bash
-sudo zypper install SDL3-devel SDL3_image-devel SDL3_ttf-devel
+``` sh
+pacman -S "mingw-w64-clang-x86_64-{boost,fmt,icu,lua,mcfgthread,spdlog,sdl3,sdl3-{image,ttf},vulkan-devel,gtk4}" 
+#vulkan-devel Optional
 ```
 
 ## 待定目标
 
 > Stg基础功能  
 > 使用Lua对项目进行拓展  
-> ~~自由地拉屎~~
+> ~~自由地拉屎~~  
+> 制作一个三段式简易长矛
+> 出去玩，出去玩。  
+> 何意味

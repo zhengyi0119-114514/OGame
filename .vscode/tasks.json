@@ -1,22 +1,69 @@
 {
   "tasks": [
     {
-      "type": "shell",
-      "label": "Clang-Tidy: fix current file",
-      "command": "clang-tidy",
-      "args": ["--fix-errors", "--use-color", "${file}"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "group": "none",
-      "presentation": {
-        "echo": false,
-        "reveal": "silent",
-        "focus": false,
-        "panel": "shared"
-      },
-      "problemMatcher": []
+        "type": "shell",
+        "label": "Clang-Tidy: fix current file",
+        "command": "clang-tidy",
+        "args": [
+            "--fix-errors",
+            "--use-color",
+            "${file}"
+        ],
+        "options": {
+            "cwd": "${workspaceFolder}"
+        },
+        "group": "none",
+        "presentation": {
+            "echo": false,
+            "reveal": "silent",
+            "focus": false,
+            "panel": "shared"
+        },
+        "problemMatcher": []
+    },
+    {
+        "type": "shell",
+        "label": "CMake: Remove Config Cache",
+        "command": [
+            "cmake",
+            "-E",
+            "remove",
+            "-f",
+            "${workspaceFolder}/build/CMakeCache.txt"
+        ],
+        "options": {
+            "cwd": "${workspaceFolder}"
+        },
+        "group": "none",
+        "presentation": {
+            "echo": true,
+            "reveal": "silent",
+            "focus": false,
+            "panel": "shared"
+        }
+    },
+    {
+        "type": "shell",
+        "label": "Clean All Build File",
+        "command": [
+            "cmake",
+            "-E",
+            "remove_directory",
+            "${workspaceFolder}/target/",
+            "${workspaceFolder}/build/"
+        ],
+        "options": {
+            "cwd": "${workspaceFolder}"
+        },
+        "group": "none",
+        "presentation": {
+            "echo": true,
+            "reveal": "silent",
+            "focus": false,
+            "panel": "shared"
+        },
+        "problemMatcher": []
     }
-  ],
+],
   "version": "2.0.0"
 }

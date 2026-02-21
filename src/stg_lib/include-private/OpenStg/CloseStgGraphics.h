@@ -1,4 +1,4 @@
-#include <OpenStgDefine.h>
+#include <OpenStg/OpenStgDefine.h>
 
 #if !defined OPEN_STG_GRAPHICS_PRIVATE_H
 #define OPEN_STG_GRAPHICS_PRIVATE_H

@@ -1,6 +1,9 @@
-#include "CloseStgCore.h"
+#define FMT_UNICODE 1
+#include "OpenStg/CloseStgCore.h"
+#include <assert.h>
 #include <fmt/format.h>
 #include <fmt/printf.h>
+#include <fmt/xchar.h>
 #include <inttypes.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -21,37 +24,39 @@
 #endif
 
 #define MAX_FRAMES 96
-#define MAX_EXCEPTION_HANDLER 16
-void OG_API ogCrPvDefaultExceptionHandler(OG_ERROR_T e)
+#define MAX_NAME_LEN 128
+OG_INTERNAL void OG_API ogCrInvokeErrorHandlerFunction();
+void OG_API ogCrInvokeErrorHandlerFunction()
 {
-    OgFormatErrorMessage(e, OG_CHAR_BUFFER, OPEN_STG_CONST_CHAR_BUFFER_LENGTH);
-    fmt::fprintf(stderr, "%016" PRIx64 ":%s\n", OG_CHAR_BUFFER);
-    OgCrPrintStackTrace();
+    OG_CR_EXCEPTION_HANDLER_FUNCTION_T *funcs = ogCrPvGetProgramStaticVariables()->rgfnExceptionHandlers;
+    OG_CR_THREAD_LOCAL_STORAGE_STRUCT *ptlss = OgCrGetTLSStruct();
+    OG_CR_EXCEPTION_HANDLER_STATUS ehs{};
+    for (size_t uIndex = 0; uIndex < OPEN_STG_CONST_MAX_EXCEPTION_HANDLER_FUNCTION; uIndex++)
+    {
+        if (funcs[uIndex] != NULL)
+        {
+            ehs = funcs[uIndex](ptlss->ecErrno, ptlss->bIsRecoverableException);
+        }
+    }
 }
-OG_CR_EXCEPTION_HANDLER_FUNCTION_T s_pfnHandler = NULL;
 void OG_API OgCrSetErrorHandler(OG_CR_EXCEPTION_HANDLER_FUNCTION_T pfnHandler)
 {
-    s_pfnHandler = pfnHandler;
 }
 void OG_API OgCrSetRecoverableError(OG_ERROR_T e)
 {
     OG_CR_THREAD_LOCAL_STORAGE_STRUCT *ptlss = OgCrGetTLSStruct();
     ptlss->ecErrno = e;
+    ptlss->szAdditionalErrorMessage[0] = '\0';
     ptlss->bIsRecoverableException = TRUE;
-    if (s_pfnHandler != NULL)
-    {
-        s_pfnHandler(OG_ERRNO);
-    }
+    ogCrInvokeErrorHandlerFunction();
 }
 void OG_API OgCrSetIrreversibleError(OG_ERROR_T e)
 {
     OG_CR_THREAD_LOCAL_STORAGE_STRUCT *ptlss = OgCrGetTLSStruct();
+    ptlss->szAdditionalErrorMessage[0] = '\0';
     ptlss->bIsRecoverableException = FALSE;
     ptlss->ecErrno = e;
-    if (s_pfnHandler != NULL)
-    {
-        s_pfnHandler(OG_ERRNO);
-    }
+    ogCrInvokeErrorHandlerFunction();
     _Exit(EXIT_FAILURE);
 }
 #if OPEN_STG_MACRO_IS_DEBUG
@@ -59,8 +64,8 @@ inline void OG_API OG_ALWAYS_INLINE ogCrPrintException(const char *pszExpression
                                                        const char *pszFile, const char *pszEexceptionMessage,
                                                        OG_ERROR_T uError, uint64_t uLine)
 {
-    fmt::fprintf(stderr, "[%s:%" PRId64 "]%s|%016" PRIx64 "|%s|%s\n", pszFile, (signed long long int)uLine, pszFunction,
-                 uError, pszExpression, pszEexceptionMessage);
+    fmt::fprintf(stderr, "[%s:%" PRId64 "]%s|%016" PRIx64 "|%s|%s\n", pszFile, uLine, pszFunction, uError,
+                 pszExpression, pszEexceptionMessage);
 }
 #endif
 void *OG_API OgCrNoExceptPtrVa(void *p)
@@ -117,8 +122,7 @@ BOOL_T OG_API OgCrNoExceptBooleanEx(BOOL_T b, const char *pszExpression, const c
     {
         if (OgCrGetErrorNamesoace(OG_ERRNO) == OPEN_STG_NAMESPACE_CORE)
         {
-            OgCrFormatErrorMessage(OgCrGetErrorCode(OG_ERRNO), OG_CHAR_BUFFER,
-                                   OPEN_STG_CONST_CHAR_BUFFER_LENGTH);
+            OgCrFormatErrorMessage(OgCrGetErrorCode(OG_ERRNO), OG_CHAR_BUFFER, OPEN_STG_CONST_CHAR_BUFFER_LENGTH);
         }
         else
         {
@@ -137,7 +141,23 @@ void OG_API OgCrPrintStackTrace()
     DuplicateHandle(GetCurrentProcess(), GetCurrentProcess(), GetCurrentProcess(), &hCurrentProcess, 0, FALSE,
                     DUPLICATE_SAME_ACCESS);
     SymInitialize(hCurrentProcess, NULL, TRUE);
-
+    PVOID rgpvBuffer[MAX_FRAMES];
+    WORD wFrames = CaptureStackBackTrace(0, MAX_FRAMES, rgpvBuffer, NULL);
+    size_t sSymbolInfoSize = sizeof(SYMBOL_INFOW) + sizeof(WCHAR) * MAX_NAME_LEN;
+    PSYMBOL_INFOW psi = (PSYMBOL_INFOW)malloc(sSymbolInfoSize);
+    ZeroMemory((PVOID)psi, sSymbolInfoSize);
+    psi->MaxNameLen = MAX_NAME_LEN;
+    for (WORD wIndex = 0; wIndex < wFrames; wIndex++)
+    {
+        if (SymFromAddrW(hCurrentProcess, (DWORD64)rgpvBuffer[wIndex], 0, psi))
+        {
+            fwprintf(stderr, L"\t%" PRId16 "(%16" PRIx64 "):%s\n", (uint16_t)wIndex, psi->Address, psi->Name);
+        }
+        else
+        {
+            fmt::fprintf(stderr, "\t%" PRId16 "(%p):???\n", (uint16_t)wIndex, rgpvBuffer[wIndex]);
+        }
+    }
     SymCleanup(hCurrentProcess);
     CloseHandle(hCurrentProcess);
 #elif defined __unix__

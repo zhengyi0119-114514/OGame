@@ -1,10 +1,18 @@
-#include <OpenStg.h>
+#include <OpenStg/OpenStg.h>
+#include <fmt/printf.h>
+#include <inttypes.h>
 #include <spdlog/spdlog.h>
+
+extern "C"
+{
+    extern int32_t OgLgAdd(uint32_t f, uint32_t s);
+}
 
 int main(int argc, char **args)
 {
     SPDLOG_INFO("Program start");
-    if(!OgCrInit())
+    fmt::printf("%" PRId32 "\n", OgLgAdd(1145, 1919));
+    if (!OgCrInit())
     {
         SPDLOG_ERROR("Failed to init og.");
     }
@@ -20,4 +28,5 @@ int main(int argc, char **args)
         OgCrElectromagneticDotTimerSkipATimeStamp(pedt);
     }
     OgCrDestoryElectromagneticDotTimer(pedt);
+    
 }
