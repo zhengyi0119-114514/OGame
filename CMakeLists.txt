@@ -15,15 +15,16 @@ option(OPEN_STG_OPTION_USE_ZIG "OPEN_STG_OPTION_USE_SDL3_CLOCK:${OPEN_STG_OPTION
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" "${CMAKE_SOURCE_DIR}")
 
+include(cmake/SetGlobalProperties.cmake)
 include(cmake/AddTarget.cmake)
 include(cmake/FindPackage.cmake)
-include(cmake/SetGlobalProperties.cmake)
 include(GNUInstallDirs)
 
 if(NOT EXISTS "${CMAKE_BINARY_DIR}/include")
     file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/include")
 endif()
 configure_file("${CMAKE_SOURCE_DIR}/cmake/ProjectInformation.h.in" "${CMAKE_BINARY_DIR}/include/OpenStg/ProjectInformation.h")
+
 ADD_TARGET(
     open_stg_shared
     TARGET_TYPE INTERFACE
@@ -68,9 +69,11 @@ ADD_TARGET(
         PUBLIC
             $<TARGET_NAME_IF_EXISTS:PkgConfig::LIBSAFEC>
         PRIVATE
+            $<$<CONFIG:Debug>:$<TARGET_NAME_IF_EXISTS:libdwarf::dwarf>>
+            $<$<CONFIG:Debug>:$<TARGET_NAME_IF_EXISTS:PkgConfig::DWARF>>
             open_stg_shared
             Boost::json
-            $<$<PLATFORM_ID:Windows,WindowsPhone,WindowsStore,MSYS>:dbghelp;ws2_32>
+            $<$<PLATFORM_ID:Windows,WindowsPhone,WindowsStore,MSYS>:dbghelp>
             $<TARGET_NAME_IF_EXISTS:PkgConfig::MCFGHREAD>
             $<TARGET_NAME_IF_EXISTS:PThreads4W::PThreads4W>
     TARGET_PROPERTIES
@@ -96,16 +99,17 @@ ADD_TARGET(
             $<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<C_COMPILER_ID:MSVC>>:/Zc:__STDC__>
     COMPILE_DEFINITIONS
         PUBLIC
-            OPEN_STG_MACRO_HAS_XDG_PORTAL=$<BOOL:${XDG_DESKTOP_PORTAL_FOUND}>
-            OPEN_STG_MACRO_IS_LINUX=$<PLATFORM_ID:Linux>
-            OPEN_STG_MACRO_IS_BSD=$<PLATFORM_ID:FreeBSD,NetBSD,OpenBSD,MirBSD> # 未测试
-            OPEN_STG_MACRO_IS_APPLE=$<BOOL:${APPLE}>
-            OPEN_STG_MACRO_IS_WINDOWS=$<PLATFORM_ID:Windows,WindowsPhone,WindowsStore,MSYS>
-            OPEN_STG_MACRO_IS_DEBUG=$<CONFIG:Debug>
-            OPEN_STG_MACRO_IS_RELEASE=$<CONFIG:Release,RelWithDebInfo,MinSizeRel>
+            $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_MACRO_IS_LINUX=$<PLATFORM_ID:Linux>>
+            $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_MACRO_IS_BSD=$<PLATFORM_ID:FreeBSD,NetBSD,OpenBSD,MirBSD>> # 未测试
+            $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_MACRO_IS_APPLE=$<BOOL:${APPLE}>>
+            $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_MACRO_IS_WINDOWS=$<PLATFORM_ID:Windows,WindowsPhone,WindowsStore,MSYS>>
+            $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_MACRO_IS_DEBUG=$<CONFIG:Debug>>
+            $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_MACRO_IS_RELEASE=$<CONFIG:Release,RelWithDebInfo,MinSizeRel>>
         PRIVATE
-            OPEN_STG_OPTION_USE_MCFGTHREAD=$<AND:$<BOOL:${OPEN_STG_OPTION_USE_MCFGTHREAD}>,$<BOOL:${MCFGHREAD_FOUND}>>
-            OPEN_STG_OPTION_USE_SDL3_CLOCK=$<BOOL:${OPEN_STG_OPTION_USE_SDL3_CLOCK}>
+            $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_OPTION_USE_MCFGTHREAD=$<AND:$<BOOL:${OPEN_STG_OPTION_USE_MCFGTHREAD}>,$<BOOL:${MCFGHREAD_FOUND}>>>
+            $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_OPTION_USE_SDL3_CLOCK=$<BOOL:${OPEN_STG_OPTION_USE_SDL3_CLOCK}>>
+            $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_MACRO_HAS_XDG_PORTAL=$<BOOL:${XDG_DESKTOP_PORTAL_FOUND}>>
+            $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_MACRO_USE_LIBDWARF=$<AND:$<CONFIG:Debug>,$<OR:$<TARGET_EXISTS:libdwarf::dwarf>,$<TARGET_EXISTS:PkgConfig::DWARF>>>>
     INCLUDE_DIRS
         PUBLIC
             "${CMAKE_CURRENT_SOURCE_DIR}/include"
@@ -114,7 +118,9 @@ ADD_CRATE(open_stg_base_lib_wapper
     IMPORTED_TARGET
     CRATE_TYPE "dylib"
     MANIFEST_FILE Cargo.toml
-    DEPENDS open_stg_base_lib
+    LINK_LIBRARIES
+        PUBLIC_TARGET 
+            open_stg_base_lib
 )
 ADD_TARGET(
     open_stg_graphics_lib
@@ -146,6 +152,7 @@ ADD_TARGET(
     LINK_DEPENDS 
         PRIVATE
             open_stg_shared
+            $<$<PLATFORM_ID:Windows,WindowsPhone,WindowsStore,MSYS>:ws2_32>
         PUBLIC
             open_stg_base_lib
     LINK_OPTIONS
@@ -195,13 +202,23 @@ ADD_TARGET(
         C_STANDARD_REQUIRED TRUE
         C_EXTENSIONS TRUE
 )
-target_sources(test_game PRIVATE src/empty.c)
+ADD_TARGET(
+    unit_test
+    TARGET_TYPE EXECUTABLE
+    LINK_DEPENDS
+        PUBLIC
+        open_stg_lib
+    TARGET_PROPERTIES
+        CXX_STANDARD 20
+        CXX_STANDARD_REQUIRED TRUE
+        CXX_EXTENSIONS TRUE
+        C_STANDARD 17
+        C_STANDARD_REQUIRED TRUE
+        C_EXTENSIONS TRUE
+)
 
-add_executable(unit_test)
-target_sources(unit_test PRIVATE src/empty.c)
-
-add_subdirectory(src/stg_lib)
-add_subdirectory(src/test_game)
+add_subdirectory(src-c_and_cpp/stg_lib)
+add_subdirectory(src-c_and_cpp/test_game)
 
 enable_testing()
 include(CTest)

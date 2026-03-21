@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 不要格式化这个文本-->
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <ItemGroup Condition="'$(MSBuildProjectExtension)' == '.vcxproj'">
         <ProjectCapability Include="PackageReferences" />
     </ItemGroup>
     <PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.vcxproj'">
         <NuGetTargetMoniker Condition="'$(NuGetTargetMoniker)' == ''">native,Version=v0.0</NuGetTargetMoniker>
-        <RuntimeIdentifiers Condition="'$(RuntimeIdentifiers)' == ''">win;win-x86;win-x64;win-arm;win-arm64</RuntimeIdentifiers>
+        <RuntimeIdentifiers Condition="'$(RuntimeIdentifiers)' == ''">
+            win;win-x86;win-x64;win-arm;win-arm64</RuntimeIdentifiers>
         <!-- Windows 目标平台最小版本 (兼容 XP/Vista/7 等) -->
         <!-- 如果同时需要 VC-LTL 和 YY-Thunks，建议设置合适的 MinVersion -->
-        <WindowsTargetPlatformMinVersion Condition="'$(WindowsTargetPlatformMinVersion)' == ''">6.2.9200.0</WindowsTargetPlatformMinVersion>
+        <WindowsTargetPlatformMinVersion Condition="'$(WindowsTargetPlatformMinVersion)' == ''">
+            6.2.9200.0</WindowsTargetPlatformMinVersion>
         <!-- 注释说明：
             所有可能值：
              5.1.2600.0 - Windows XP //SDL3理论上兼容
-             5.2.3790.0
+             5.2.3790.0 = Windows XP x64  / WindowsServer 2003
              6.0.6000.0 - Windows Vista 
              6.2.9200.0 - Windows 7
-             10.0.10240.0 - Window 10
+             10.0.10240.0 - Windows 10
              10.0.19041.0
         -->
     </PropertyGroup>
     <ItemGroup Condition="'$(MSBuildProjectExtension)' == '.vcxproj'">
-        <PackageReference Include="VC-LTL">
-            <Version>5.3.1</Version>
-        </PackageReference>
-        <PackageReference Include="YY-Thunks">
-            <Version>v1.1.9</Version>
-        </PackageReference>
+        <PackageReference Include="VC-LTL" Version="5.3.1" />
+        <PackageReference Include="YY-Thunks" Version="v1.1.9" />
     </ItemGroup>
-    <!--从兼容性考虑，继续向上搜索
-    Directory.Build.props-->
-    <PropertyGroup>
-        <DirectoryBuildPropsPath>
-            $([MSBuild]::GetPathOfFileAbove('Directory.Build.props','$(MSBuildThisFileDirectory)../'))</DirectoryBuildPropsPath>
+    <PropertyGroup
+        Condition="'$(MSBuildProjectExtension)' == '.csproj' Or '$(MSBuildProjectExtension)' == '.fsproj' Or '$(MSBuildProjectExtension)' == '.vbproj'">
+        <OutDir>$(MSBuildThisFileDirectory)build\binary\</OutDir>
+        <BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)'=='' ">$(MSBuildThisFileDirectory)build\dotnet\$(MSBuildProjectName)\obj\</BaseIntermediateOutputPath>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+        <UseCommonOutputDirectory>true</UseCommonOutputDirectory>
     </PropertyGroup>
-    <Import Project="$(DirectoryBuildPropsPath)" Condition="'$(DirectoryBuildPropsPath)' != ''" />
 </Project>

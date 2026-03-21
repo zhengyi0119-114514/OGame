@@ -65,11 +65,7 @@
 [LibSafeC](https://github.com/rurban/safeclib)
 
 ``` bash
-doas pacman -S boost fmt icu lua sdl3 sdl3_{image,ttf} gtk4 vulkan-devel #vulkan-devel Optional
-```
-or
-``` bash
-sudo pacman -S boost fmt icu lua sdl3 sdl3_{image,ttf} gtk4 vulkan-devel #vulkan-devel Optional
+sudo pacman -S boost fmt icu lua sdl3 sdl3_{image,ttf} gtk4 vulkan-devel
 ```
 
 ### Windows-MSYS2
@@ -77,8 +73,7 @@ sudo pacman -S boost fmt icu lua sdl3 sdl3_{image,ttf} gtk4 vulkan-devel #vulkan
 推荐使用CLANG64/UCRT64环境,此处以CLANG64环境为例
 
 ``` sh
-pacman -S "mingw-w64-clang-x86_64-{boost,fmt,icu,lua,mcfgthread,spdlog,sdl3,sdl3-{image,ttf},vulkan-devel,gtk4}" 
-#vulkan-devel Optional
+pacman -S "mingw-w64-clang-x86_64-{boost,fmt,icu,lua,mcfgthread,spdlog,sdl3,sdl3-{image,ttf},vulkan-devel,gtk4,libdwarf}" 
 ```
 
 ## 待定目标

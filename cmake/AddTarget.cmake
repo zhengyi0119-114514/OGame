@@ -2,6 +2,13 @@
 if(NOT DEFINED __ADD_TARGET_TAG)
     set(__ADD_TARGET_TAG)
     set(__empty_c_source "${CMAKE_CURRENT_BINARY_DIR}/empty.c")
+    cmake_path(APPEND CMAKE_CURRENT_LIST_DIR "OpenStgScripts" "CopyIfExist.cmake" OUTPUT_VARIABLE __ADD_TARGET_COPY_IF_EXIST_SCRIPT)
+
+    if(EXISTS "${__ADD_TARGET_COPY_IF_EXIST_SCRIPT}")
+        set(__ADD_TARGET_COPY_IF_EXIST_SCRIPT_EXIST TRUE)
+    else()
+        set(__ADD_TARGET_COPY_IF_EXIST_SCRIPT_EXIST FALSE)
+    endif()
 
     function(ADD_TARGET __target)
         set(__MULTI_VALUE_KEYWORDS
@@ -34,6 +41,7 @@ if(NOT DEFINED __ADD_TARGET_TAG)
         set(__target_compile_definitions "${__TARGET_COMPILE_DEFINITIONS}")
         set(__target_link_options "${__TARGET_LINK_OPTIONS}")
         set(__target_compile_features "${__TARGET_COMPILE_FEATURES}")
+
         if(NOT "${__target_type}" MATCHES "^((EXE(CUTABLE)?)|(SHARED(_LIBRARY)?)|(STATIC(_LIBRARY)?)|(OBJECT(_LIBRARY)?)|(INTERFACE(_LIBRARY)?))$")
             message(FATAL_ERROR "Unknown target type:${__TARGET_TARGET_TYPE}")
         endif()
@@ -163,6 +171,21 @@ if(NOT DEFINED __ADD_TARGET_TAG)
 
         if(NOT "${__target_properties}" STREQUAL "")
             set_target_properties("${__target}" PROPERTIES ${__target_properties})
+        endif()
+
+        if((DEFINED ADD_TARGET_BINARY_DIR) AND
+            ("${__target_type}" MATCHES [=[((EXE(CUTABLE)?)|(SHARED(_LIBRARY)?)|(STATIC(_LIBRARY)?))]=]) AND
+            "${__ADD_TARGET_COPY_IF_EXIST_SCRIPT_EXIST}"
+        )
+            set(COPY_IF_EXIST_SOURCE "$<TARGET_FILE:${__target}>")
+            add_custom_command(
+                TARGET "${__target}"
+                POST_BUILD 
+                COMMAND "${CMAKE_COMMAND}" "-D" "COPY_IF_EXIST_SOURCE=${COPY_IF_EXIST_SOURCE}"
+                    "-D" "COPY_IF_EXIST_TARGET=${ADD_TARGET_BINARY_DIR}"
+                    "-P" "${__ADD_TARGET_COPY_IF_EXIST_SCRIPT}"
+                COMMENT "Copy binary file to ${ADD_TARGET_BINARY_DIR}"
+            )
         endif()
     endfunction()
 endif()

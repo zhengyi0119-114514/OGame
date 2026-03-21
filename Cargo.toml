@@ -1,8 +1,7 @@
 [workspace]
 resolver = "3"
-members = [
-    "src-rust/build_scripts",
-    "src-rust/open_stg_base_lib",
+members = ["src-rust/build_scripts",
+    "src-rust/open_stg_base_lib_wapper",
     "src-rust/open_stg_logic_lib"
 ]
 package.license-file = "LICENSE"

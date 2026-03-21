@@ -3,16 +3,13 @@
     "configurePresets": [
         {
             "name": "vcpkg-visula-studio",
-            "generator": "Visual Studio 17 2022",
+            "generator": "Visual Studio 18 2026",
             "binaryDir": "${sourceDir}/build/",
             "cacheVariables": {
                 "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
                 "CMAKE_C_COMPILER": "cl.exe",
                 "CMAKE_CXX_COMPILER": "cl.exe",
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-            },
-            "environment": {
-                "RUST_BUILD_USE_VCPKG": "1"
             }
         },
         {
@@ -24,9 +21,6 @@
                 "CMAKE_C_COMPILER": "gcc",
                 "CMAKE_CXX_COMPILER": "g++",
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-            },
-            "environment": {
-                "RUST_BUILD_USE_VCPKG": "1"
             }
         },
         {
