@@ -1,0 +1,19 @@
+{
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "CMake Configuration(Preset:sys-llvm)",
+            "command": "cmake",
+            "args": [
+                "-S",
+                "${workspaceFolder}",
+                "-B",
+                "${workspaceFolder}/build",
+                "--preset",
+                "sys-llvm"
+            ],
+            "isBackground": false
+        }
+    ],
+    "version": "2.0.0"
+}

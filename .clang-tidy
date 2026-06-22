@@ -1,0 +1,13 @@
+Checks: >
+  -*
+  clang-analyzer-*,
+  bugprone-*,
+  -bugprone-easily-swappable-parameters,
+  -performance-*,
+  cppcoreguidelines-*,
+  performance-*
+  misc-*,
+  cert-*,
+  -bugprone-assignment-in-if-condition
+  -cppcoreguidelines-avoid-non-const-global-variables
+

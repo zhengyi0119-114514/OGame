@@ -1,10 +1,12 @@
 [workspace]
 resolver = "3"
-members = ["src-rust/build_scripts",
-    "src-rust/open_stg_base_lib_wapper",
-    "src-rust/open_stg_logic_lib"
-]
 package.license-file = "LICENSE"
+members = [
+    "Source.Rust/OpenStg/base", 
+    "Source.Rust/OpenStg/graphics",
+    "Source.Rust/OpenStg/logic",
+    "Source.Rust/OpenStg/network"
+]
 
 [profile.dev]
 opt-level = 0

@@ -61,19 +61,21 @@
 
 ### ArchLinux / Manjaro / Archlinux(WSL)
 
-本项目严重依赖C11的SafeCLib,但AUR的**aur/libsafec 1:3.7.1-1**无法使用,所以请自行安装:  
-[LibSafeC](https://github.com/rurban/safeclib)
-
 ``` bash
-sudo pacman -S boost fmt icu lua sdl3 sdl3_{image,ttf} gtk4 vulkan-devel
+sudo pacman -S icu lua catch2 libxml2 cjson popt mongo-c-driver
+# optional
+sudo pacman -S vulkan-devel libc++ libc++abi gtk4 sdl3 sdl3_{image,ttf,mixer} 
 ```
 
 ### Windows-MSYS2
 
 推荐使用CLANG64/UCRT64环境,此处以CLANG64环境为例
 
-``` sh
-pacman -S "mingw-w64-clang-x86_64-{boost,fmt,icu,lua,mcfgthread,spdlog,sdl3,sdl3-{image,ttf},vulkan-devel,gtk4,libdwarf}" 
+``` bash
+pacman -S mingw-w64-clang-x86_64-{icu,lua,mcfgthread,sdl3,libxml2,cjson}
+pacman -S mingw-w64-clang-x86_64-{catch,mongo-c-driver}
+# optional
+pacman -S mingw-w64-clang-x86_64-{sdl3-{image,ttf,mixer},vulkan-devel,gtk4,libdwarf}
 ```
 
 ## 待定目标

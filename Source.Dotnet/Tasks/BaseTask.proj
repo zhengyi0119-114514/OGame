@@ -1,0 +1,6 @@
+<?xml-model href="https://fastly.jsdelivr.net/gh/dotnet/msbuild@main/src/MSBuild/MSBuild/Microsoft.Build.Core.xsd"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" Sdk="Microsoft.NET.Sdk">
+    <Target Name="Build">
+        <BSCMake></BSCMake>
+    </Target>
+</Project>

@@ -1,17 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- 不要格式化这个文本-->
+<?xml-model href="https://fastly.jsdelivr.net/gh/dotnet/msbuild@main/src/MSBuild/MSBuild/Microsoft.Build.Core.xsd"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <ItemGroup Condition="'$(MSBuildProjectExtension)' == '.vcxproj'">
-        <ProjectCapability Include="PackageReferences" />
+        <ProjectCapability Include="PackageReferences"/>
     </ItemGroup>
     <PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.vcxproj'">
         <NuGetTargetMoniker Condition="'$(NuGetTargetMoniker)' == ''">native,Version=v0.0</NuGetTargetMoniker>
-        <RuntimeIdentifiers Condition="'$(RuntimeIdentifiers)' == ''">
-            win;win-x86;win-x64;win-arm;win-arm64</RuntimeIdentifiers>
-        <!-- Windows 目标平台最小版本 (兼容 XP/Vista/7 等) -->
-        <!-- 如果同时需要 VC-LTL 和 YY-Thunks，建议设置合适的 MinVersion -->
-        <WindowsTargetPlatformMinVersion Condition="'$(WindowsTargetPlatformMinVersion)' == ''">
-            6.2.9200.0</WindowsTargetPlatformMinVersion>
+        <RuntimeIdentifiers Condition="'$(RuntimeIdentifiers)' == ''">win;win-x86;win-x64;win-arm;win-arm64</RuntimeIdentifiers>
+        <WindowsTargetPlatformMinVersion Condition="'$(WindowsTargetPlatformMinVersion)' == ''">6.2.9200.0</WindowsTargetPlatformMinVersion>
         <!-- 注释说明：
             所有可能值：
              5.1.2600.0 - Windows XP //SDL3理论上兼容
@@ -23,13 +18,12 @@
         -->
     </PropertyGroup>
     <ItemGroup Condition="'$(MSBuildProjectExtension)' == '.vcxproj'">
-        <PackageReference Include="VC-LTL" Version="5.3.1" />
-        <PackageReference Include="YY-Thunks" Version="v1.1.9" />
+        <PackageReference Include="VC-LTL" Version="5.3.1"/>
+        <PackageReference Include="YY-Thunks" Version="v1.1.9"/>
     </ItemGroup>
-    <PropertyGroup
-        Condition="'$(MSBuildProjectExtension)' == '.csproj' Or '$(MSBuildProjectExtension)' == '.fsproj' Or '$(MSBuildProjectExtension)' == '.vbproj'">
-        <OutDir>$(MSBuildThisFileDirectory)build\binary\</OutDir>
-        <BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)'=='' ">$(MSBuildThisFileDirectory)build\dotnet\$(MSBuildProjectName)\obj\</BaseIntermediateOutputPath>
+    <PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.csproj' Or '$(MSBuildProjectExtension)' == '.fsproj' Or '$(MSBuildProjectExtension)' == '.vbproj'">
+        <OutDir>$(MSBuildThisFileDirectory)build\$(Configuration)\</OutDir>
+        <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)build\Dotnet\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
         <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
         <UseCommonOutputDirectory>true</UseCommonOutputDirectory>

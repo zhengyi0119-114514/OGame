@@ -1,0 +1,26 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "CMake: debug configuration",
+            "type": "cmake",
+            "request": "launch",
+            "cmakeDebugType": "configure",
+            "clean": false,
+            "configureAll": false
+        },
+        {
+            "name": "CMake: clean and debug configuration",
+            "type": "cmake",
+            "request": "launch",
+            "cmakeDebugType": "configure",
+            "clean": true,
+            "configureAll": false
+        },
+        {
+            "type": "codelldb",
+            "request": "launch",
+            "clean":true
+        }
+    ]
+}

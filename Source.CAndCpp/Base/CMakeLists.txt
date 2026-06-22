@@ -1,0 +1,26 @@
+target_include_directories(Base PUBLIC SYSTEM include)
+target_sources(
+    Base
+    PRIVATE
+        FILE_SET
+        HEADERS
+        FILES
+        Array.h
+        Allocator.h
+        ElectromagneticDotTimer.h
+        Exception.h
+        Module.h
+        StringProcessing.h
+        StaticVariable.h
+        Tree.h)
+target_sources(
+    Base
+    PRIVATE
+        Array.c
+        Allocator.c
+        ElectromagneticDotTimer.c
+        Exception.OutOfRange.c
+        Module.c
+        StaticVariable.c
+        StringProcessing.c
+        Tree.c)

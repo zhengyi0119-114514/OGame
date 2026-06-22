@@ -1,3 +1,17 @@
 <Solution>
-  <Project Path="src-cs/Base/Base.csproj" />
+    <Configurations>
+        <Platform Name="Any CPU" />
+        <Platform Name="x64" />
+        <Platform Name="x86" />
+    </Configurations>
+    <Folder Name="/Sources/">
+        <Project Path="Source.Dotnet/Sources/Base/Base.csproj"/>
+        <Project Path="Source.Dotnet/Sources/Logic/Logic.csproj"/>
+        <Project Path="Source.Dotnet/Sources/Network/Network.csproj"/>
+        <Project Path="Source.Dotnet/Sources/Graphics/Graphics.csproj"/>
+    </Folder>
+    <Folder Name="/Tasks/">
+        <Project Path="Source.Dotnet/Tasks/Tasks/Tasks.csproj"/>
+    </Folder>
 </Solution>
+

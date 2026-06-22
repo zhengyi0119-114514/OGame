@@ -1,5 +1,5 @@
 {
-    "version": 3,
+    "version": 2,
     "configurePresets": [
         {
             "name": "vcpkg-visula-studio",
@@ -9,7 +9,8 @@
                 "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
                 "CMAKE_C_COMPILER": "cl.exe",
                 "CMAKE_CXX_COMPILER": "cl.exe",
-                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true
             }
         },
         {
@@ -20,7 +21,8 @@
                 "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
                 "CMAKE_C_COMPILER": "gcc",
                 "CMAKE_CXX_COMPILER": "g++",
-                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true
             }
         },
         {
@@ -50,13 +52,40 @@
             }
         },
         {
+            "name": "sys-llvm-all",
+            "generator": "Ninja Multi-Config",
+            "binaryDir": "${sourceDir}/build/",
+            "cacheVariables": {
+                "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "OPEN_STG_ENABLE_DEVELOP_TOOLS":true,
+                "OPEN_STG_DEVELOP_TOOLS_C_CODE_GENERATOR":"CLANG",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true
+            }
+        },
+        {
+            "name": "sys-gnu-all",
+            "generator": "Ninja Multi-Config",
+            "binaryDir": "${sourceDir}/build/",
+            "cacheVariables": {
+                "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++",
+                "OPEN_STG_ENABLE_DEVELOP_TOOLS":true,
+                "OPEN_STG_DEVELOP_TOOLS_C_CODE_GENERATOR":"CLANG",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true
+            }
+        },
+        {
             "name": "sys-gnu",
             "generator": "Ninja Multi-Config",
             "binaryDir": "${sourceDir}/build/",
             "cacheVariables": {
                 "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
                 "CMAKE_C_COMPILER": "gcc",
-                "CMAKE_CXX_COMPILER": "g++"
+                "CMAKE_CXX_COMPILER": "g++",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true
             }
         }
     ],
