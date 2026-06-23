@@ -7,6 +7,7 @@ target_sources(
         FILES
         Array.h
         Allocator.h
+        DebugInformation.h
         ElectromagneticDotTimer.h
         Exception.h
         Module.h
@@ -20,6 +21,7 @@ target_sources(
         Allocator.c
         ElectromagneticDotTimer.c
         Exception.OutOfRange.c
+        Exception.Panic.c
         Module.c
         StaticVariable.c
         StringProcessing.c

@@ -4,10 +4,10 @@ Language: Cpp
 BasedOnStyle: Microsoft
 
 IndentWidth: 4
-ColumnLimit: 100
+ColumnLimit: 120
 AlignAfterOpenBracket: Align
 AlignConsecutiveAssignments: None
-PenaltyReturnTypeOnItsOwnLine: 0
+PenaltyReturnTypeOnItsOwnLine: 1024
 PenaltyBreakBeforeFirstCallParameter: 0
 BreakAfterOpenBracketFunction: true
 BreakAfterOpenBracketIf: true
@@ -21,6 +21,7 @@ BreakBeforeCloseBracketSwitch: false
 BreakFunctionDefinitionParameters: true
 AllowAllArgumentsOnNextLine: false
 ContinuationIndentWidth: 4
+BracedInitializerIndentWidth: 4
 BreakBeforeBinaryOperators: All
 
 # BreakAfterReturnType: Automatic
@@ -41,10 +42,10 @@ SortIncludes:
   Enabled: false
 # PackParameters:
 #   BinPackParametersStyle: OnePerLine
-
+BreakBinaryOperations: OnePerLine
 BinPackParameters: AlwaysOnePerLine
 BinPackArguments: true
-BinPackLongBracedList: false
+BinPackLongBracedList: true
 
 BitFieldColonSpacing: None
 BreakBeforeBraces: Custom

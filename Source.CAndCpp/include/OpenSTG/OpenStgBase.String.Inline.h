@@ -35,5 +35,9 @@ inline OgString OgStringAllocMemoryAndClone(
     return psNewString;
 }
 
+inline OgBoolean OgStringIsNullOrEmpty(OgConstString pcsString)
+{
+    return pcsString == NULL || strlen(pcsString) == 0;
+}
 OG_MACRO_C_BLOCK_END
 #endif

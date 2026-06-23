@@ -5,18 +5,17 @@
 #define OPEN_STG__MACRO_BASE_EXCEPTIONS_H 1
 OG_MACRO_C_BLOCK_BEGIN
 
-#define OG_MACRO_THROW_EXCEPTION_EXTENSION_PARAMENT                                                \
+#define OG_MACRO_THROW_EXCEPTION_EXTENSION_PARAMENT                                                                    \
     OgUnsignedInteger64 uLine, OgConstString pcsFile, OgConstString pcsFunction
 #define OG_MACRO_THROW_EXCEPTION_EXTENSION_FILL_PARAMENT __LINE__, __FILE__, OG_MACRO_FUNCTION
 #define OPEN_STG_CONST_CALL_STACK_SIZE 128
-#define OgExceptionCreateBasicDebugInformation(bdBasicDebugInformation)                            \
-    do                                                                                             \
-    {                                                                                              \
-        (bdBasicDebugInformation).File = pcsFile;                                                  \
-        (bdBasicDebugInformation).Function = pcsFunction;                                          \
-        (bdBasicDebugInformation).Line = uLine;                                                    \
-        OgExceptionCreateCallStack(                                                                \
-            (bdBasicDebugInformation).CallStack, OPEN_STG_CONST_CALL_STACK_SIZE);                  \
+#define OgExceptionCreateBasicDebugInformation(bdBasicDebugInformation)                                                \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        (bdBasicDebugInformation).File = pcsFile;                                                                      \
+        (bdBasicDebugInformation).Function = pcsFunction;                                                              \
+        (bdBasicDebugInformation).Line = uLine;                                                                        \
+        OgExceptionCreateCallStack((bdBasicDebugInformation).CallStack, OPEN_STG_CONST_CALL_STACK_SIZE);               \
     } while (false);
 
 typedef struct OgException
@@ -29,19 +28,19 @@ typedef struct OgExceptionInformation
 {
     void (*ExceptionDestroy)(struct OgException e);
     OgException (*ExceptionFormatMessage)(
-        const struct OgException *peException,
+        const struct OgException eException,
         OgString psDestination,
         OgUnsignedIntegerSize uDestinationSize);
     OgException (*ExceptionGetFormattedMessageSize)(
-        const struct OgException *peException,
+        const struct OgException eException,
         OgUnsignedIntegerSize *puMessageSize);
     OgException (*ExceptionSerialization)(
-        const struct OgException *peException,
+        const struct OgException eException,
         OgUnsignedByte *pbDestinationBuffer,
         OgUnsignedIntegerSize uDestinationBufferSize,
         OgUnsignedIntegerSize *puDestinationChanged);
     OgException (*ExceptionDeserialization)(
-        struct OgException *peExceptionOutput,
+        struct OgException eExceptionOutput,
         const OgUnsignedByte *pbSource,
         OgUnsignedIntegerSize uSourceSize);
     OgConstString (*ExceptionGetExceptionTypeName)(void);
@@ -55,6 +54,10 @@ typedef struct OgExceptionBasicDebugInformation
     OgConstString File;
     OgConstString Function;
 } OgExceptionBasicDebugInformation;
+
+typedef void (*OgExceptionPanicHock)(const OgException *e);
+OG_MACRO_EXTERN void OgExceptionAtPanic(OgExceptionPanicHock ephHock);
+OG_MACRO_NORETURN OG_MACRO_EXTERN void OgExceptionPanic(OgException e);
 
 inline OgException OgExceptionCreate(
     const struct OgExceptionInformation *peiInformation,
@@ -74,9 +77,7 @@ OG_MACRO_EXTERN OgException OgExceptionThrowOutOfRangeD(
     OgConstString pcsMax,
     OgConstString pcsMin);
 inline OgConstString OgExceptionOutOfRangeGetExceptionTypeName();
-OG_MACRO_EXTERN OgException OgExceptionIsOutOfRange(
-    const OgException *e,
-    OgBoolean *pbResult);
+inline OgBoolean OgExceptionIsOutOfRange(const OgException *e);
 OG_MACRO_EXTERN OgException OgExceptionThrowInvalidArgumentV(OgConstString pcsParameter);
 OG_MACRO_EXTERN OgException OgExceptionThrowInvalidArgumentD(
     OG_MACRO_THROW_EXCEPTION_EXTENSION_PARAMENT,
@@ -114,23 +115,20 @@ OG_MACRO_EXTERN OgException OgExceptionThrowStackOverflowD(
 #define OgExceptionThrowOutOfMemory OgExceptionThrowOutOfMemoryV
 #define OgExceptionThrowStackOverflow OgExceptionThrowStackOverflowV
 #else
-#define OgExceptionThrowOutOfRange(...)                                                            \
+#define OgExceptionThrowOutOfRange(...)                                                                                \
     OgExceptionThrowOutOfRangeD(OG_MACRO_THROW_EXCEPTION_EXTENSION_FILL_PARAMENT, ##__VA_ARGS__)
-#define OgExceptionThrowInvalidArgument(...)                                                       \
-    OgExceptionThrowInvalidArgumentD(                                                              \
-        OG_MACRO_THROW_EXCEPTION_EXTENSION_FILL_PARAMENT, ##__VA_ARGS__)
-#define OgExceptionThrowArgumentNull(...)                                                          \
+#define OgExceptionThrowInvalidArgument(...)                                                                           \
+    OgExceptionThrowInvalidArgumentD(OG_MACRO_THROW_EXCEPTION_EXTENSION_FILL_PARAMENT, ##__VA_ARGS__)
+#define OgExceptionThrowArgumentNull(...)                                                                              \
     OgExceptionThrowArgumentNullD(OG_MACRO_THROW_EXCEPTION_EXTENSION_FILL_PARAMENT, ##__VA_ARGS__)
-#define OgExceptionThrowInvalidOperation()                                                         \
+#define OgExceptionThrowInvalidOperation()                                                                             \
     OgExceptionThrowInvalidOperationD(OG_MACRO_THROW_EXCEPTION_EXTENSION_FILL_PARAMENT)
-#define OgExceptionThrowFormatException(...)                                                       \
-    OgExceptionThrowFormatExceptionD(                                                              \
-        OG_MACRO_THROW_EXCEPTION_EXTENSION_FILL_PARAMENT, ##__VA_ARGS__)
-#define OgExceptionThrowRuntimeException()                                                         \
+#define OgExceptionThrowFormatException(...)                                                                           \
+    OgExceptionThrowFormatExceptionD(OG_MACRO_THROW_EXCEPTION_EXTENSION_FILL_PARAMENT, ##__VA_ARGS__)
+#define OgExceptionThrowRuntimeException()                                                                             \
     OgExceptionThrowRuntimeExceptionD(OG_MACRO_THROW_EXCEPTION_EXTENSION_FILL_PARAMENT)
-#define OgExceptionThrowOutOfMemory()                                                              \
-    OgExceptionThrowOutOfMemoryD(OG_MACRO_THROW_EXCEPTION_EXTENSION_FILL_PARAMENT)
-#define OgExceptionThrowStackOverflow(...)                                                         \
+#define OgExceptionThrowOutOfMemory() OgExceptionThrowOutOfMemoryD(OG_MACRO_THROW_EXCEPTION_EXTENSION_FILL_PARAMENT)
+#define OgExceptionThrowStackOverflow(...)                                                                             \
     OgExceptionThrowStackOverflowD(OG_MACRO_THROW_EXCEPTION_EXTENSION_FILL_PARAMENT, ##__VA_ARGS__)
 
 #endif

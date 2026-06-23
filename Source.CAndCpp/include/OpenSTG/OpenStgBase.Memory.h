@@ -30,7 +30,7 @@ typedef struct OgAllocator
         const struct OgAllocator *pMemory);
 } OgAllocator;
 OG_MACRO_EXTERN OgAllocator OgAllocatorCreateCStandardAllocator();
-OG_MACRO_EXTERN OgException OgAllocatorGetDefaultAllocator(struct OgAllocator *paOutputAllocator);
+OG_MACRO_EXTERN struct OgAllocator* OgAllocatorGetDefaultAllocator();
 OG_MACRO_EXTERN OgException OgAllocatorCheckBasic(
     const struct OgAllocator *pAllocator,
     OgBoolean *pbResult);

@@ -8,7 +8,7 @@ static const OgExceptionInformation s_eiOutOfRangeExcepitonInformation
        NULL,
        NULL,
        OgExceptionOutOfRangeGetExceptionTypeName,
-       NULL};
+       OgPrivateExceptionOutOfRangeIsSomething};
 // static OgException OgPrivateExceptionOutOfRangeFormatMessage(
 //     const struct OgException *,
 //     OgString psDestination,
@@ -17,7 +17,8 @@ static const OgExceptionInformation s_eiOutOfRangeExcepitonInformation
 OgBoolean OgPrivateExceptionOutOfRangeIsSomething(
     OgConstString pcsTypeName)
 {
-    return strcmp(pcsTypeName, OgExceptionOutOfRangeGetExceptionTypeName()) == 0
+    return strcmp(pcsTypeName, OgExceptionOutOfRangeGetExceptionTypeName())
+           == 0
            || OgPrivateExceptionLogicExceptionIsSomething(pcsTypeName);
 }
 void OgPrivateExceptionOutOfRangeDestroy(
@@ -30,44 +31,32 @@ OgException OgExceptionThrowOutOfRangeV(
     OgConstString pcsMin,
     OgConstString pcsMax)
 {
-    OgAllocator aAllocator = OgAllocatorCreateCStandardAllocator();
-    OgException e = OgExceptionThrowNothing();
+    // 设置并返回一个 OgPrivateExceptionOutOfRangeException 对象
+    // 如果
+    OgAllocator *aAllocator = OgAllocatorGetDefaultAllocator();
     OgBoolean bAllocatorUseable = OgFalse;
-    OgPrivateExceptionOutOfRangeException eThrownException, *peThrownException = NULL;
-    e = OgAllocatorCheckBasic(&aAllocator, &bAllocatorUseable);
-    if (bAllocatorUseable)
-    {
-        if (!OgExceptionIsNothing(e))
-        {
-            return e;
-        }
-        memset((OgPVoid)&eThrownException, 0, sizeof(OgPrivateExceptionOutOfRangeException));
-        eThrownException.Type = OgExceptionTypeOutOfRange;
-        if (pcsMin != NULL)
-        {
-            OgStringCopy(pcsMin, eThrownException.Minimun, OPEN_STG_CONST_MINIMUN_STRING_LENGTH);
-        }
-        if (pcsMax != NULL)
-        {
-            OgStringCopy(pcsMax, eThrownException.Maximun, OPEN_STG_CONST_MAXIMUN_STRING_LENGTH);
-        }
-        peThrownException = (OgPrivateExceptionOutOfRangeException *)aAllocator.Alloc(
-            &aAllocator, sizeof(OgPrivateExceptionOutOfRangeException));
-        if (peThrownException == NULL)
-        {
-            goto Fallback;
-        }
-        else
-        {
-            *peThrownException = eThrownException;
-            return OgExceptionCreate(
-                &s_eiOutOfRangeExcepitonInformation, (OgPVoid)peThrownException);
-        }
-    }
-    else
+    OgPrivateExceptionOutOfRangeException *peThrownException = NULL;
+    if (!OgExceptionIsNothing(OgAllocatorCheckBasic(aAllocator, &bAllocatorUseable)))
     {
         goto Fallback;
     }
+    peThrownException = aAllocator->Alloc(aAllocator, sizeof(OgPrivateExceptionOutOfRangeException));
+    if (peThrownException == NULL)
+    {
+        free((OgPVoid)peThrownException);
+        goto Fallback;
+    }
+    memset((OgPVoid)peThrownException, 0, sizeof(OgPrivateExceptionOutOfRangeException));
+    if (pcsMin != NULL)
+    {
+        strncpy(peThrownException->Minimun, pcsMin, OPEN_STG_CONST_MINIMUN_STRING_LENGTH - 1);
+    }
+    if (pcsMax != NULL)
+    {
+        strncpy(peThrownException->Maximun, pcsMax, OPEN_STG_CONST_MAXIMUN_STRING_LENGTH - 1);
+    }
+    peThrownException->Type = OgExceptionTypeOutOfRange;
+    return OgExceptionCreate(&s_eiOutOfRangeExcepitonInformation, (OgPVoid)peThrownException);
 Fallback:
     return OgExceptionCreate(NULL, (OgPVoid)(OgIntPtr)OgExceptionTypeOutOfRange);
 }
@@ -82,16 +71,66 @@ OgException OgExceptionThrowOutOfRangeD(
     {
         return eBasicException;
     }
-    OgPrivateExceptionOutOfRangeException *e
-        = (OgPrivateExceptionOutOfRangeException *)eBasicException.AdditionalData;
+    OgPrivateExceptionOutOfRangeException *e = (OgPrivateExceptionOutOfRangeException *)eBasicException.AdditionalData;
     OgExceptionCreateBasicDebugInformation(e->Basic);
     return eBasicException;
 }
 OG_MACRO_PRIVATE void OgPrivateExceptionOutOfRangeDestroy(struct OgException e);
 OG_MACRO_PRIVATE OgException OgPrivateExceptionOutOfRangeFormatMessage(
-    const struct OgException *peException,
+    const struct OgException eException,
     OgString psDestination,
     OgUnsignedIntegerSize uDestinationSize);
+#define OgPrivateExceptionOutOfRangeFormatMessage_None "Type:%s\n"
+#define OgPrivateExceptionOutOfRangeFormatMessage_MinimunOnly "Type:%s\nMinimun:%s\n"
+#define OgPrivateExceptionOutOfRangeFormatMessage_MaximunOnly "Type:%s\nMaximun:%s\n"
+#define OgPrivateExceptionOutOfRangeFormatMessage_All "Type:%s\nMinimun:%s\nMaximun:%s\n"
 OG_MACRO_PRIVATE OgException OgPrivateExceptionOutOfRangeGetFormattedMessageLength(
-    const struct OgException *peException,
-    OgUnsignedIntegerSize *puMessageSize);
+    const struct OgException e,
+    OgUnsignedIntegerSize *puMessageSize)
+{
+    OgException eException = OgExceptionThrowNothing();
+    OgBoolean bHasMinimun = OgFalse, bHasMaximun = OgFalse;
+    OgConstString pcsMinimun = OgStringGetEmptyString(), pcsMaximun = OgStringGetEmptyString();
+    OgPrivateExceptionOutOfRangeException *peAdditionalException = NULL;
+    if (e.Information == NULL)
+    {
+        bHasMaximun = bHasMinimun = OgFalse;
+        goto FormatMessage;
+    }
+    peAdditionalException = (OgPrivateExceptionOutOfRangeException *)e.AdditionalData;
+    bHasMaximun = !OgStringIsNullOrEmpty(peAdditionalException->Maximun);
+    bHasMinimun = !OgStringIsNullOrEmpty(peAdditionalException->Minimun);
+    if (bHasMaximun)
+    {
+        pcsMaximun = peAdditionalException->Maximun;
+    }
+    if (bHasMinimun)
+    {
+        pcsMinimun = peAdditionalException->Minimun;
+    }
+FormatMessage:
+    if (bHasMinimun && !bHasMaximun)
+    {
+        *puMessageSize = snprintf(
+            NULL, 0, OgPrivateExceptionOutOfRangeFormatMessage_MinimunOnly, OgExceptionOutOfRangeGetExceptionTypeName(),
+            pcsMaximun);
+    }
+    else if (!bHasMinimun && bHasMaximun)
+    {
+        *puMessageSize = snprintf(
+            NULL, 0, OgPrivateExceptionOutOfRangeFormatMessage_MaximunOnly, OgExceptionOutOfRangeGetExceptionTypeName(),
+            pcsMaximun);
+    }
+    else if (bHasMaximun && bHasMinimun)
+    {
+        *puMessageSize = snprintf(
+            NULL, 0, OgPrivateExceptionOutOfRangeFormatMessage_All, OgExceptionOutOfRangeGetExceptionTypeName(),
+            pcsMinimun, pcsMaximun);
+    }
+    else if (!bHasMaximun && !bHasMinimun)
+    {
+        *puMessageSize = snprintf(
+            NULL, 0, OgPrivateExceptionOutOfRangeFormatMessage_None, OgExceptionOutOfRangeGetExceptionTypeName());
+    }
+    return OgExceptionThrowNothing();
+}

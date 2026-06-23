@@ -16,6 +16,7 @@ struct OgStringEx;
 struct OgException;
 struct OgExceptionBasicDebugImformation;
 struct OgFunction;
+struct OgDebugSource;
 
 typedef const char OgConstCharacter, *OgConstString;
 typedef char OgCharacter, *OgString;

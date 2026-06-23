@@ -27,5 +27,6 @@ OG_MACRO_ALWAYS_INLINE inline OgConstString OgExceptionOutOfRangeGetExceptionTyp
 {
     return "OpenStg.Base.Exception.LogicException.OutOfRange";
 }
+
 OG_MACRO_C_BLOCK_END
 #endif

@@ -11,16 +11,24 @@
 #if defined(_MSC_VER)
 #define OG_MACRO_FUNCTION __FUNCSIG__
 #define OG_MACRO_PRIVATE
+#define OG_MACRO_NORETURN __declspec(noreturn)
 #define OG_MACRO_THREAD_LOCAL __declspec(thread)
 #define OG_MACRO_ALWAYS_INLINE __forceinline
 #else
 #if defined(__GNUC__) || defined (__llvm__)
 #define OG_MACRO_PRIVATE __attribute__((visibility("hidden")))
 #define OG_MACRO_ALWAYS_INLINE __attribute__((__always_inline__))
+#define OG_MACRO_NORETURN __attribute__((__noreturn__))
 #define OG_MACRO_FUNCTION __PRETTY_FUNCTION__
 #else
 #define OG_MACRO_FUNCTION __FUNCTION__
 #define OG_MACRO_PRIVATE
+#if __STDC_VERSION__ >= 201112L && __STDC_VERSION__ < 202311L
+#include<stdnoreturn.h>
+#define OG_MACRO_NORETURN noreturn
+#else
+#define OG_MACRO_NORETURN
+#endif
 #endif
 #if (defined(__cplusplus) && __cplusplus >= 201103L) || __STDC_VERSION__ >= 202311L
 #define OG_MACRO_THREAD_LOCAL thread_local
@@ -30,9 +38,7 @@
 #if (defined(__GNUC__))
 #define OG_MACRO_THREAD_LOCAL __thread
 #else
-static_assert(
-    false,
-    "No thread local support.")
+static_assert(false,"No thread local support.")
 #endif
 #endif
 #endif

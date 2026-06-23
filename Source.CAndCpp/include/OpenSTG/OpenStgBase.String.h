@@ -3,10 +3,11 @@
 #include <OpenSTG/OpenStgBase.Types.h>
 #include <OpenSTG/OpenStgBase.Exceptions.h>
 #if !defined(OPEN_STG_MACRO_BASE_STRING)
-#define OgStringGetEmptyString() ""
 #define OPEN_STG_MACRO_BASE_STRING 1
 OG_MACRO_C_BLOCK_BEGIN
 
+#define OgStringGetEmptyString() ""
+inline OgBoolean OgStringIsNullOrEmpty(OgConstString pcsString);
 typedef struct OgStringEx
 {
     OgString String;

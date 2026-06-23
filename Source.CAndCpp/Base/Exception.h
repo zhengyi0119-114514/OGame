@@ -35,13 +35,14 @@ OG_MACRO_EXPORT OgException OgExceptionThrowOutOfRangeD(
     OgConstString pcsMin,
     OgConstString pcsMax);
 
+OG_MACRO_NORETURN void OgExceptionPanic(OgException e);
 OG_MACRO_PRIVATE void OgPrivateExceptionOutOfRangeDestroy(struct OgException e);
 OG_MACRO_PRIVATE OgException OgPrivateExceptionOutOfRangeFormatMessage(
-    const struct OgException *peException,
+    const struct OgException eException,
     OgString psDestination,
     OgUnsignedIntegerSize uDestinationSize);
 OG_MACRO_PRIVATE OgException OgPrivateExceptionOutOfRangeGetFormattedMessageLength(
-    const struct OgException *peException,
+    const struct OgException e,
     OgUnsignedIntegerSize *puMessageSize);
 OG_MACRO_PRIVATE OgBoolean OgPrivateExceptionLogicExceptionIsSomething(OgConstString pcsTypeName);
 OG_MACRO_PRIVATE OgBoolean OgPrivateExceptionOutOfRangeIsSomething(OgConstString pcsTypeName);
