@@ -4,8 +4,9 @@ Language: Cpp
 BasedOnStyle: Microsoft
 
 IndentWidth: 4
-ColumnLimit: 120
+ColumnLimit: 80
 AlignAfterOpenBracket: Align
+AlignOperands: Align
 AlignConsecutiveAssignments: None
 PenaltyReturnTypeOnItsOwnLine: 1024
 PenaltyBreakBeforeFirstCallParameter: 0
@@ -43,7 +44,7 @@ SortIncludes:
 # PackParameters:
 #   BinPackParametersStyle: OnePerLine
 BreakBinaryOperations: OnePerLine
-BinPackParameters: AlwaysOnePerLine
+BinPackParameters: OnePerLine
 BinPackArguments: true
 BinPackLongBracedList: true
 

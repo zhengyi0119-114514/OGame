@@ -28,3 +28,6 @@ endif()
 cmake_host_system_information(RESULT __parallel QUERY NUMBER_OF_LOGICAL_CORES)
 set(CMAKE_BUILD_PARALLEL_LEVEL ${__parallel})
 message(STATUS "parallel:${__parallel}")
+
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:Debug>,Debug,Release>")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:Debug>,Debug,Release>")

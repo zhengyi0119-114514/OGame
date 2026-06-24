@@ -26,12 +26,13 @@ OgException OgAllocatorCheckSupportForResize(
     const struct OgAllocator *pAllocator,
     OgBoolean *pbResult)
 {
-    OgException e = {NULL, NULL};
+    OgException e = OgExceptionThrowNothing();
     if (pAllocator == NULL)
     {
         return OgExceptionThrowArgumentNull("pAllocator");
     }
     OgBoolean bBaseCheckResult = OgFalse;
+    OgExceptionDestroy(e);
     e = OgAllocatorCheckBasic(pAllocator, &bBaseCheckResult);
     if (!OgExceptionIsNothing(e))
     {

@@ -31,7 +31,7 @@ OgException OgStringCopy(
 #else
     static_assert(false, "Require libbsd ,libsafec or Annex K Stdandard C library");
 #endif
-    return OgExceptionCreate(NULL, NULL);
+    return OgExceptionThrowNothing();
 }
 OgException OgStringConcatenation(
     OgString psDestination,

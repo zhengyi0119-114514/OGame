@@ -1,8 +1,128 @@
 {
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 20
+    },
     "version": 2,
     "configurePresets": [
         {
-            "name": "vcpkg-visula-studio",
+            "name": "basic-config",
+            "hidden": true,
+            "binaryDir": "${sourceDir}/build",
+            "generator": "Ninja Multi-Config",
+            "cacheVariables": {
+                "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true
+            }
+        },
+        {
+            "name": "basic-gnu",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++"
+            }
+        },
+        {
+            "name": "basic-mingw-w64",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_C_COMPILER":"x86_64-w64-mingw32-cc",
+                "CMAKE_CXX_COMPILER":"x86_64-w64-mingw32-c++"
+            },
+            "environment": {
+                "VCPKG_DEFAULT_HOST_TRIPLET": "x64-mingw-dynamic",
+                "VCPKG_DEFAULT_TRIPLET":"x64-mingw-dynamic"
+            }
+        },
+        {
+            "name": "basic-vcpkg-mingw",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+            }
+        },
+        {
+            "name": "basic-llvm",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_C_COMPILER":"clang",
+                "CMAKE_CXX_COMPILER":"clang++"
+            }
+        },
+        {
+            "name": "options-msys2-defult-all",
+            "hidden": true,
+            "cacheVariables": {
+                "OPEN_STG_ENABLE_LIBDWARF":true,
+                "OPEN_STG_ENABLE_DEVELOP_TOOLS":true,
+                "OPEN_STG_OPTION_STRING_PROCESSING_AUTO":true,
+                "OPEN_STG_ENABLE_MCFGTHREAD":true,
+                "OPEN_STG_ENABLE_UNIT_TESTS":true,
+                "OPEN_STG_ENABLE_GAME_SERVER":true,
+                "OPEN_STG_ENABLE_GAME_CLIENT":true
+            }
+        },
+        {
+            "name": "options-vcpkg-defult-all",
+            "hidden": true,
+            "cacheVariables": {
+                "OPEN_STG_ENABLE_LIBDWARF":true,
+                "OPEN_STG_ENABLE_DEVELOP_TOOLS":true,
+                "OPEN_STG_OPTION_STRING_PROCESSING_AUTO":true,
+                "OPEN_STG_ENABLE_MCFGTHREAD":false,
+                "OPEN_STG_ENABLE_UNIT_TESTS":true,
+                "OPEN_STG_ENABLE_GAME_SERVER":true,
+                "OPEN_STG_ENABLE_GAME_CLIENT":true
+            }
+        },
+        {
+            "name": "options-unix-defult-all",
+            "hidden": true,
+            "cacheVariables": {
+                "OPEN_STG_ENABLE_LIBDWARF":true,
+                "OPEN_STG_ENABLE_DEVELOP_TOOLS":true,
+                "OPEN_STG_OPTION_STRING_PROCESSING_AUTO":true,
+                "OPEN_STG_ENABLE_MCFGTHREAD":false,
+                "OPEN_STG_ENABLE_UNIT_TESTS":true,
+                "OPEN_STG_ENABLE_GAME_SERVER":true,
+                "OPEN_STG_ENABLE_GAME_CLIENT":true
+            }
+        },
+        {
+            "name": "unix-gnu-all",
+            "inherits":[
+                "basic-config",
+                "basic-gnu",
+                "options-unix-defult-all"
+            ]
+        },
+        {
+            "name": "unix-llvm-all",
+            "inherits":[
+                "basic-config",
+                "basic-llvm",
+                "options-unix-defult-all"
+            ]
+        },
+        {
+            "name": "msys-gnu-all",
+            "inherits":[
+                "basic-config",
+                "basic-mingw-w64",
+                "options-msys2-defult-all"
+            ]
+        },
+        {
+            "name": "msys-llvm-all",
+            "inherits":[
+                "basic-config",
+                "basic-llvm",
+                "options-msys2-defult-all"
+            ]
+        },
+        {
+            "name": "vcpkg-win32-msvcx64-all",
             "generator": "Visual Studio 18 2026",
             "binaryDir": "${sourceDir}/build/",
             "cacheVariables": {
@@ -12,155 +132,8 @@
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
                 "CMAKE_EXPORT_COMPILE_COMMANDS": true
             }
-        },
-        {
-            "name": "vcpkg-gnu",
-            "generator": "Ninja Multi-Config",
-            "binaryDir": "${sourceDir}/build/",
-            "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
-                "CMAKE_C_COMPILER": "gcc",
-                "CMAKE_CXX_COMPILER": "g++",
-                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": true
-            }
-        },
-        {
-            "name": "vcpkg-llvm",
-            "generator": "Ninja Multi-Config",
-            "binaryDir": "${sourceDir}/build/",
-            "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
-                "CMAKE_C_COMPILER": "clang",
-                "CMAKE_CXX_COMPILER": "clang++",
-                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": true
-            },
-            "environment": {
-                "RUST_BUILD_USE_VCPKG": "1"
-            }
-        },
-        {
-            "name": "sys-llvm",
-            "generator": "Ninja Multi-Config",
-            "binaryDir": "${sourceDir}/build/",
-            "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
-                "CMAKE_C_COMPILER": "clang",
-                "CMAKE_CXX_COMPILER": "clang++",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": true
-            }
-        },
-        {
-            "name": "sys-llvm-all",
-            "generator": "Ninja Multi-Config",
-            "binaryDir": "${sourceDir}/build/",
-            "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
-                "CMAKE_C_COMPILER": "clang",
-                "CMAKE_CXX_COMPILER": "clang++",
-                "OPEN_STG_ENABLE_DEVELOP_TOOLS":true,
-                "OPEN_STG_DEVELOP_TOOLS_C_CODE_GENERATOR":"CLANG",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": true
-            }
-        },
-        {
-            "name": "sys-gnu-all",
-            "generator": "Ninja Multi-Config",
-            "binaryDir": "${sourceDir}/build/",
-            "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
-                "CMAKE_C_COMPILER": "gcc",
-                "CMAKE_CXX_COMPILER": "g++",
-                "OPEN_STG_ENABLE_DEVELOP_TOOLS":true,
-                "OPEN_STG_DEVELOP_TOOLS_C_CODE_GENERATOR":"CLANG",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": true
-            }
-        },
-        {
-            "name": "sys-gnu",
-            "generator": "Ninja Multi-Config",
-            "binaryDir": "${sourceDir}/build/",
-            "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
-                "CMAKE_C_COMPILER": "gcc",
-                "CMAKE_CXX_COMPILER": "g++",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": true
-            }
         }
     ],
     "buildPresets": [
-        {
-            "name": "vcpkg-debug",
-            "displayName": "Debug_VS",
-            "configuration": "Debug",
-            "configurePreset": "vcpkg-visula-studio",
-            "nativeToolOptions": [
-                "-Restore"
-            ]
-        },
-        {
-            "name": "vcpkg-release",
-            "displayName": "Release_VS",
-            "configuration": "Release",
-            "configurePreset": "vcpkg-visula-studio",
-            "nativeToolOptions": [
-                "-Restore"
-            ]
-        },
-        {
-            "name": "vcpkg-gnu-debug",
-            "displayName": "Debug_GNU",
-            "configuration": "Debug",
-            "configurePreset": "vcpkg-gnu"
-        },
-        {
-            "name": "vcpkg-gnu-release",
-            "displayName": "Release_GNU",
-            "configuration": "Release",
-            "configurePreset": "vcpkg-gnu"
-        },
-        {
-            "name": "vcpkg-llvm-debug",
-            "displayName": "Debug_LLVM",
-            "configuration": "Debug",
-            "configurePreset": "vcpkg-llvm"
-        },
-        {
-            "name": "vcpkg-llvm-release",
-            "displayName": "Release_LLVM",
-            "configuration": "Release",
-            "configurePreset": "vcpkg-llvm"
-        },
-        {
-            "name": "sys-release",
-            "displayName": "Release_VS",
-            "configuration": "Release",
-            "configurePreset": "vcpkg-visula-studio"
-        },
-        {
-            "name": "sys-gnu-debug",
-            "displayName": "Debug_GNU",
-            "configuration": "Debug",
-            "configurePreset": "sys-gnu"
-        },
-        {
-            "name": "sys-gnu-release",
-            "displayName": "Release_GNU",
-            "configuration": "Release",
-            "configurePreset": "sys-gnu"
-        },
-        {
-            "name": "sys-llvm-debug",
-            "displayName": "Debug_LLVM",
-            "configuration": "Debug",
-            "configurePreset": "sys-llvm"
-        },
-        {
-            "name": "sys-llvm-release",
-            "displayName": "Release_LLVM",
-            "configuration": "Release",
-            "configurePreset": "sys-llvm"
-        }
     ]
 }

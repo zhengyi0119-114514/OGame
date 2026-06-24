@@ -15,11 +15,11 @@ OG_MACRO_C_BLOCK_BEGIN
         (bdBasicDebugInformation).File = pcsFile;                                                                      \
         (bdBasicDebugInformation).Function = pcsFunction;                                                              \
         (bdBasicDebugInformation).Line = uLine;                                                                        \
-        OgExceptionCreateCallStack((bdBasicDebugInformation).CallStack, OPEN_STG_CONST_CALL_STACK_SIZE);               \
     } while (false);
 
 typedef struct OgException
 {
+    OgUnsignedInteger64 ExceptionType;
     const struct OgExceptionInformation *Information;
     OgPVoid AdditionalData;
 } OgException;
@@ -60,13 +60,11 @@ OG_MACRO_EXTERN void OgExceptionAtPanic(OgExceptionPanicHock ephHock);
 OG_MACRO_NORETURN OG_MACRO_EXTERN void OgExceptionPanic(OgException e);
 
 inline OgException OgExceptionCreate(
+    OgUnsignedInteger64 uExceptionType,
     const struct OgExceptionInformation *peiInformation,
     OgPVoid pvAdditionalData);
 inline OgBoolean OgExceptionSerializable(OgException e);
 inline OgBoolean OgExceptionIsNothing(OgException e);
-OG_MACRO_EXTERN OgException OgExceptionCreateCallStack(
-    OgPVoid *aFrames,
-    OgUnsignedIntegerSize uMaxFrames);
 OG_MACRO_EXTERN OgException OgExceptionThrowOutOfRangeV(
     OgConstString pcsParameter,
     OgConstString pcsMax,
@@ -103,7 +101,7 @@ OG_MACRO_EXTERN OgException OgExceptionThrowStackOverflowV(OgConstString pcsPara
 OG_MACRO_EXTERN OgException OgExceptionThrowStackOverflowD(
     OG_MACRO_THROW_EXCEPTION_EXTENSION_PARAMENT,
     OgConstString pcsParameter);
-#define OgExceptionThrowNothing() OgExceptionCreate(NULL, NULL)
+#define OgExceptionThrowNothing() OgExceptionCreate(0,NULL, NULL)
 #if !DEBUG
 #define OgExceptionThrowLogicException OgExceptionThrowLogicExceptionV
 #define OgExceptionThrowOutOfRange OgExceptionThrowOutOfRangeV
@@ -130,8 +128,9 @@ OG_MACRO_EXTERN OgException OgExceptionThrowStackOverflowD(
 #define OgExceptionThrowOutOfMemory() OgExceptionThrowOutOfMemoryD(OG_MACRO_THROW_EXCEPTION_EXTENSION_FILL_PARAMENT)
 #define OgExceptionThrowStackOverflow(...)                                                                             \
     OgExceptionThrowStackOverflowD(OG_MACRO_THROW_EXCEPTION_EXTENSION_FILL_PARAMENT, ##__VA_ARGS__)
-
 #endif
+
+inline void OgExceptionDestroy(OgException e);
 
 OG_MACRO_C_BLOCK_END
 #include <OpenSTG/OpenStgBase.Exceptions.Inline.h>

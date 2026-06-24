@@ -64,7 +64,9 @@
 ``` bash
 sudo pacman -S icu lua catch2 libxml2 cjson popt mongo-c-driver
 # optional
-sudo pacman -S vulkan-devel libc++ libc++abi gtk4 sdl3 sdl3_{image,ttf,mixer} 
+sudo pacman -S vulkan-devel libc++ libc++abi gtk4 
+# optional (client)
+sudo pacman -S sdl3 sdl3_{image,ttf,mixer} 
 ```
 
 ### Windows-MSYS2
@@ -75,7 +77,9 @@ sudo pacman -S vulkan-devel libc++ libc++abi gtk4 sdl3 sdl3_{image,ttf,mixer}
 pacman -S mingw-w64-clang-x86_64-{icu,lua,mcfgthread,sdl3,libxml2,cjson}
 pacman -S mingw-w64-clang-x86_64-{catch,mongo-c-driver}
 # optional
-pacman -S mingw-w64-clang-x86_64-{sdl3-{image,ttf,mixer},vulkan-devel,gtk4,libdwarf}
+pacman -S mingw-w64-clang-x86_64-{vulkan-devel,gtk4,libdwarf}
+# optional (client)
+pacman -S mingw-w64-clang-x86_64-{sdl3{,-{image,ttf,mixer}}}
 ```
 
 ## 待定目标

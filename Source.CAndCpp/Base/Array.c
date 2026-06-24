@@ -4,7 +4,8 @@
 #include <OpenSTG/OpenStgBase.h>
 #include <stdlib.h>
 
-OgException OgDynamicArrayCreate(OgDynamicArray *pArray,
+OgException OgDynamicArrayCreate(
+    OgDynamicArray *pArray,
     OgUnsignedIntegerSize uUnitSize,
     OgUnsignedIntegerSize uLength,
     OgSignedInteger64 sAlign,
@@ -38,7 +39,8 @@ OgException OgDynamicArrayCreate(OgDynamicArray *pArray,
 }
 OgException OgDynamicArrayRemoveItem(OgDynamicArray *pArray, OgUnsignedIntegerSize uIndex);
 OgException OgDynamicArrayAppendItem(OgDynamicArray *pArray, OgPVoid *pvItem);
-OgException OgDynamicArrayGetLength(OgDynamicArray *pArray, OgUnsignedIntegerSize *puSize)
+OgException OgDynamicArrayGetLength(
+    OgDynamicArray *pArray, OgUnsignedIntegerSize *puSize)
 {
     if (pArray == NULL)
     {
@@ -47,7 +49,8 @@ OgException OgDynamicArrayGetLength(OgDynamicArray *pArray, OgUnsignedIntegerSiz
     *puSize = pArray->Length;
     return OgExceptionThrowNothing();
 }
-OgException OgDynamicArrayDestroy(OgDynamicArray *pArray)
+OgException OgDynamicArrayDestroy(
+    OgDynamicArray *pArray)
 {
     if (pArray == NULL || pArray->DestroyItem == NULL)
     {
@@ -59,7 +62,8 @@ OgException OgDynamicArrayDestroy(OgDynamicArray *pArray)
     }
     return OgExceptionThrowNothing();
 }
-OgException OgDynamicArrayGetFront(OgDynamicArray *pArray, OgPVoid *ppvItem)
+OgException OgDynamicArrayGetFront(
+    OgDynamicArray *pArray, OgPVoid *ppvItem)
 {
     if (pArray == NULL)
     {
@@ -72,7 +76,8 @@ OgException OgDynamicArrayGetFront(OgDynamicArray *pArray, OgPVoid *ppvItem)
     *ppvItem = (OgPVoid)(pArray->Array);
     return OgExceptionThrowNothing();
 }
-OgException OgDynamicArrayGetBack(OgDynamicArray *pArray, OgPVoid *ppvItem)
+OgException OgDynamicArrayGetBack(
+    OgDynamicArray *pArray, OgPVoid *ppvItem)
 {
     if (pArray == NULL)
     {
@@ -86,10 +91,11 @@ OgException OgDynamicArrayGetBack(OgDynamicArray *pArray, OgPVoid *ppvItem)
     {
         return OgExceptionThrowInvalidOperation();
     }
-    *ppvItem = (OgPVoid)(pArray + pArray->UnitSize * (pArray->Length -1));
+    *ppvItem = (OgPVoid)(pArray + pArray->UnitSize * (pArray->Length - 1));
     return OgExceptionThrowNothing();
 }
-OgException OgDynamicArrayGetItem(OgDynamicArray *pArray,OgUnsignedIntegerSize uIndex,OgPVoid* ppvItem)
+OgException OgDynamicArrayGetItem(
+    OgDynamicArray *pArray, OgUnsignedIntegerSize uIndex, OgPVoid *ppvItem)
 {
     if (pArray == NULL)
     {
@@ -101,12 +107,13 @@ OgException OgDynamicArrayGetItem(OgDynamicArray *pArray,OgUnsignedIntegerSize u
     }
     if (uIndex >= pArray->Length)
     {
-        return OgExceptionThrowOutOfRange("uIndex",OgStringGetEmptyString(),OgStringGetEmptyString());
+        return OgExceptionThrowOutOfRange("uIndex", OgStringGetEmptyString(), OgStringGetEmptyString());
     }
-    *ppvItem = (OgPVoid)(pArray->Array+pArray->UnitSize*uIndex);
+    *ppvItem = (OgPVoid)(pArray->Array + pArray->UnitSize * uIndex);
     return OgExceptionThrowNothing();
 }
-OgException OgDynamicArrayIsEmpty(OgDynamicArray *pArray, OgBoolean *pbResult)
+OgException OgDynamicArrayIsEmpty(
+    OgDynamicArray *pArray, OgBoolean *pbResult)
 {
     if (pArray == NULL)
     {
@@ -115,7 +122,8 @@ OgException OgDynamicArrayIsEmpty(OgDynamicArray *pArray, OgBoolean *pbResult)
     *pbResult = pArray->Length == 0;
     return OgExceptionThrowNothing();
 }
-OgException OgDynamicArrayIsResizable(OgDynamicArray *pArray, OgBoolean *pbResult)
+OgException OgDynamicArrayIsResizable(
+    OgDynamicArray *pArray, OgBoolean *pbResult)
 {
     if (pArray == NULL)
     {

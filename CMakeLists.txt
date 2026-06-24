@@ -19,13 +19,28 @@ if(NOT "${OPEN_STG_LOADER_ARCHITECTURE}" MATCHES [=[^(OneProcess|MicrokernelLike
     message(FATAL_ERROR "Unknown OPEN_STG_LOADER_ARCHITECTURE")
 endif()
 
-option(OPEN_STG_OPTION_USE_MCFGTHREAD "Will use mcfgthread instead of pthread。" TRUE)
-option(OPEN_STG_ENABLE_MCFGTHREAD "Enable mcfgthreaad" TRUE)
-option(OPEN_STG_ENABLE_XDG_DESKTOP_PORTAL "Enable xdg desktop portal(BSD/Linux)." TRUE)
+option(OPEN_STG_ENABLE_GAME_CLIENT "Enable game client support." TRUE)
+option(OPEN_STG_ENABLE_GAME_SERVER "Enable game server support." TRUE)
+option(OPEN_STG_ENABLE_UNIT_TESTS "Unit tests for all target." TRUE)
+option(OPEN_STG_ENABLE_MCFGTHREAD "Enable mcfgthreaad" FALSE)
+option(OPEN_STG_ENABLE_XDG_DESKTOP_PORTAL "Enable xdg desktop portal(BSD/Linux)." FALSE)
 option(OPEN_STG_ENABLE_DEVELOP_TOOLS "Enable develop component." FALSE)
 option(OPEN_STG_ENABLE_LIBDWARF "Enable libdwarf.(Linux,BSD,Win32)." FALSE)
-option(OPEN_STG_DEVELOP_TOOLS_ENABLE_LLVM_AND_CLANG "Enable llvm and clang to generate C code." TRUE)
 option(OPEN_STG_OPTION_STRING_PROCESSING_AUTO "Choose by CMake script." TRUE)
+cmake_dependent_option(
+    OPEN_STG_ENABLE_LLVM_AND_CLANG 
+    "Enable llvm and clang for generate C code.(DevelopTools)"
+    TRUE
+    OPEN_STG_ENABLE_DEVELOP_TOOLS
+    FALSE
+)
+cmake_dependent_option(
+    OPEN_STG_ENABLE_BASE_UNIT_TESTS
+    "Enable Unit testing for Base target."
+    TRUE
+    "OPEN_STG_ENABLE_GAME_SERVER OR OPEN_STG_ENABLE_GAME_CLIENT;OPEN_STG_ENABLE_UNIT_TESTS"
+    FALSE
+)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Source.CMake/" "${CMAKE_SOURCE_DIR}")
 
@@ -49,12 +64,6 @@ if("${OPEN_STG_ENABLE_DEVELOP_TOOLS}" AND (NOT "${OPEN_STG_DEVELOP_TOOLS_C_CODE_
     set(OPEN_STG_ENABLE_DEVELOP_TOOLS FALSE)
 endif()
 
-message(STATUS "OPEN_STG_OPTION_USE_MCFGTHREAD:${OPEN_STG_OPTION_USE_MCFGTHREAD}")
-message(STATUS "OPEN_STG_OPTION_USE_SDL3_CLOCK:${OPEN_STG_OPTION_USE_SDL3_CLOCK}")
-message(STATUS "OPEN_STG_ENABLE_DEVELOP_TOOLS:${OPEN_STG_ENABLE_DEVELOP_TOOLS}")
-message(STATUS "OPEN_STG_DEVELOP_TOOLS_C_CODE_GENERATOR:${OPEN_STG_DEVELOP_TOOLS_C_CODE_GENERATOR} (CLANG,STRING_CONNECT)")
-message(STATUS "OPEN_STG_OPTION_STRING_PROCESSING_AUTO:${OPEN_STG_OPTION_STRING_PROCESSING_AUTO}")
-
 add_target(
     Shared
     TARGET_TYPE INTERFACE
@@ -70,7 +79,7 @@ add_target(
     COMPILE_OPTIONS
         INTERFACE
             # $<$<AND:$<C_COMPILER_ID:MSVC>,$<CONFIG:Release>,$<COMPILE_LANGUAGE:C,CXX>>:/Ox>
-            $<$<COMPILE_LANGUAGE:C,CXX>:$<$<C_COMPILER_ID:MSVC>:/W4>>
+            # $<$<COMPILE_LANGUAGE:C,CXX>:$<$<C_COMPILER_ID:MSVC>:/W4>>
             $<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<C_COMPILER_ID:GNU,Clang>,$<COMPILE_LANGUAGE:C,CXX>>:-O> # 内存泄露检查
             $<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<CONFIG:Debug>,$<C_COMPILER_ID:Clang>>:-fsanitize=memory;-fno-omit-frame-pointer>
             $<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<C_COMPILER_ID:GNU,AppleClang,ARMClang,CrayClang,TIClang,IntelLLVM,Clang>>:
@@ -100,14 +109,11 @@ add_target(
     LINK_DEPENDS
         PRIVATE
             Shared
-            $<TARGET_NAME_IF_EXISTS:PkgConfig::LIBSAFEC>
-            $<TARGET_NAME_IF_EXISTS:PkgConfig::LIBBSD>
-            $<TARGET_NAME_IF_EXISTS:libdwarf::dwarf>
-            $<TARGET_NAME_IF_EXISTS:PkgConfig::LIBDWARF>
-            $<TARGET_NAME_IF_EXISTS:PkgConfig::LIBPOPT>
+            ${OPEN_STG_TARGET_STRING_PROCESSING_LIBRARY}
+            ${OPEN_STG_TARGET_THREADS}
+            $<$<BOOL:${OPEN_STG_TARGET_HAS_LIBDWARF}>:${OPEN_STG_TARGET_LIBDWARF}>
+            $<$<BOOL:${OPEN_STG_TARGET_HAS_POPT}>:${OPEN_STG_TARGET_POPT}>
             $<$<PLATFORM_ID:Windows,WindowsPhone,WindowsStore,MSYS>:dbghelp>
-            $<TARGET_NAME_IF_EXISTS:PkgConfig::MCFGHREAD>
-            $<TARGET_NAME_IF_EXISTS:PThreads4W::PThreads4W>
             $<TARGET_NAME_IF_EXISTS:LibXml2::LibXml2>
             $<TARGET_NAME_IF_EXISTS:PkgConfig::LIBXML2>
             $<TARGET_NAME_IF_EXISTS:cJSON::cJSON>
@@ -136,17 +142,7 @@ add_target(
             $<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<C_COMPILER_ID:MSVC>>:/Zc:__cplusplus>
             $<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<C_COMPILER_ID:MSVC>>:/Zc:__STDC__>
     COMPILE_DEFINITIONS
-        PUBLIC
-            $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_MACRO_IS_LINUX=$<PLATFORM_ID:Linux>>
-            $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_MACRO_IS_BSD=$<PLATFORM_ID:FreeBSD,NetBSD,OpenBSD,MirBSD>> # 未测试
-            $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_MACRO_IS_APPLE=$<BOOL:${APPLE}>>
-            $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_MACRO_IS_WINDOWS=$<PLATFORM_ID:Windows,WindowsPhone,WindowsStore,MSYS>>
-            $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_MACRO_IS_DEBUG=$<CONFIG:Debug>>
-            $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_MACRO_IS_RELEASE=$<CONFIG:Release,RelWithDebInfo,MinSizeRel>>
         PRIVATE
-            $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_OPTION_USE_MCFGTHREAD=$<AND:$<BOOL:${OPEN_STG_OPTION_USE_MCFGTHREAD}>,$<BOOL:${MCFGHREAD_FOUND}>>>
-            $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_MACRO_HAS_XDG_DESKTOP_PORTAL=$<BOOL:${XDG_DESKTOP_PORTAL_FOUND}>>
-            $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_MACRO_HAS_LIBDWARF=$<OR:$<TARGET_EXISTS:libdwarf::dwarf>,$<TARGET_EXISTS:PkgConfig::LIBDWARF>>>
             $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_MACRO_USE_STDC=$<BOOL:$<STREQUAL:${OPEN_STG_STRING_PROCESSING_LIBRARY},STDC>>>
             $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_MACRO_USE_LIBBSD=$<BOOL:$<STREQUAL:${OPEN_STG_STRING_PROCESSING_LIBRARY},LIBBSD>>>
             $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_MACRO_USE_LIBSAFEC=$<BOOL:$<STREQUAL:${OPEN_STG_STRING_PROCESSING_LIBRARY},LIBSAFEC>>>
@@ -192,10 +188,6 @@ if(${OPEN_STG_ENABLE_DEVELOP_TOOLS})
                 c_std_17
         COMPILE_OPTIONS
             PUBLIC
-                $<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<C_COMPILER_ID:GNU>>:-fexec-charset=UTF-8;-finput-charset=UTF-8>
-                $<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<C_COMPILER_ID:MSVC>>:/source-charset:utf-8;/execution-charset:utf-8>
-                $<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<C_COMPILER_ID:MSVC>>:/Zc:__cplusplus>
-                $<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<C_COMPILER_ID:MSVC>>:/Zc:__STDC__>
         COMPILE_DEFINITIONS
         INCLUDE_DIRS
             SYSTEM PUBLIC
@@ -237,6 +229,8 @@ if(${OPEN_STG_ENABLE_DEVELOP_TOOLS})
             SYSTEM PUBLIC
                 ${LLVM_INCLUDE_DIRS}
     )
+    add_subdirectory(Source.CAndCpp/DevelopTools/Library)
+    add_subdirectory(Source.CAndCpp/DevelopTools/Executable)
 endif()
 add_target(
     Logic
@@ -258,32 +252,6 @@ add_target(
         C_EXTENSIONS TRUE
         POSITION_INDEPENDENT_CODE TRUE
         OUTPUT_NAME "OpenStgLogic"
-        PREFIX "lib"
-)
-add_target(
-    Graphics
-    TARGET_TYPE SHARED
-    LINK_DEPENDS
-        PRIVATE
-            SDL3::SDL3
-            SDL3_ttf::SDL3_ttf
-            SDL3_image::SDL3_image
-            $<TARGET_NAME_IF_EXISTS:PkgConfig::XDG_DESKTOP_PORTAL>
-            Shared
-        PUBLIC
-            Base
-    LINK_OPTIONS
-    COMPILE_OPTIONS
-    COMPILE_DEFINITIONS
-    TARGET_PROPERTIES
-        CXX_STANDARD 20
-        CXX_STANDARD_REQUIRED TRUE
-        CXX_EXTENSIONS TRUE
-        C_STANDARD 17
-        C_STANDARD_REQUIRED TRUE
-        C_EXTENSIONS TRUE
-        POSITION_INDEPENDENT_CODE TRUE
-        OUTPUT_NAME "OpenStgGraphics"
         PREFIX "lib"
 )
 add_target(
@@ -319,13 +287,38 @@ add_target(
             Network
             Logic
 )
-
+if(${OPEN_STG_ENABLE_GAME_CLIENT})
+    add_target(
+        Graphics
+        TARGET_TYPE SHARED
+        LINK_DEPENDS
+            PRIVATE
+                SDL3::SDL3
+                SDL3_ttf::SDL3_ttf
+                SDL3_image::SDL3_image
+                $<TARGET_NAME_IF_EXISTS:PkgConfig::XDG_DESKTOP_PORTAL>
+                Shared
+            PUBLIC
+                Base
+        LINK_OPTIONS
+        COMPILE_OPTIONS
+        COMPILE_DEFINITIONS
+        TARGET_PROPERTIES
+            CXX_STANDARD 20
+            CXX_STANDARD_REQUIRED TRUE
+            CXX_EXTENSIONS TRUE
+            C_STANDARD 17
+            C_STANDARD_REQUIRED TRUE
+            C_EXTENSIONS TRUE
+            POSITION_INDEPENDENT_CODE TRUE
+            OUTPUT_NAME "OpenStgGraphics"
+            PREFIX "lib"
+    )
+endif()
 add_subdirectory(Source.CAndCpp/Base)
 add_subdirectory(Source.CAndCpp/Logic)
 add_subdirectory(Source.CAndCpp/Network)
 add_subdirectory(Source.CAndCpp/Graphics)
-add_subdirectory(Source.CAndCpp/DevelopTools/Library)
-add_subdirectory(Source.CAndCpp/DevelopTools/Executable)
 
 # 定义资源文件路径
 set(RESOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Rsesources")
