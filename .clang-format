@@ -4,10 +4,11 @@ Language: Cpp
 BasedOnStyle: Microsoft
 
 IndentWidth: 4
-ColumnLimit: 80
+ColumnLimit: 100
 AlignAfterOpenBracket: Align
-AlignOperands: Align
+# AlignOperands: Align
 AlignConsecutiveAssignments: None
+AlignArrayOfStructures: Left
 PenaltyReturnTypeOnItsOwnLine: 1024
 PenaltyBreakBeforeFirstCallParameter: 0
 BreakAfterOpenBracketFunction: true

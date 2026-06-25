@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #endif
 
-OG_MACRO_NORETURN void OgExceptionPanic(OgException e)
+OG_MACRO_NORETURN void OgExceptionPanic(OgConstantString pcsDescription)
 {
 #if defined (_WIN32)
 #else

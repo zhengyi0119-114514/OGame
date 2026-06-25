@@ -1,6 +1,9 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stddef.h>
+#include <stdio.h>
+#include <inttypes.h>
+#include <string.h>
 #include <OpenSTG/OpenStgBase.Macro.h>
 
 #if !defined (OPEN_STG_MACRO_BASE_MEMORY_H)
@@ -10,16 +13,15 @@ OG_MACRO_C_BLOCK_BEGIN
 struct OgModule;
 struct OgDynamicArray;
 struct OgDependencyTree;
-struct OgAllocator;
-struct OgDependencyTree;
-struct OgStringEx;
-struct OgException;
-struct OgExceptionBasicDebugImformation;
+struct OgExceptionInformation;
 struct OgFunction;
 struct OgDebugSource;
+struct OgAllocator;
 
-typedef const char OgConstCharacter, *OgConstString;
+typedef const char OgConstantCharacter, *OgConstantString;
 typedef char OgCharacter, *OgString;
+typedef signed char OgSignedCharater;
+typedef unsigned char OgUnsignedCharater;
 typedef int8_t OgSignedInteger8, OgInteger8, OgSignedByte, OgSByte;
 typedef uint8_t OgUnsignedInteger8, OgUnsignedByte, OgByte;
 typedef int16_t OgSignedInteger16, OgInteger16;
@@ -32,9 +34,10 @@ typedef int64_t OgSignedIntegerSize;
 typedef uint64_t OgUnsignedIntegerSize;
 typedef intptr_t OgIntPtr, OgPointerSizedSignedInteger;
 typedef uintptr_t OgUIntPtr, OgPointerSizedUnsignedInteger;
-typedef uint8_t OgBoolean;
 typedef void *OgPVoid;
 
+typedef uint8_t OgBoolean,Og8BitBoolean;
+typedef uint32_t Og32BitBoolean;
 #define OgTrue true
 #define OgFalse false
 #define OPEN_STG_MODULE_REGISTERED_NAME "IceThorn.OpenStg.Base.SB"

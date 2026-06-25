@@ -73,22 +73,6 @@ add_target(
             ICU::i18n
             ICU::io
             ${LUA_LIBRARIES}
-    LINK_OPTIONS
-        INTERFACE
-            $<$<AND:$<BOOL:${UNIX}>,$<NOT:$<BOOL:${APPLE}>>,$<C_COMPILER_ID:GUN,Clang>,$<LINK_LANGUAGE:C,CXX>>:-rdynamic>
-    COMPILE_OPTIONS
-        INTERFACE
-            # $<$<AND:$<C_COMPILER_ID:MSVC>,$<CONFIG:Release>,$<COMPILE_LANGUAGE:C,CXX>>:/Ox>
-            # $<$<COMPILE_LANGUAGE:C,CXX>:$<$<C_COMPILER_ID:MSVC>:/W4>>
-            $<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<C_COMPILER_ID:GNU,Clang>,$<COMPILE_LANGUAGE:C,CXX>>:-O> # 内存泄露检查
-            $<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<CONFIG:Debug>,$<C_COMPILER_ID:Clang>>:-fsanitize=memory;-fno-omit-frame-pointer>
-            $<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<C_COMPILER_ID:GNU,AppleClang,ARMClang,CrayClang,TIClang,IntelLLVM,Clang>>:
-                -Wall;
-                -Wextra;
-                -Wno-sign-compare;
-                -Wno-unused-parameter
-            >
-
     COMPILE_DEFINITIONS
         INTERFACE
             $<$<COMPILE_LANGUAGE:C,CXX>:UINCODE>
@@ -102,6 +86,26 @@ add_target(
         SYSTEM
         INTERFACE
             ${LUA_INCLUDE_DIR}
+)
+target_test_and_add_compile_options(
+    Shared C INTERFACE
+    -O
+    -fsanitize=memory
+    -fno-omit-frame-pointer
+    -Wall
+    -Wextra
+    -Wno-unused-parameter
+    -Wconversion
+    -Wincompatible-function-pointer-types
+    -Wincompatible-function-pointer-types-strict
+    -Wincompatible-pointer-types
+     /W4
+     /Wall
+)
+
+target_test_and_add_link_options(
+    Shared C INTERFACE
+    -rdynamic
 )
 add_target(
     Base
@@ -135,12 +139,6 @@ add_target(
             cxx_constexpr
             cxx_nullptr
             c_std_17
-    COMPILE_OPTIONS
-        PUBLIC
-            $<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<C_COMPILER_ID:GNU>>:-fexec-charset=UTF-8;-finput-charset=UTF-8>
-            $<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<C_COMPILER_ID:MSVC>>:/source-charset:utf-8;/execution-charset:utf-8>
-            $<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<C_COMPILER_ID:MSVC>>:/Zc:__cplusplus>
-            $<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<C_COMPILER_ID:MSVC>>:/Zc:__STDC__>
     COMPILE_DEFINITIONS
         PRIVATE
             $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_MACRO_USE_STDC=$<BOOL:$<STREQUAL:${OPEN_STG_STRING_PROCESSING_LIBRARY},STDC>>>
@@ -149,6 +147,15 @@ add_target(
     INCLUDE_DIRS
         SYSTEM PUBLIC
             "${CMAKE_CURRENT_SOURCE_DIR}/Source.CAndCpp/include"
+)
+target_test_and_add_compile_options(
+    Base C PUBLIC 
+    -fexec-charset=UTF-8
+    -finput-charset=UTF-8
+    /source-charset:utf-8
+    /execution-charset:utf-8
+    /Zc:__cplusplus
+    /Zc:__STDC__
 )
 if(${OPEN_STG_ENABLE_DEVELOP_TOOLS})
     add_target(
@@ -161,13 +168,10 @@ if(${OPEN_STG_ENABLE_DEVELOP_TOOLS})
                 $<TARGET_NAME_IF_EXISTS:LLVMCore>
                 $<TARGET_NAME_IF_EXISTS:LLVMSupport>
                 $<TARGET_NAME_IF_EXISTS:libclang>
-                $<TARGET_NAME_IF_EXISTS:PkgConfig::LIBPOPT>
-                $<TARGET_NAME_IF_EXISTS:PkgConfig::MCFGHREAD>
-                $<TARGET_NAME_IF_EXISTS:PThreads4W::PThreads4W>
-                $<TARGET_NAME_IF_EXISTS:LibXml2::LibXml2>
-                $<TARGET_NAME_IF_EXISTS:PkgConfig::LIBXML2>
-                $<TARGET_NAME_IF_EXISTS:cJSON::cJSON>
-                $<TARGET_NAME_IF_EXISTS:PkgConfig::LIBCJSON>
+                $<$<BOOL:${OPEN_STG_TARGET_HAS_POPT}>:${OPEN_STG_TARGET_POPT}>
+                $<$<BOOL:${OPEN_STG_TARGET_HAS_THREADS}>:${OPEN_STG_TARGET_THREADS}>
+                $<$<BOOL:${OPEN_STG_TARGET_HAS_LIBXML2}>:${OPEN_STG_TARGET_LIBXML2}>
+                $<$<BOOL:${OPEN_STG_TARGET_CJSON}>:${OPEN_STG_TARGET_CJSON}>
             PUBLIC
                 Base
         TARGET_PROPERTIES
@@ -219,11 +223,6 @@ if(${OPEN_STG_ENABLE_DEVELOP_TOOLS})
                 cxx_nullptr
                 c_std_17
         COMPILE_OPTIONS
-            PUBLIC
-                $<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<C_COMPILER_ID:GNU>>:-fexec-charset=UTF-8;-finput-charset=UTF-8>
-                $<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<C_COMPILER_ID:MSVC>>:/source-charset:utf-8;/execution-charset:utf-8>
-                $<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<C_COMPILER_ID:MSVC>>:/Zc:__cplusplus>
-                $<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<C_COMPILER_ID:MSVC>>:/Zc:__STDC__>
         COMPILE_DEFINITIONS
         INCLUDE_DIRS
             SYSTEM PUBLIC

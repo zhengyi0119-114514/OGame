@@ -2,7 +2,7 @@
     "tasks": [
         {
             "type": "shell",
-            "label": "CMake Configuration(Preset:sys-llvm)",
+            "label": "CMake Configuration(Preset:unix-gnu-all)",
             "command": "cmake",
             "args": [
                 "-S",
@@ -10,7 +10,7 @@
                 "-B",
                 "${workspaceFolder}/build",
                 "--preset",
-                "sys-llvm"
+                "unix-gnu-all"
             ],
             "isBackground": false
         }

@@ -4,46 +4,43 @@
 #define OPEN_STG_CONST_MINIMUN_STRING_LENGTH 64
 #define OPEN_STG_CONST_MAXIMUN_STRING_LENGTH 64
 
-typedef enum OgExceptionDefaultType
+OG_MACRO_EXPORT OgExceptionFormattingException OgExceptionOutOfRangeFormatExceptionMessage(
+    struct OgExceptionStructureOutOfRange *poorException,
+    OgUnsignedInteger64 uDestinationBufferSize,
+    OgString psDestinationBuffer);
+OG_MACRO_EXPORT OgExceptionFormattingException OgExceptionOutOfRangeGetExceptionMessageLength(
+    struct OgExceptionStructureOutOfRange *poorException,
+    OgUnsignedInteger64 *const puMessageLength);
+inline OgExceptionFormattingException OgExceptionOutOfRangeFormatExceptionMessageWarpper(
+    OgPVoid pvExceptionSource,
+    OgUnsignedInteger64 uDestinationBufferSize,
+    OgString psDestinationBuffer)
 {
-    OgExceptionTypeNull = 0,
-    OgExceptionTypeLogicException = 0x00010000,
-    OgExceptionTypeOutOfRange = OgExceptionTypeLogicException + 1,
-    OgExceptionTypeArgumentNull = OgExceptionTypeOutOfRange + 1,
-    OgExceptionTypeInvalidArgument = OgExceptionTypeArgumentNull + 1,
-    OgExceptionTypeInvalidOperation = OgExceptionTypeInvalidArgument + 1,
-    OgExceptionTypeFormat = OgExceptionTypeInvalidOperation + 1,
-    OgExceptionTypeRuntimeException = 0x00020000,
-    OgExceptionTypeOutOfMemory = OgExceptionTypeRuntimeException + 1,
-    OgExceptionTypeStackOverflow = OgExceptionTypeOutOfMemory + 1,
-} OgExceptionDefaultType;
-
-typedef struct
+    return OgExceptionOutOfRangeFormatExceptionMessage(
+        (struct OgExceptionStructureOutOfRange *)pvExceptionSource, uDestinationBufferSize,
+        psDestinationBuffer);
+}
+inline OgExceptionFormattingException OgExceptionOutOfRangeGetExceptionMessageLengthWrapper(
+    OgPVoid pvExceptionSource, OgUnsignedInteger64 *const puMessageLength)
 {
-    OgExceptionDefaultType Type;
-    OgExceptionBasicDebugInformation Basic;
-    OgCharacter Maximun[OPEN_STG_CONST_MAXIMUN_STRING_LENGTH];
-    OgCharacter Minimun[OPEN_STG_CONST_MINIMUN_STRING_LENGTH];
-} OgPrivateExceptionOutOfRangeException;
-OG_MACRO_EXPORT OgException OgExceptionThrowOutOfRangeV(
-    OgConstString pcsParameter,
-    OgConstString pcsMin,
-    OgConstString pcsMax);
-OG_MACRO_EXPORT OgException OgExceptionThrowOutOfRangeD(
-    OG_MACRO_THROW_EXCEPTION_EXTENSION_PARAMENT,
-    OgConstString pcsParameter,
-    OgConstString pcsMin,
-    OgConstString pcsMax);
+    return OgExceptionOutOfRangeGetExceptionMessageLength(
+        (struct OgExceptionStructureOutOfRange *)pvExceptionSource, puMessageLength);
+}
+OG_MACRO_PRIVATE OgExceptionFormattingException OgExceptionOutOfRangeSerializeWrapper(
+    OgPVoid pvExceptionSource,
+    OgPVoid pvDestinationBuffer,
+    OgUnsignedInteger64 puDestinationBufferSize);
 
-OG_MACRO_NORETURN void OgExceptionPanic(OgException e);
-OG_MACRO_PRIVATE void OgPrivateExceptionOutOfRangeDestroy(struct OgException e);
-OG_MACRO_PRIVATE OgException OgPrivateExceptionOutOfRangeFormatMessage(
-    const struct OgException eException,
-    OgString psDestination,
-    OgUnsignedIntegerSize uDestinationSize);
-OG_MACRO_PRIVATE OgException OgPrivateExceptionOutOfRangeGetFormattedMessageLength(
-    const struct OgException e,
-    OgUnsignedIntegerSize *puMessageSize);
-OG_MACRO_PRIVATE OgBoolean OgPrivateExceptionLogicExceptionIsSomething(OgConstString pcsTypeName);
-OG_MACRO_PRIVATE OgBoolean OgPrivateExceptionOutOfRangeIsSomething(OgConstString pcsTypeName);
+/// TODO: After default serialize.
+OG_MACRO_PRIVATE OgExceptionFormattingException OgExceptionOutOfRangeDeserializeWrapper(
+    OgPVoid pvDestinationBuffer,
+    OgUnsignedInteger64 puDestinationBufferSize,
+    OgPVoid pvSourceBuffer,
+    OgUnsignedInteger64 puSourceBufferSize);
+/// TODO: After default serialize.
+OG_MACRO_PRIVATE OgConstantString OgExceptionOutOfRangeGetExceptionName();
+OG_MACRO_EXTERN struct OgExceptionInformation *OgExceptionStructureUndefineBehaviorGetInformation(
+    void);
+OG_MACRO_EXTERN struct OgExceptionInformation *OgExceptionStructureInvalidArgumentGetInformation(
+    void);
 #endif

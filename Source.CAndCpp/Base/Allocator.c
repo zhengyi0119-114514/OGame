@@ -1,46 +1,5 @@
 #include "Allocator.h"
 
-OgException OgAllocatorCheckBasic(
-    const struct OgAllocator *pAllocator,
-    OgBoolean *pbResult)
-{
-    if (pAllocator == NULL)
-    {
-        return OgExceptionThrowArgumentNull("pAllocator");
-    }
-    *pbResult = pAllocator->Alloc != NULL && pAllocator->Free != NULL;
-    return OgExceptionThrowNothing();
-}
-OgException OgAllocatorCheckSupportForAlignmentSupport(
-    const struct OgAllocator *pAllocator,
-    OgBoolean *pbResult)
-{
-    if (pAllocator == NULL)
-    {
-        return OgExceptionThrowArgumentNull("pAllocator");
-    }
-    *pbResult = pAllocator->AlignedAlloc != NULL && pAllocator->AlignedFree != NULL;
-    return OgExceptionThrowNothing();
-}
-OgException OgAllocatorCheckSupportForResize(
-    const struct OgAllocator *pAllocator,
-    OgBoolean *pbResult)
-{
-    OgException e = OgExceptionThrowNothing();
-    if (pAllocator == NULL)
-    {
-        return OgExceptionThrowArgumentNull("pAllocator");
-    }
-    OgBoolean bBaseCheckResult = OgFalse;
-    OgExceptionDestroy(e);
-    e = OgAllocatorCheckBasic(pAllocator, &bBaseCheckResult);
-    if (!OgExceptionIsNothing(e))
-    {
-        return e;
-    }
-    *pbResult = bBaseCheckResult && (pAllocator->Realloc != NULL);
-    return OgExceptionThrowNothing();
-}
 OG_MACRO_PRIVATE OgPVoid OgPvStdAllocWarp(
     struct OgAllocator *pAllocator,
     OgUnsignedIntegerSize uSize)
@@ -94,11 +53,14 @@ OG_MACRO_PRIVATE void OgPvStdAlignedFreeWarp(
 }
 OgAllocator OgAllocatorCreateCStandardAllocator()
 {
-    OgAllocator a = {};
-    memset((OgPVoid)&a, 0, sizeof(OgAllocator));
-    a.Alloc = OgPvStdAllocWarp;
-    a.Free = OgPvStdFreeWarp;
-    a.Realloc = OgPvStdReallocWarp;
-    a.AlignedAlloc = OgPvStdAlignedAllocWarp;
+    const OgAllocator a = {
+        OgPvStdAllocWarp,
+        OgPvStdReallocWarp,
+        OgPvStdFreeWarp,
+        OgPvStdAlignedAllocWarp,
+        OgPvStdAlignedFreeWarp,
+        NULL,
+        NULL
+    };
     return a;
 }

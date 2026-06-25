@@ -9,10 +9,10 @@ OG_MACRO_C_BLOCK_BEGIN
 
 OG_MACRO_EXTERN OgException OgModuleRegister(const struct OgModule *pcModule);
 OG_MACRO_EXTERN OgException OgModuleGetRegisteredModule(
-    OgConstString pcsModuleRegisteredName,
+    OgConstantString pcsModuleRegisteredName,
     const struct OgModule **pOutput);
-OG_MACRO_EXTERN OgException OgModuleFree(const OgConstString pcsModuleRegisteredName);
-OG_MACRO_EXTERN OgException OgModuleLoad(const OgConstString pcsModulePath);
+OG_MACRO_EXTERN OgException OgModuleFree(const OgConstantString pcsModuleRegisteredName);
+OG_MACRO_EXTERN OgException OgModuleLoad(const OgConstantString pcsModulePath);
 
 OG_MACRO_C_BLOCK_END
 #endif

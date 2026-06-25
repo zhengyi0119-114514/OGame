@@ -9,8 +9,16 @@
 #define OPEN_STG_STRING_PROCESSING_H 1
 OG_MACRO_C_BLOCK_BEGIN
 
-OG_MACRO_EXPORT OgException OgStringCopy(OgConstString pcsSource, OgString psDestination, OgUnsignedIntegerSize iDestinationSize);
-OG_MACRO_EXPORT OgException OgStringConcatenation(OgString psDestination,OgUnsignedIntegerSize iDestinationSize,OgConstString pcsSource);
+OG_MACRO_EXPORT OgExceptionFormattingException OgStringCopy(
+    OgString psDestination,
+    OgSignedInteger64 iDestinationSize,
+    OgConstantString pcsSource,
+    OgSignedInteger64 iCharatersToCopy);
+OG_MACRO_EXPORT OgExceptionFormattingException OgStringConnect(
+    OgString psDestination,
+    OgSignedInteger64 iDestinationSize,
+    OgConstantString pcsSource,
+    OgSignedInteger64 iCharatersToConnect);
 
 OG_MACRO_C_BLOCK_END
 #endif

@@ -12,44 +12,19 @@
 #include <string.h>
 #endif
 
-OgException OgStringCopy(
-    OgConstString pcsSource,
+OgExceptionFormattingException OgStringCopy(
     OgString psDestination,
-    OgUnsignedIntegerSize uDestinationSize)
+    OgSignedInteger64 iDestinationSize,
+    OgConstantString pcsSource,
+    OgSignedInteger64 iCharatersToCopy)
 {
-#if OPEN_STG_MACRO_USE_LIBBSD
-    size_t uSourceSize = strlcpy(psDestination, pcsSource, uDestinationSize);
-    if (uSourceSize >= uDestinationSize)
+    if(iDestinationSize <= 0 && iCharatersToCopy <= 0 )
     {
-        return OgExceptionThrowOutOfRange("uDestinationSize", OgStringGetEmptyString(), OgStringGetEmptyString());
+        
     }
-#elif OPEN_STG_MACRO_USE_STDC || OPEN_STG_MACRO_USE_LIBSAFEC
-    if (strcpy_s(psDestination, iDestinationSize, pcsSource) != 0)
-    {
-        return OgExceptionThrowOutOfRange("uDestinationSize", OgStringGetEmptyString(), OgStringGetEmptyString());
-    }
-#else
-    static_assert(false, "Require libbsd ,libsafec or Annex K Stdandard C library");
-#endif
-    return OgExceptionThrowNothing();
 }
-OgException OgStringConcatenation(
+OgExceptionFormattingException OgStringConnect(
     OgString psDestination,
-    OgUnsignedIntegerSize uDestinationSize,
-    OgConstString pcsSource)
-{
-#if OPEN_STG_MACRO_USE_LIBBSD
-    if (strlcat(psDestination, pcsSource, uDestinationSize) >= uDestinationSize)
-    {
-        return OgExceptionThrowOutOfRange("uDestinationSize", OgStringGetEmptyString(), OgStringGetEmptyString());
-    }
-#elif OPEN_STG_MACRO_USE_STDC || OPEN_STG_MACRO_USE_LIBSAFEC
-    if (strcat_s(psDestination, uDestinationSize, pcsSource) != 0)
-    {
-        return OgExceptionThrowOutOfRange("uDestinationSize", OgStringGetEmptyString(), OgStringGetEmptyString());
-    }
-#else
-    static_assert(false, "Require libbsd ,libsafec or Annex K Stdandard C library");
-#endif
-    return OgExceptionThrowNothing();
-}
+    OgSignedInteger64 iDestinationSize,
+    OgConstantString pcsSource,
+    OgSignedInteger64 iCharatersToConnect);
