@@ -4,19 +4,34 @@
 #include <stdio.h>
 #include <inttypes.h>
 #include <string.h>
-#include <OpenSTG/OpenStgBase.Macro.h>
 
-#if !defined (OPEN_STG_MACRO_BASE_MEMORY_H)
+#if !defined(OPEN_STG_MACRO_BASE_MEMORY_H)
 #define OPEN_STG_MACRO_BASE_MEMORY_H 1
+#include <OpenSTG/OpenStgBase.Macro.h>
 OG_MACRO_C_BLOCK_BEGIN
 
 struct OgModule;
 struct OgDynamicArray;
 struct OgDependencyTree;
+struct OgThread;
+struct OgTask;
+struct OgResult;
 struct OgExceptionInformation;
+struct OgExceptionDebugInformation;
+struct OgExceptionStructureOutOfRange;
+struct OgExceptionStructureInvalidArgument;
+struct OgExceptionStructureUndefineBehavior;
+struct OgExceptionStructureFormatException;
+struct OgExceptionStructureStackOverflow;
+enum OgExceptionEnumFormattingExceptionType;
+struct OgExceptionCollectionFormattingException;
+enum OgExceptionEnumIoExceptionType;
+struct OgExceptionCollectionIoException;
+
 struct OgFunction;
 struct OgDebugSource;
 struct OgAllocator;
+struct OgIoStteam;
 
 typedef const char OgConstantCharacter, *OgConstantString;
 typedef char OgCharacter, *OgString;
@@ -36,7 +51,7 @@ typedef intptr_t OgIntPtr, OgPointerSizedSignedInteger;
 typedef uintptr_t OgUIntPtr, OgPointerSizedUnsignedInteger;
 typedef void *OgPVoid;
 
-typedef uint8_t OgBoolean,Og8BitBoolean;
+typedef uint8_t OgBoolean, Og8BitBoolean;
 typedef uint32_t Og32BitBoolean;
 #define OgTrue true
 #define OgFalse false

@@ -1,9 +1,9 @@
 #include <string.h>
 #include <stdlib.h>
+#if !defined(OPEN_STG_MACRO_BASE_STRING_H)
+#define OPEN_STG_MACRO_BASE_STRING_H 1
 #include <OpenSTG/OpenStgBase.Types.h>
 #include <OpenSTG/OpenStgBase.Exceptions.h>
-#if !defined(OPEN_STG_MACRO_BASE_STRING)
-#define OPEN_STG_MACRO_BASE_STRING 1
 OG_MACRO_C_BLOCK_BEGIN
 
 
@@ -29,5 +29,7 @@ OG_MACRO_EXTERN OgExceptionFormattingException OgStringConnect(
 #define OgStringGetEmptyString() ""
 
 OG_MACRO_C_BLOCK_END
+#if !defined (OPEN_STG_MACRO_BASE_STRING_INLINE_H)
 #include <OpenSTG/OpenStgBase.String.Inline.h>
+#endif
 #endif

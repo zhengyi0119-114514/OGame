@@ -3,12 +3,81 @@
 
 #if !defined(OPEN_STG_MACRO_BASE_EXCEPTIONS_H)
 #define OPEN_STG_MACRO_BASE_EXCEPTIONS_H 1
-
-#if !defined(OPEN_STG_MACRO_BASE_EXCEPTION_STRUCTURES_H)
-#include <OpenSTG/OpenStgBase.Exceptions.Structures.h>
+#if !defined(OPEN_STG_MACRO_BASE_INPUT_AND_OUTPUT_H)
+#include <OpenSTG/OpenStgBase.InputAndOutput.h>
 #endif
 
 OG_MACRO_C_BLOCK_BEGIN
+
+typedef struct OgExceptionDebugInformation
+{
+    OgUnsignedInteger64 Line;
+    OgConstantString File;
+    OgConstantString Function;
+    OgPVoid Callstack[32];
+} OgExceptionDebugInformation;
+
+typedef struct OgExceptionStructureOutOfRange
+{
+    struct OgExceptionInformation *Information;
+    OgConstantString Paramenter;
+    OgCharacter MaximumValue[32];
+    OgCharacter MinimumValue[32];
+    OgConstantString Description;
+    struct OgExceptionDebugInformation DebugInformation;
+} OgExceptionStructureOutOfRange;
+
+inline OgExceptionStructureOutOfRange OgExceptionStructureOutOfRangeCreateWithInteger64(
+    OgConstantString pcsParamenter,
+    OgSignedInteger64 iMaximumValue,
+    OgSignedInteger64 iMinimumValue,
+    OgConstantString pcsDescription);
+inline OgExceptionStructureOutOfRange OgExceptionStructureOutOfRangeCreate(
+    OgConstantString pcsParamenter,
+    OgConstantString pcsMaximumValue,
+    OgConstantString pcsMinimumValue,
+    OgConstantString pcsDescription);
+OG_MACRO_EXTERN struct OgExceptionInformation *OgExceptionStructureOutOfRangeGetInformation(void);
+
+typedef struct OgExceptionStructureInvalidArgument
+{
+    struct OgExceptionInformation *Information;
+    OgConstantString Paramenter;
+    OgConstantString Description;
+    struct OgExceptionDebugInformation DebugInformation;
+} OgExceptionStructureInvalidArgument;
+OG_MACRO_EXTERN struct OgExceptionInformation *OgExceptionStructureInvalidArgumentGetInformation(
+    void);
+inline struct OgExceptionStructureInvalidArgument OgExceptionStructureInvalidArgumentCreate(
+    OgConstantString pcsParamenter, OgConstantString pcsDescription);
+
+typedef struct OgExceptionStructureUndefineBehavior
+{
+    struct OgExceptionInformation *Information;
+    OgConstantString Description;
+    struct OgExceptionDebugInformation DebugInformation;
+} OgExceptionStructureUndefineBehavior;
+
+inline struct OgExceptionStructureUndefineBehavior OgExceptionStructureUndefineBehaviorCreate(
+    OgConstantString pcsDescription);
+OG_MACRO_EXTERN struct OgExceptionInformation *OgExceptionStructureUndefineBehaviorGetInformation(
+    void);
+
+typedef struct OgExceptionStructureFormatException
+{
+    struct OgExceptionInformation *Information;
+    OgConstantString Description;
+    struct OgExceptionDebugInformation DebugInformation;
+} OgExceptionStructureFormatException;
+
+typedef struct OgExceptionStructureStackOverflow
+{
+    OgUnsignedInteger64 ProcessId;
+    OgUnsignedInteger64 ThreadId;
+    OgPointerSizedUnsignedInteger Address;
+    OgConstantString Description;
+} OgExceptionStructureStackOverflow;
+
 typedef enum OgExceptionEnumFormattingExceptionType
 {
     OgExceptionEnumFormatingExceptionItemNone = 0,
@@ -28,11 +97,21 @@ typedef struct OgExceptionCollectionFormattingException
     };
 } OgExceptionFormattingException;
 
-OG_MACRO_EXTERN OgExceptionFormattingException OgExceptionFormattingExceptionThrowNone(void);
-OG_MACRO_EXTERN OgExceptionFormattingException OgExceptionFormattingExceptionThrowInvalidArgument();
-OG_MACRO_EXTERN OgExceptionFormattingException
-    OgExceptionFormattingExceptionThrowUndefineBehavior();
-OG_MACRO_EXTERN OgExceptionFormattingException OgExceptionFormattingExceptionThrowOutOfRange();
+typedef enum OgExceptionEnumIoExceptionType
+{
+    OgExceptionEnumIoExceptionItemNone = 0,
+    OgExceptionEnumIoExceptionItemInvalidArgument = 1,
+    OgExceptionEnumIoExceptionItemUndefineBehavior = 2,
+} OgExceptionEnumIoExceptionType;
+typedef struct 
+{
+    enum OgExceptionEnumIoExceptionType Type;
+    union
+    {
+        struct OgExceptionStructureInvalidArgument InvalidArgument;
+        struct OgExceptionStructureUndefineBehavior UndefineBehavior;
+    };
+} OgExceptionIoException;
 
 typedef OgExceptionFormattingException (*OgExceptionFunctionDefinitionFormatExceptionMessage)(
     OgPVoid pvExceptionSource,

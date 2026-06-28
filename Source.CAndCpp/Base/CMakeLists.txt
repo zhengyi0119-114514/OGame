@@ -21,6 +21,7 @@ target_sources(
         Allocator.c
         ElectromagneticDotTimer.c
         Exception.OutOfRange.c
+        Exception.UndefineBehavior.c
         Exception.Panic.c
         Module.c
         StaticVariable.c

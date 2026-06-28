@@ -4,6 +4,41 @@
 目前深耕于STG类型
     by IceThorn ~~BakaTechnology~~
 
+## 项目目标
+
+由于个人的极强的类Suckless的理念追求和强烈的对兼容性的向往（以及对AI的强烈不信任），这个项目将会被打造成一个  
+个人维护的大型项目。追求极致的内存安全，内存低消耗，性能高~~糕~~，不依赖标准C++组件（为以后的C++组件预留位置  
+，以同时满足对多种标准C++库同时同等级支持做准备）。  
+
+### 子项目
+
+~~(总有几个会烂尾的，放心)~~
+
+> OpenStg
+> OpenStg.Base
+> OpenStg.Graphics              (With SDL3)
+> OpenStg.Logic
+> OpenStg.Network               (Native)
+> OpenStg.DevelopTools
+> OpenStg.DevelopTools.Compiler (With Clang and LLVM)
+> OpenStg.RustBinding.Base
+> OpenStg.RustBinding.Graphics
+> OpenStg.RustBinding.Logic
+> OpenStg.RustBinding.Network
+> OpenStg.DotnetBinding.Base
+> OpenStg.DotnetBinding.Graphics
+> OpenStg.DotnetBinding.Logic
+> OpenStg.DotnetBinding.Network
+> OpenStg.ZigBinding.Base       (Laest,脱离zig标准库)
+> OpenStg.ZigBinding.Graphics
+> OpenStg.ZigBinding.Logic
+> OpenStg.ZigBinding.Network
+> OpenStgPlusPlus               (C++ 20)
+> OpenStgPlusPlus.Base
+> OpenStgPlusPlus.Graphics
+> OpenStgPlusPlus.Logic
+> OpenStgPlusPlus.Network
+
 ## ~~获奖感言~~
 
 你将会面对的是：  
@@ -16,34 +51,6 @@
   - ~~比你的生命周期都长的CMakeLists.txt~~
   - ~~神奇的理论兼容性~~
 - ~~反复横跳的程序设计~~
-
-## ℬ𝒶𝓀𝒶
-
-ᗜˬᗜ ⑨：𝓫𝓪𝓴𝓪  
-⠀⠀⠀⣠⠤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⠀⠀  
-⠀⠀⡜⠁⠀⠈⢢⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⠋⠷⠶⠱⡄  
-⠀⢸⣸⣿⠀⠀⠀⠙⢦⡀⠀⠀⠀⠀⠀⠀⠀⢀⡴⠫⢀⣖⡃⢀⣸⢹  
-⠀⡇⣿⣿⣶⣤⡀⠀⠀⠙⢆⠀⠀⠀⠀⠀⣠⡪⢀⣤⣾⣿⣿⣿⣿⣸  
-⠀⡇⠛⠛⠛⢿⣿⣷⣦⣀⠀⣳⣄⠀⢠⣾⠇⣠⣾⣿⣿⣿⣿⣿⣿⣽  
-⠀⠯⣠⣠⣤⣤⣤⣭⣭⡽⠿⠾⠞⠛⠷⠧⣾⣿⣿⣯⣿⡛⣽⣿⡿⡼  
-⠀⡇⣿⣿⣿⣿⠟⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⠻⣿⣿⣮⡛⢿⠃  
-⠀⣧⣛⣭⡾⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢿⣿⣷⣎⡇  
-⠀⡸⣿⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⢿⣷⣟⡇  
-⣜⣿⣿⡧⠀⠀⠀⠀⠀⡀⠀⠀⠀⠀⠀⠀⣄⠀⠀⠀⠀⠀⣸⣿⡜⡄  
-⠉⠉⢹⡇⠀⠀⠀⢀⣞⠡⠀⠀⠀⠀⠀⠀⡝⣦⠀⠀⠀⠀⢿⣿⣿⣹  
-⠀⠀⢸⠁⠀⠀⢠⣏⣨⣉⡃⠀⠀⠀⢀⣜⡉⢉⣇⠀⠀⠀⢹⡄⠀⠀  
-⠀⠀⡾⠄⠀⠀⢸⣾⢏⡍⡏⠑⠆⠀⢿⣻⣿⣿⣿⠀⠀⢰⠈⡇⠀⠀  
-⠀⢰⢇⢀⣆⠀⢸⠙⠾⠽⠃⠀⠀⠀⠘⠿⡿⠟⢹⠀⢀⡎⠀⡇⠀⠀  
-⠀⠘⢺⣻⡺⣦⣫⡀⠀⠀⠀⣄⣀⣀⠀⠀⠀⠀⢜⣠⣾⡙⣆⡇⠀⠀  
-⠀⠀⠀⠙⢿⡿⡝⠿⢧⡢⣠⣤⣍⣀⣤⡄⢀⣞⣿⡿⣻⣿⠞⠀⠀⠀  
-⠀⠀⠀⢠⠏⠄⠐⠀⣼⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠳⢤⣉⢳⠀⠀⠀  
-⢀⡠⠖⠉⠀⠀⣠⠇⣿⡿⣿⡿⢹⣿⣿⣿⣿⣧⣠⡀⠀⠈⠉⢢⡀⠀  
-⢿⠀⠀⣠⠴⣋⡤⠚⠛⠛⠛⠛⠛⠛⠛⠛⠙⠛⠛⢿⣦⣄⠀⢈⡇⠀  
-⠈⢓⣤⣵⣾⠁⣀⣀⠤⣤⣀⠀⠀⠀⠀⢀⡤⠶⠤⢌⡹⠿⠷⠻⢤⡀  
-⢰⠋⠈⠉⠘⠋⠁⠀⠀⠈⠙⠳⢄⣀⡴⠉⠀⠀⠀⠀⠙⠂⠀⠀⢀⡇  
-⢸⡠⡀⠀⠒⠂⠐⠢⠀⣀⠀⠀⠀⠀⠀⢀⠤⠚⠀⠀⢸⣔⢄⠀⢾⠀  
-⠀⠑⠸⢿⠀⠀⠀⠀⢈⡗⠭⣖⡒⠒⢊⣱⠀⠀⠀⠀⢨⠟⠂⠚⠋⠀  
-⠀⠀⠀⠘⠦⣄⣀⣠⠞⠀⠀⠀⠈⠉⠉⠀⠳⠤⠤⡤⠞⠀⠀⠀⠀⠀  
 
 ## 配置开发环境
 
@@ -62,7 +69,7 @@
 ### ArchLinux / Manjaro / Archlinux(WSL)
 
 ``` bash
-sudo pacman -S icu lua catch2 libxml2 cjson popt mongo-c-driver
+sudo pacman -S icu lua catch2 libxml2 libbsd cjson popt mongo-c-driver
 # optional
 sudo pacman -S vulkan-devel libc++ libc++abi gtk4 
 # optional (client)

@@ -1,5 +1,5 @@
-#if !defined(OPEN_STG_MACRO_BASE_TYPE_AND_MACRO_H)
-#define OPEN_STG_MACRO_BASE_TYPE_AND_MACRO_H 1
+#if !defined(OPEN_STG_MACRO_BASE__MACRO_H)
+#define OPEN_STG_MACRO_BASE_MACRO_H 1
 
 #if OPEN_STG_MACRO_IS_WINDOWS
 #define OG_MACRO_EXTERN __deslspec(dllimport)
@@ -15,7 +15,7 @@
 #define OG_MACRO_THREAD_LOCAL __declspec(thread)
 #define OG_MACRO_ALWAYS_INLINE __forceinline
 #else
-#if defined(__GNUC__) || defined (__llvm__)
+#if defined(__GNUC__) || defined(__llvm__)
 #define OG_MACRO_PRIVATE __attribute__((visibility("hidden")))
 #define OG_MACRO_ALWAYS_INLINE __attribute__((__always_inline__))
 #define OG_MACRO_NORETURN __attribute__((__noreturn__))
@@ -24,7 +24,7 @@
 #define OG_MACRO_FUNCTION __FUNCTION__
 #define OG_MACRO_PRIVATE
 #if __STDC_VERSION__ >= 201112L && __STDC_VERSION__ < 202311L
-#include<stdnoreturn.h>
+#include <stdnoreturn.h>
 #define OG_MACRO_NORETURN noreturn
 #else
 #define OG_MACRO_NORETURN
@@ -38,7 +38,8 @@
 #if (defined(__GNUC__))
 #define OG_MACRO_THREAD_LOCAL __thread
 #else
-static_assert(false,"No thread local support.")
+static_assert(
+    false, "No thread local support.")
 #endif
 #endif
 #endif

@@ -88,24 +88,27 @@ add_target(
             ${LUA_INCLUDE_DIR}
 )
 target_test_and_add_compile_options(
-    Shared C INTERFACE
-    -O
-    -fsanitize=memory
-    -fno-omit-frame-pointer
-    -Wall
-    -Wextra
-    -Wno-unused-parameter
-    -Wconversion
-    -Wincompatible-function-pointer-types
-    -Wincompatible-function-pointer-types-strict
-    -Wincompatible-pointer-types
-     /W4
-     /Wall
+    Shared C 
+    INTERFACE
+        -O
+        -fsanitize=memory
+        -fno-omit-frame-pointer
+        -Wall
+        -Wextra
+        -Wno-unused-parameter
+        -Wconversion
+        -Wcast-align
+        -Wincompatible-function-pointer-types
+        -Wincompatible-function-pointer-types-strict
+        -Wincompatible-pointer-types
+        /W4
+        /Wall
 )
 
 target_test_and_add_link_options(
-    Shared C INTERFACE
-    -rdynamic
+    Shared C 
+    INTERFACE
+        -rdynamic
 )
 add_target(
     Base
@@ -117,11 +120,9 @@ add_target(
             ${OPEN_STG_TARGET_THREADS}
             $<$<BOOL:${OPEN_STG_TARGET_HAS_LIBDWARF}>:${OPEN_STG_TARGET_LIBDWARF}>
             $<$<BOOL:${OPEN_STG_TARGET_HAS_POPT}>:${OPEN_STG_TARGET_POPT}>
+            $<$<BOOL:${OPEN_STG_TARGET_HAS_LIBXML2}>:${OPEN_STG_TARGET_LIBXML2}>
+            $<$<BOOL:${OPEN_STG_TARGET_HAS_CJSON}>:${OPEN_STG_TARGET_CJSON}>
             $<$<PLATFORM_ID:Windows,WindowsPhone,WindowsStore,MSYS>:dbghelp>
-            $<TARGET_NAME_IF_EXISTS:LibXml2::LibXml2>
-            $<TARGET_NAME_IF_EXISTS:PkgConfig::LIBXML2>
-            $<TARGET_NAME_IF_EXISTS:cJSON::cJSON>
-            $<TARGET_NAME_IF_EXISTS:PkgConfig::LIBCJSON>
     TARGET_PROPERTIES
         CXX_STANDARD 20
         CXX_STANDARD_REQUIRED TRUE

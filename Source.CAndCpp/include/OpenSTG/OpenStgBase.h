@@ -15,9 +15,11 @@
 
 #include <OpenSTG/OpenStgBase.Macro.h>
 #include <OpenSTG/OpenStgBase.Exceptions.h>
+#include <OpenSTG/OpenStgBase.InputAndOutput.h>
 #include <OpenSTG/OpenStgBase.Memory.h>
 #include <OpenSTG/OpenStgBase.Module.h>
 #include <OpenSTG/OpenStgBase.String.h>
+#include <OpenSTG/OpenStgBase.Task.h>
 #include <OpenSTG/OpenStgBase.Types.h>
 
 #endif // !OPEN_STG_MACRO_BASE_H
