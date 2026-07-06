@@ -15,12 +15,12 @@ typedef struct OgStringEx
     struct OgConstantAllocator *Allocator;
 } OgStringEx;
 
-OG_MACRO_EXTERN OgExceptionFormattingException OgStringCopy(
+OG_MACRO_EXTERN struct OgExceptionCollectionFormatException OgStringCopy(
     OgString psDestination,
     OgSignedInteger64 iDestinationSize,
     OgConstantString pcsSource,
     OgSignedInteger64 iCharatersToCopy);
-OG_MACRO_EXTERN OgExceptionFormattingException OgStringConnect(
+OG_MACRO_EXTERN struct OgExceptionCollectionFormatException OgStringConnect(
     OgString psDestination,
     OgSignedInteger64 iDestinationSize,
     OgConstantString pcsSource,

@@ -117,11 +117,12 @@ add_target(
         PRIVATE
             Shared
             ${OPEN_STG_TARGET_STRING_PROCESSING_LIBRARY}
-            ${OPEN_STG_TARGET_THREADS}
+            $<$<BOOL:${OPEN_STG_TARGET_HAS_THREADS}>:${OPEN_STG_TARGET_THREADS}>
             $<$<BOOL:${OPEN_STG_TARGET_HAS_LIBDWARF}>:${OPEN_STG_TARGET_LIBDWARF}>
             $<$<BOOL:${OPEN_STG_TARGET_HAS_POPT}>:${OPEN_STG_TARGET_POPT}>
             $<$<BOOL:${OPEN_STG_TARGET_HAS_LIBXML2}>:${OPEN_STG_TARGET_LIBXML2}>
             $<$<BOOL:${OPEN_STG_TARGET_HAS_CJSON}>:${OPEN_STG_TARGET_CJSON}>
+            $<$<BOOL:${OPEN_STG_TARGET_HAS_PCRE2}:${OPEN_STG_TARGET_PCRE2}>
             $<$<PLATFORM_ID:Windows,WindowsPhone,WindowsStore,MSYS>:dbghelp>
     TARGET_PROPERTIES
         CXX_STANDARD 20
@@ -142,21 +143,22 @@ add_target(
             c_std_17
     COMPILE_DEFINITIONS
         PRIVATE
-            $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_MACRO_USE_STDC=$<BOOL:$<STREQUAL:${OPEN_STG_STRING_PROCESSING_LIBRARY},STDC>>>
-            $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_MACRO_USE_LIBBSD=$<BOOL:$<STREQUAL:${OPEN_STG_STRING_PROCESSING_LIBRARY},LIBBSD>>>
-            $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_MACRO_USE_LIBSAFEC=$<BOOL:$<STREQUAL:${OPEN_STG_STRING_PROCESSING_LIBRARY},LIBSAFEC>>>
+            $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_MACRO_USE_STDC=$<BOOL:$<STREQUAL:${OPEN_STG_STRING_PROCESSING_LIBRARY},stdc>>>
+            $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_MACRO_USE_LIBBSD=$<BOOL:$<STREQUAL:${OPEN_STG_STRING_PROCESSING_LIBRARY},libbsd>>>
+            $<$<COMPILE_LANGUAGE:C,CXX>:OPEN_STG_MACRO_USE_LIBSAFEC=$<BOOL:$<STREQUAL:${OPEN_STG_STRING_PROCESSING_LIBRARY},libsafec>>>
     INCLUDE_DIRS
         SYSTEM PUBLIC
             "${CMAKE_CURRENT_SOURCE_DIR}/Source.CAndCpp/include"
 )
 target_test_and_add_compile_options(
-    Base C PUBLIC 
-    -fexec-charset=UTF-8
-    -finput-charset=UTF-8
-    /source-charset:utf-8
-    /execution-charset:utf-8
-    /Zc:__cplusplus
-    /Zc:__STDC__
+    Base C 
+    PUBLIC 
+        -fexec-charset=UTF-8
+        -finput-charset=UTF-8
+        /source-charset:utf-8
+        /execution-charset:utf-8
+        /Zc:__cplusplus
+        /Zc:__STDC__
 )
 if(${OPEN_STG_ENABLE_DEVELOP_TOOLS})
     add_target(

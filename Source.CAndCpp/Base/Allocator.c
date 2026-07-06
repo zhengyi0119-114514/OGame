@@ -1,13 +1,12 @@
 #include "Allocator.h"
 
-OG_MACRO_PRIVATE OgPVoid OgPvStdAllocWarp(
-    struct OgAllocator *pAllocator,
-    OgUnsignedIntegerSize uSize)
+OgPVoid OgPrivateStandardAllocWarp(
+    struct OgAllocator *pAllocator, OgUnsignedIntegerSize uSize)
 {
     OgPVoid pvMemory = malloc(uSize);
     return pvMemory;
 }
-OG_MACRO_PRIVATE OgPVoid OgPvStdAlignedAllocWarp(
+OgPVoid OgPrivateStandardAlignedAllocWarp(
     struct OgAllocator *pAllocator,
     OgUnsignedIntegerSize uMemorySize,
     OgUnsignedIntegerSize uAligned)
@@ -23,10 +22,8 @@ OG_MACRO_PRIVATE OgPVoid OgPvStdAlignedAllocWarp(
     }
     return pvMemory;
 }
-OG_MACRO_PRIVATE OgPVoid OgPvStdReallocWarp(
-    struct OgAllocator *pAllocator,
-    OgPVoid pvOld,
-    OgUnsignedIntegerSize uNewSize)
+OgPVoid OgPrivateStandardReallocWarp(
+    struct OgAllocator *pAllocator, OgPVoid pvOld, OgUnsignedIntegerSize uNewSize)
 {
     if (uNewSize == 0)
     {
@@ -35,15 +32,13 @@ OG_MACRO_PRIVATE OgPVoid OgPvStdReallocWarp(
     }
     return realloc(pvOld, uNewSize);
 }
-OG_MACRO_PRIVATE void OgPvStdFreeWarp(
-    struct OgAllocator *pAllocator,
-    OgPVoid pv)
+void OgPrivateStandardFreeWarp(
+    struct OgAllocator *pAllocator, OgPVoid pv)
 {
     free(pv);
 }
-OG_MACRO_PRIVATE void OgPvStdAlignedFreeWarp(
-    struct OgAllocator *pAllocator,
-    OgPVoid pv)
+void OgPrivateStandardAlignedFreeWarp(
+    struct OgAllocator *pAllocator, OgPVoid pv)
 {
 #if defined(_WIN32)
     _aligned_free(pv)
@@ -51,16 +46,15 @@ OG_MACRO_PRIVATE void OgPvStdAlignedFreeWarp(
     free(pv);
 #endif
 }
-OgAllocator OgAllocatorCreateCStandardAllocator()
+OgAllocator OgMemoryAllocatorCreateCStandardAllocator()
 {
-    const OgAllocator a = {
-        OgPvStdAllocWarp,
-        OgPvStdReallocWarp,
-        OgPvStdFreeWarp,
-        OgPvStdAlignedAllocWarp,
-        OgPvStdAlignedFreeWarp,
-        NULL,
-        NULL
-    };
+    const OgAllocator a
+        = {OgPrivateStandardAllocWarp,
+           OgPrivateStandardReallocWarp,
+           OgPrivateStandardFreeWarp,
+           OgPrivateStandardAlignedAllocWarp,
+           OgPrivateStandardAlignedFreeWarp,
+           NULL,
+           NULL};
     return a;
 }

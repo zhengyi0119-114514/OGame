@@ -14,30 +14,30 @@
 
 ~~(总有几个会烂尾的，放心)~~
 
-> OpenStg
-> OpenStg.Base
-> OpenStg.Graphics              (With SDL3)
-> OpenStg.Logic
-> OpenStg.Network               (Native)
-> OpenStg.DevelopTools
-> OpenStg.DevelopTools.Compiler (With Clang and LLVM)
-> OpenStg.RustBinding.Base
-> OpenStg.RustBinding.Graphics
-> OpenStg.RustBinding.Logic
-> OpenStg.RustBinding.Network
-> OpenStg.DotnetBinding.Base
-> OpenStg.DotnetBinding.Graphics
-> OpenStg.DotnetBinding.Logic
-> OpenStg.DotnetBinding.Network
-> OpenStg.ZigBinding.Base       (Laest,脱离zig标准库)
-> OpenStg.ZigBinding.Graphics
-> OpenStg.ZigBinding.Logic
-> OpenStg.ZigBinding.Network
-> OpenStgPlusPlus               (C++ 20)
-> OpenStgPlusPlus.Base
-> OpenStgPlusPlus.Graphics
-> OpenStgPlusPlus.Logic
-> OpenStgPlusPlus.Network
+> OpenStg  
+> OpenStg.Base  
+> OpenStg.Graphics              (With SDL3)  
+> OpenStg.Logic  
+> OpenStg.Network               (Native)  
+> OpenStg.DevelopTools  
+> OpenStg.DevelopTools.Compiler (With Clang and LLVM)  
+> OpenStg.RustBinding.Base  
+> OpenStg.RustBinding.Graphics  
+> OpenStg.RustBinding.Logic  
+> OpenStg.RustBinding.Network  
+> OpenStg.DotnetBinding.Base  
+> OpenStg.DotnetBinding.Graphics  
+> OpenStg.DotnetBinding.Logic  
+> OpenStg.DotnetBinding.Network  
+> OpenStg.ZigBinding.Base       (Laest,脱离zig标准库)  
+> OpenStg.ZigBinding.Graphics  
+> OpenStg.ZigBinding.Logic  
+> OpenStg.ZigBinding.Network  
+> OpenStgPlusPlus               (C++ 20)  
+> OpenStgPlusPlus.Base  
+> OpenStgPlusPlus.Graphics  
+> OpenStgPlusPlus.Logic  
+> OpenStgPlusPlus.Network  
 
 ## ~~获奖感言~~
 

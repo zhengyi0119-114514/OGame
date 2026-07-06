@@ -5,10 +5,10 @@ BasedOnStyle: Microsoft
 
 IndentWidth: 4
 ColumnLimit: 100
-AlignAfterOpenBracket: Align
-# AlignOperands: Align
-AlignConsecutiveAssignments: None
+AlignAfterOpenBracket: AlwaysBreak
+AlignOperands: DontAlign
 AlignArrayOfStructures: Left
+AlignEscapedNewlines: DontAlign
 PenaltyReturnTypeOnItsOwnLine: 1024
 PenaltyBreakBeforeFirstCallParameter: 0
 BreakAfterOpenBracketFunction: true
@@ -21,20 +21,19 @@ BreakBeforeCloseBracketIf: true
 BreakBeforeCloseBracketLoop: true
 BreakBeforeCloseBracketSwitch: false
 BreakFunctionDefinitionParameters: true
-AllowAllArgumentsOnNextLine: false
-ContinuationIndentWidth: 4
 BracedInitializerIndentWidth: 4
-BreakBeforeBinaryOperators: All
+ContinuationIndentWidth: 4
+AllowAllArgumentsOnNextLine: false
+# BreakBeforeBinaryOperators: All
 
-# BreakAfterReturnType: Automatic
 BreakAfterReturnType: None
-
+UseTab: Never
 IndentWrappedFunctionNames: true
+RequiresExpressionIndentation: OuterScope
+IndentCaseBlocks: false
+IndentCaseLabels: true
 AlwaysBreakAfterReturnType: None
 AlwaysBreakAfterDefinitionReturnType: None
-
-# PPIndentWidth: 2
-# IndentPPDirectives: AfterHash
 
 RequiresClausePosition: OwnLine
 
@@ -44,6 +43,7 @@ SortIncludes:
   Enabled: false
 # PackParameters:
 #   BinPackParametersStyle: OnePerLine
+PackConstructorInitializers: BinPack
 BreakBinaryOperations: OnePerLine
 BinPackParameters: OnePerLine
 BinPackArguments: true
@@ -51,7 +51,7 @@ BinPackLongBracedList: true
 
 BitFieldColonSpacing: None
 BreakBeforeBraces: Custom
-BreakAfterAttributes: Always
+
 BraceWrapping:
   AfterCaseLabel: false
   AfterClass: true

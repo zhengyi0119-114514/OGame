@@ -9,12 +9,12 @@
 #define OPEN_STG_STRING_PROCESSING_H 1
 OG_MACRO_C_BLOCK_BEGIN
 
-OG_MACRO_EXPORT OgExceptionFormattingException OgStringCopy(
+OG_MACRO_EXPORT struct OgExceptionCollectionFormatException OgStringCopy(
     OgString psDestination,
     OgSignedInteger64 iDestinationSize,
     OgConstantString pcsSource,
     OgSignedInteger64 iCharatersToCopy);
-OG_MACRO_EXPORT OgExceptionFormattingException OgStringConnect(
+OG_MACRO_EXPORT struct OgExceptionCollectionFormatException OgStringConnect(
     OgString psDestination,
     OgSignedInteger64 iDestinationSize,
     OgConstantString pcsSource,

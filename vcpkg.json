@@ -1,5 +1,6 @@
 {
   "dependencies": [
+    "cjson",
     "fmt",
     "icu",
     "libbson",
@@ -50,6 +51,11 @@
         "svg"
       ]
     },
-    "cjson"
+    {
+      "name": "pcre2",
+      "features": [
+        "jit"
+      ]
+    }
   ]
 }

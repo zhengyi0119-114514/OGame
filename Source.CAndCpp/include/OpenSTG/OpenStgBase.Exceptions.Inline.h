@@ -44,7 +44,14 @@ inline OgExceptionStructureOutOfRange OgExceptionStructureOutOfRangeCreateWithIn
     return exception;
 };
 inline struct OgExceptionStructureInvalidArgument OgExceptionStructureInvalidArgumentCreate(
-    OgConstantString pcsParamenter, OgConstantString pcsDescription);
+    OgConstantString pcsParamenter, OgConstantString pcsDescription)
+{
+    struct OgExceptionStructureInvalidArgument e = {};
+    e.Paramenter = pcsParamenter;
+    e.Description = pcsDescription;
+    e.Information = OgExceptionStructureInvalidArgumentGetInformation();
+    return e;
+}
 inline struct OgExceptionStructureUndefineBehavior OgExceptionStructureUndefineBehaviorCreate(
     OgConstantString pcsDescription);
 OG_MACRO_C_BLOCK_END

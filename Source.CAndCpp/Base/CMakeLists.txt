@@ -7,10 +7,11 @@ target_sources(
         FILES
         Array.h
         Allocator.h
-        DebugInformation.h
         ElectromagneticDotTimer.h
         Exception.h
         Module.h
+        InlineFunctions.h
+        Stream.h
         StringProcessing.h
         StaticVariable.h
         Tree.h)
@@ -24,6 +25,8 @@ target_sources(
         Exception.UndefineBehavior.c
         Exception.Panic.c
         Module.c
+        Stream.MemoryStream.c
+        Stream.FormatAndWrite.c
         StaticVariable.c
         StringProcessing.c
         Tree.c)

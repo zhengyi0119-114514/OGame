@@ -4,6 +4,9 @@
 #include <stdio.h>
 #include <inttypes.h>
 #include <string.h>
+#include <stdarg.h>
+#include <stdalign.h>
+#include <stdbool.h>
 
 #if !defined(OPEN_STG_MACRO_BASE_MEMORY_H)
 #define OPEN_STG_MACRO_BASE_MEMORY_H 1
@@ -22,13 +25,18 @@ struct OgExceptionStructureOutOfRange;
 struct OgExceptionStructureInvalidArgument;
 struct OgExceptionStructureUndefineBehavior;
 struct OgExceptionStructureFormatException;
-struct OgExceptionStructureStackOverflow;
+enum OgExceptionStructureMemoryExceptionType;
+struct OgExceptionStructureMemoryException;
 enum OgExceptionEnumFormattingExceptionType;
-struct OgExceptionCollectionFormattingException;
+struct OgExceptionCollectionFormatException;
 enum OgExceptionEnumIoExceptionType;
 struct OgExceptionCollectionIoException;
+typedef enum OgEnumBitFlagOperator
+{
+    OgEnumBitFlagOperatorItemAnd = 0,
+    OgEnumBooleanOperatorItemOr = 1,
+} OgEnumBitFlagOperator;
 
-struct OgFunction;
 struct OgDebugSource;
 struct OgAllocator;
 struct OgIoStteam;
