@@ -13,6 +13,8 @@
 #include <OpenSTG/OpenStgBase.Macro.h>
 OG_MACRO_C_BLOCK_BEGIN
 
+#define OgConstantSignedInteger64SelectAll() UINT64_C(-1)
+
 struct OgModule;
 struct OgDynamicArray;
 struct OgDependencyTree;

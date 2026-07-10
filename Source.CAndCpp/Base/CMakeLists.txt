@@ -1,4 +1,5 @@
 target_include_directories(Base PUBLIC SYSTEM include)
+if("${CMAKE_VERSION}" VERSION_GREATER_EQUAL 3.23)
 target_sources(
     Base
     PRIVATE
@@ -15,6 +16,7 @@ target_sources(
         StringProcessing.h
         StaticVariable.h
         Tree.h)
+endif()
 target_sources(
     Base
     PRIVATE

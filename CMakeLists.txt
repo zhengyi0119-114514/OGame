@@ -27,6 +27,7 @@ option(OPEN_STG_ENABLE_XDG_DESKTOP_PORTAL "Enable xdg desktop portal(BSD/Linux).
 option(OPEN_STG_ENABLE_DEVELOP_TOOLS "Enable develop component." FALSE)
 option(OPEN_STG_ENABLE_LIBDWARF "Enable libdwarf.(Linux,BSD,Win32)." FALSE)
 option(OPEN_STG_OPTION_STRING_PROCESSING_AUTO "Choose by CMake script." TRUE)
+
 cmake_dependent_option(
     OPEN_STG_ENABLE_LLVM_AND_CLANG 
     "Enable llvm and clang for generate C code.(DevelopTools)"
@@ -47,9 +48,14 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Source.CMake/" "${CMA
 include(Source.CMake/SetGlobalProperties.cmake)
 include(Source.CMake/AddTarget.cmake)
 include(Source.CMake/FindPackage.cmake)
+include(Source.CMake/VcltlAndYythunks.cmake)
 include(GNUInstallDirs)
 include(CheckFunctionExists)
 include(CheckIncludeFile)
+
+__download_and_extract_vcltl("${VCLTL_VERSION}" TRUE TRUE)
+__download_and_extract_yythunk("${YYTHUNKS_VERSION}" TRUE)
+__download_and_extract_yythunk("${YYTHUNKS_VERSION}" FALSE)
 
 if(NOT EXISTS "${CMAKE_BINARY_DIR}/include")
     file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/include")
@@ -104,6 +110,17 @@ target_test_and_add_compile_options(
         /W4
         /Wall
 )
+target_test_and_add_compile_options(
+    Shared CXX 
+    INTERFACE
+        -fmodules
+        # -fmodules-ts
+        # -stdlib=libc++
+        ---precompile
+        -experimental-modules-support
+        -fmodule-header
+        --compile-std-module
+)
 
 target_test_and_add_link_options(
     Shared C 
@@ -125,7 +142,7 @@ add_target(
             $<$<BOOL:${OPEN_STG_TARGET_HAS_PCRE2}:${OPEN_STG_TARGET_PCRE2}>
             $<$<PLATFORM_ID:Windows,WindowsPhone,WindowsStore,MSYS>:dbghelp>
     TARGET_PROPERTIES
-        CXX_STANDARD 20
+        CXX_STANDARD 23
         CXX_STANDARD_REQUIRED TRUE
         CXX_EXTENSIONS TRUE
         C_STANDARD 17
@@ -137,7 +154,7 @@ add_target(
     LINK_OPTIONS
     COMPILE_FEATURES
         PUBLIC
-            cxx_std_20
+            cxx_std_23
             cxx_constexpr
             cxx_nullptr
             c_std_17
@@ -160,6 +177,9 @@ target_test_and_add_compile_options(
         /Zc:__cplusplus
         /Zc:__STDC__
 )
+link_to_vcltl_and_yythunk(
+    Base PUBLIC
+)
 if(${OPEN_STG_ENABLE_DEVELOP_TOOLS})
     add_target(
         DevelopToolsLibrary
@@ -178,7 +198,7 @@ if(${OPEN_STG_ENABLE_DEVELOP_TOOLS})
             PUBLIC
                 Base
         TARGET_PROPERTIES
-            CXX_STANDARD 20
+            CXX_STANDARD 23
             CXX_STANDARD_REQUIRED TRUE
             CXX_EXTENSIONS TRUE
             C_STANDARD 17
@@ -189,7 +209,7 @@ if(${OPEN_STG_ENABLE_DEVELOP_TOOLS})
             POSITION_INDEPENDENT_CODE TRUE
         COMPILE_FEATURES
             PUBLIC
-                cxx_std_20
+                cxx_std_23
                 cxx_constexpr
                 cxx_nullptr
                 c_std_17
@@ -212,7 +232,7 @@ if(${OPEN_STG_ENABLE_DEVELOP_TOOLS})
             PUBLIC
                 Base
         TARGET_PROPERTIES
-            CXX_STANDARD 20
+            CXX_STANDARD 30
             CXX_STANDARD_REQUIRED TRUE
             CXX_EXTENSIONS TRUE
             C_STANDARD 17
@@ -221,7 +241,7 @@ if(${OPEN_STG_ENABLE_DEVELOP_TOOLS})
             POSITION_INDEPENDENT_CODE TRUE
         COMPILE_FEATURES
             PUBLIC
-                cxx_std_20
+                cxx_std_23
                 cxx_constexpr
                 cxx_nullptr
                 c_std_17
@@ -246,7 +266,7 @@ add_target(
     COMPILE_OPTIONS
     COMPILE_DEFINITIONS
     TARGET_PROPERTIES
-        CXX_STANDARD 20
+        CXX_STANDARD 23
         CXX_STANDARD_REQUIRED TRUE
         CXX_EXTENSIONS TRUE
         C_STANDARD 17
@@ -269,7 +289,7 @@ add_target(
     COMPILE_OPTIONS
     COMPILE_DEFINITIONS
     TARGET_PROPERTIES
-        CXX_STANDARD 20
+        CXX_STANDARD 23
         CXX_STANDARD_REQUIRED TRUE
         CXX_EXTENSIONS TRUE
         C_STANDARD 17
@@ -306,7 +326,7 @@ if(${OPEN_STG_ENABLE_GAME_CLIENT})
         COMPILE_OPTIONS
         COMPILE_DEFINITIONS
         TARGET_PROPERTIES
-            CXX_STANDARD 20
+            CXX_STANDARD 23
             CXX_STANDARD_REQUIRED TRUE
             CXX_EXTENSIONS TRUE
             C_STANDARD 17

@@ -1,0 +1,6 @@
+set(CMAKE_C_COMPILER cl.exe)
+set(CMAKE_CXX_COMPILER cl.exe)
+set(CMAKE_LINKER_TYPE MSVC)
+
+set(CMAKE_SYSTEM_NAME Windows)
+

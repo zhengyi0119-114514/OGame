@@ -27,16 +27,16 @@
             "name": "basic-mingw-w64",
             "hidden": true,
             "cacheVariables": {
-                "CMAKE_C_COMPILER":"x86_64-w64-mingw32-cc",
-                "CMAKE_CXX_COMPILER":"x86_64-w64-mingw32-c++"
+                "CMAKE_C_COMPILER": "x86_64-w64-mingw32-cc",
+                "CMAKE_CXX_COMPILER": "x86_64-w64-mingw32-c++"
             },
             "environment": {
                 "VCPKG_DEFAULT_HOST_TRIPLET": "x64-mingw-dynamic",
-                "VCPKG_DEFAULT_TRIPLET":"x64-mingw-dynamic"
+                "VCPKG_DEFAULT_TRIPLET": "x64-mingw-dynamic"
             }
         },
         {
-            "name": "basic-vcpkg-mingw",
+            "name": "basic-vcpkg",
             "hidden": true,
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
@@ -46,84 +46,84 @@
             "name": "basic-llvm",
             "hidden": true,
             "cacheVariables": {
-                "CMAKE_C_COMPILER":"clang",
-                "CMAKE_CXX_COMPILER":"clang++"
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++"
             }
         },
         {
-            "name": "options-msys2-defult-all",
+            "name": "basic-options-msys2-defult-all",
             "hidden": true,
             "cacheVariables": {
-                "OPEN_STG_ENABLE_LIBDWARF":true,
-                "OPEN_STG_ENABLE_DEVELOP_TOOLS":true,
-                "OPEN_STG_OPTION_STRING_PROCESSING_AUTO":true,
-                "OPEN_STG_ENABLE_MCFGTHREAD":true,
-                "OPEN_STG_ENABLE_UNIT_TESTS":true,
-                "OPEN_STG_ENABLE_GAME_SERVER":true,
-                "OPEN_STG_ENABLE_GAME_CLIENT":true
+                "OPEN_STG_ENABLE_LIBDWARF": true,
+                "OPEN_STG_ENABLE_DEVELOP_TOOLS": true,
+                "OPEN_STG_OPTION_STRING_PROCESSING_AUTO": true,
+                "OPEN_STG_ENABLE_MCFGTHREAD": true,
+                "OPEN_STG_ENABLE_UNIT_TESTS": true,
+                "OPEN_STG_ENABLE_GAME_SERVER": true,
+                "OPEN_STG_ENABLE_GAME_CLIENT": true
             }
         },
         {
-            "name": "options-vcpkg-defult-all",
+            "name": "basic-options-vcpkg-defult-all",
             "hidden": true,
             "cacheVariables": {
-                "OPEN_STG_ENABLE_LIBDWARF":true,
-                "OPEN_STG_ENABLE_DEVELOP_TOOLS":true,
-                "OPEN_STG_OPTION_STRING_PROCESSING_AUTO":true,
-                "OPEN_STG_ENABLE_MCFGTHREAD":false,
-                "OPEN_STG_ENABLE_UNIT_TESTS":true,
-                "OPEN_STG_ENABLE_GAME_SERVER":true,
-                "OPEN_STG_ENABLE_GAME_CLIENT":true
+                "OPEN_STG_OPTION_STRING_PROCESSING_AUTO": true,
+                "OPEN_STG_ENABLE_LIBDWARF": true,
+                "OPEN_STG_ENABLE_DEVELOP_TOOLS": true,
+                "OPEN_STG_ENABLE_MCFGTHREAD": false,
+                "OPEN_STG_ENABLE_UNIT_TESTS": true,
+                "OPEN_STG_ENABLE_GAME_SERVER": true,
+                "OPEN_STG_ENABLE_GAME_CLIENT": true
             }
         },
         {
-            "name": "options-unix-defult-all",
+            "name": "basic-options-unix-defult-all",
             "hidden": true,
             "cacheVariables": {
-                "OPEN_STG_ENABLE_LIBDWARF":true,
-                "OPEN_STG_ENABLE_DEVELOP_TOOLS":true,
-                "OPEN_STG_OPTION_STRING_PROCESSING_AUTO":true,
-                "OPEN_STG_ENABLE_MCFGTHREAD":false,
-                "OPEN_STG_ENABLE_UNIT_TESTS":true,
-                "OPEN_STG_ENABLE_GAME_SERVER":true,
-                "OPEN_STG_ENABLE_GAME_CLIENT":true
+                "OPEN_STG_OPTION_STRING_PROCESSING_AUTO": true,
+                "OPEN_STG_ENABLE_LIBDWARF": true,
+                "OPEN_STG_ENABLE_DEVELOP_TOOLS": true,
+                "OPEN_STG_ENABLE_MCFGTHREAD": false,
+                "OPEN_STG_ENABLE_UNIT_TESTS": true,
+                "OPEN_STG_ENABLE_GAME_SERVER": true,
+                "OPEN_STG_ENABLE_GAME_CLIENT": true
             }
         },
         {
             "name": "unix-gnu-all",
-            "inherits":[
+            "inherits": [
                 "basic-config",
                 "basic-gnu",
-                "options-unix-defult-all"
+                "basic-options-unix-defult-all"
             ]
         },
         {
             "name": "unix-llvm-all",
-            "inherits":[
+            "inherits": [
                 "basic-config",
                 "basic-llvm",
-                "options-unix-defult-all"
+                "basic-options-unix-defult-all"
             ]
         },
         {
-            "name": "msys-gnu-all",
-            "inherits":[
+            "name": "msys2-gnu-x64-all",
+            "inherits": [
                 "basic-config",
                 "basic-mingw-w64",
-                "options-msys2-defult-all"
+                "basic-options-msys2-defult-all"
             ]
         },
         {
-            "name": "msys-llvm-all",
-            "inherits":[
+            "name": "msys2-llvm-x64-all",
+            "inherits": [
                 "basic-config",
                 "basic-llvm",
-                "options-msys2-defult-all"
+                "basic-options-msys2-defult-all"
             ]
         },
         {
-            "name": "vcpkg-win32-msvcx64-all",
-            "generator": "Visual Studio 18 2026",
+            "name": "vcpkg-win32-msvc-x64-all",
+            "generator": "Visual Studio 17 2022",
             "binaryDir": "${sourceDir}/build/",
             "cacheVariables": {
                 "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
@@ -134,6 +134,5 @@
             }
         }
     ],
-    "buildPresets": [
-    ]
+    "buildPresets": []
 }

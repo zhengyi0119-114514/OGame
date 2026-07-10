@@ -16,7 +16,7 @@
 #define OG_MACRO_ALWAYS_INLINE __forceinline
 #else
 #if defined(__GNUC__) || defined(__llvm__)
-#define OG_MACRO_PRIVATE __attribute__((visibility("hidden")))
+#define OG_MACRO_PRIVATE __attribute__((__visibility__("hidden")))
 #define OG_MACRO_ALWAYS_INLINE __attribute__((__always_inline__))
 #define OG_MACRO_NORETURN __attribute__((__noreturn__))
 #define OG_MACRO_FUNCTION __PRETTY_FUNCTION__
@@ -43,6 +43,7 @@ static_assert(
 #endif
 #endif
 #endif
+
 
 #if defined __cplusplus
 #define OG_MACRO_C extern "C"

@@ -1,22 +1,39 @@
-find_program(__LLD_FOUND NAMES "lld")
+include(CheckLinkerFlag)
 
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang"
-   OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang"
-   OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "ARMClang"
-   OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "IntelLLVM"
-   OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "CrayClang"
-   OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "IBMClang"
-   OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "TIClang")
-    set(__IS_CLANG TRUE)
-else()
-    set(__IS_CLANG FALSE)
-endif()
-
-if(${__IS_CLANG} AND NOT "${__LLD_FOUND}" STREQUAL "__LLD_FOUND-NOTFOUND")
+if(${OPEN_STG_USE_EXTERN_LINKER})
+    find_program(__lld_found NAMES "lld")
+    find_program(__wild_found NAMES "ld.wild")
+    find_program(__mold_found NAMES "ld.mold")
+    find_program(__gold_found NAMES "ld.gold")
+    find_program(__bfd_found NAMES "ld.bfd")
     if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.29)
-        set(CMAKE_LINKER_TYPE LLD)
+        if("${__lld_found}")
+            set(CMAKE_LINKER_TYPE LLD)
+        elseif("${__mold_found}" AND ("${CMAKE_SYSTEM_NAME}" MATCHES [=[^(Darwin|iOS|tvOS|watchOS|visionOS|Linux)$]=]))
+            set(CMAKE_LINKER_TYPE MOLD)
+        elseif("${__wild_found}" AND ("${CMAKE_VERSION}" VERSION_GREATER_EQUAL 4.4))
+            set(CMAKE_LINKER_TYPE WILD)
+        elseif("${__gold_found}" AND ("${CMAKE_SYSTEM_NAME}" MATCHES [=[^(Linux)$]=]))
+            set(CMAKE_LINKER_TYPE GOLD)
+        else()
+            set(CMAKE_LINKER_TYPE SYSTEM)
+        endif()
     else()
-        add_link_options("-fuse-ld=lld")
+        check_linker_flag(C "-fuse-ld=lld" __can_use_lld __support_lld)
+        check_linker_flag(C "-fuse-ld=mold" __can_use_mold __support_mold)
+        check_linker_flag(C "-fuse-ld=wild" __can_use_wild __support_wild)
+        check_linker_flag(C "-fuse-ld=gold" __can_use_gold __support_gold)
+        if("${__lld_found}" AND "${__support_lld}")
+            add_link_options("-fuse-ld=lld")
+        elseif("${__wild_found}" AND "${__can_use_wild}")
+            add_link_options("-fuse-ld=wild")
+        elseif("${__mold_found}" AND "${__can_use_mold}")
+            add_link_options("-fuse-ld=mold")
+        elseif("${__gold_found}" AND "${__support_gold}")
+            add_link_options("-fuse-ld=gold")
+        else()
+
+        endif()
     endif()
 endif()
 
@@ -31,3 +48,5 @@ message(STATUS "parallel:${__parallel}")
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:Debug>,Debug,Release>")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:Debug>,Debug,Release>")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:Debug>,Debug,Release>")
+set(CMAKE_COMPILE_PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:Debug>,Debug,Release>")

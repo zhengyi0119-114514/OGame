@@ -7,7 +7,7 @@ OG_MACRO_C_BLOCK_END
 
 OG_MACRO_EXPORT struct OgExceptionCollectionIoException OgIoStreamMemoryStreamCreate(
     struct OgIoStream *const pStreamOutputr,
-    struct OgAllocator *const pAllocator,
+    struct OgAllocator *const paAllocator,
     OgSignedInteger64 iAlignment,
     OgUnsignedInteger64 uBufferSize,
     enum OgIoEnumMemoryStreamFlag iemsfFlag);
@@ -31,6 +31,7 @@ struct OgPrivateIoMemoryStreamAdditionalData
     OgSignedInteger64 Alignment;
     OgSignedInteger64 BufferSize;
     enum MemoryStreamLayout Layout;
+    struct OgAllocator *paAllocator;
     OgByte *pbBuffer;
     alignas(alignof(OgSignedInteger64)) OgByte aBuffer[];
 };
@@ -41,13 +42,13 @@ struct OgPrivateIoMemoryStream
         struct OgIoStream *const pisStream,
         OgByte *pbBuffer,
         OgUnsignedInteger64 uBufferSize,
-        OgUnsignedInteger64 *const uBytesRead,
+        OgUnsignedInteger64 uBytesRead,
         OgBoolean *const pbEndOfFile);
     struct OgExceptionCollectionIoException (*Read)(
         struct OgIoStream *const pisStream,
         OgCharacter *psDestinationBuffer,
         OgUnsignedInteger64 uDestinationBufferSize,
-        OgUnsignedInteger64 *const uBytesRead,
+        OgUnsignedInteger64 uBytesRead,
         OgBoolean *const pbEndOfFile);
     struct OgExceptionCollectionIoException (*WriteBinary)(
         struct OgIoStream *pisStream,
@@ -56,8 +57,8 @@ struct OgPrivateIoMemoryStream
         OgBoolean *const pbEndOfFile);
     struct OgExceptionCollectionIoException (*Write)(
         struct OgIoStream *pisStream,
-        OgCharacter *psSourceBuffer,
-        OgUnsignedInteger64 uCharatcterToWrite,
+        OgConstantString pcsSource,
+        OgSignedInteger64 iCharatcterToWrite,
         OgBoolean *const pbEndOfFile);
     struct OgExceptionCollectionIoException (*GetBooleanProperty)(
         const struct OgIoStream *const pcisStream,
@@ -91,7 +92,7 @@ static_assert(
 OG_MACRO_EXPORT OgConstantString OgIoStreamMemoryStreamGetStreamType(void);
 OG_MACRO_EXPORT struct OgExceptionCollectionIoException OgIoStreamMemoryStreamCreate(
     struct OgIoStream *const pStreamOutput,
-    struct OgAllocator *const pAllocator,
+    struct OgAllocator *const paAllocator,
     OgSignedInteger64 iAlignment,
     OgUnsignedInteger64 uBufferSize,
     enum OgIoEnumMemoryStreamFlag iemsfFlag);
@@ -99,13 +100,13 @@ OG_MACRO_EXPORT struct OgExceptionCollectionIoException OgIoStreamMemoryStreamRe
     struct OgIoStream *const pisStream,
     OgByte *pbBuffer,
     OgUnsignedInteger64 uBufferSize,
-    OgUnsignedInteger64 *const uBytesRead,
+    OgUnsignedInteger64 uBytesRead,
     OgBoolean *const pbEndOfFile);
 OG_MACRO_EXPORT struct OgExceptionCollectionIoException OgIoStreamMemoryStreamRead(
     struct OgIoStream *const pisStream,
     OgCharacter *psDestinationBuffer,
     OgUnsignedInteger64 uDestinationBufferSize,
-    OgUnsignedInteger64 *const uBufferSize,
+    OgUnsignedInteger64 uBufferSize,
     OgBoolean *const pbEndOfFile);
 OG_MACRO_EXPORT struct OgExceptionCollectionIoException OgIoStreamMemoryStreamWriteBinary(
     struct OgIoStream *const pisStream,
@@ -114,8 +115,8 @@ OG_MACRO_EXPORT struct OgExceptionCollectionIoException OgIoStreamMemoryStreamWr
     OgBoolean *const pbEndOfFile);
 OG_MACRO_EXPORT struct OgExceptionCollectionIoException OgIoStreamMemoryStreamWrite(
     struct OgIoStream *pisStream,
-    OgCharacter *psSourceBuffer,
-    OgUnsignedInteger64 uCharatcterToWrite,
+    OgConstantString pcsSource,
+    OgSignedInteger64 iCharatcterToWrite,
     OgBoolean *const pbEndOfFile);
 OG_MACRO_EXPORT struct OgExceptionCollectionIoException OgIoStreamMemoryStreamGetBooleanProperty(
     const struct OgIoStream *const pcisStream,

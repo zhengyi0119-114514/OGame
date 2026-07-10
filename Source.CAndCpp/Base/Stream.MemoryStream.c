@@ -1,9 +1,9 @@
 #include "Stream.h"
 #include "InlineFunctions.h"
 
-OG_MACRO_EXPORT struct OgExceptionCollectionIoException OgIoStreamMemoryStreamCreate(
+struct OgExceptionCollectionIoException OgIoStreamMemoryStreamCreate(
     struct OgIoStream *const pStreamOutput,
-    struct OgAllocator *const pAllocator,
+    struct OgAllocator *const paAllocator,
     OgSignedInteger64 iAlignment,
     OgUnsignedInteger64 uBufferSize,
     enum OgIoEnumMemoryStreamFlag iemsfFlag)
@@ -21,11 +21,11 @@ OG_MACRO_EXPORT struct OgExceptionCollectionIoException OgIoStreamMemoryStreamCr
             "struct OgIoStream *const pStreamOutputr", "Argument is null.");
         return (e);
     }
-    if (pAllocator == NULL)
+    if (paAllocator == NULL)
     {
         e.Type = OgExceptionEnumIoExceptionItemInvalidArgument;
         e.InvalidArgument = OgExceptionStructureInvalidArgumentCreate(
-            "struct OgAllocator *const pAllocator", "Argument is null.");
+            "struct OgAllocator *const paAllocator", "Argument is null.");
         return (e);
     }
     if (uBufferSize > INT64_MAX)
@@ -46,13 +46,13 @@ OG_MACRO_EXPORT struct OgExceptionCollectionIoException OgIoStreamMemoryStreamCr
     msStream.Flush = OgIoStreamMemoryStreamFlush;
     msStream.Destroy = OgIoStreamMemoryStreamDestroy;
     msStream.Close = OgIoStreamMemoryStreamClose;
-    if (iAlignment > 0)
+    if (iAlignment >= 0)
     {
-        if ((pAllocator->AlignedAlloc == NULL) || (pAllocator->AlignedFree == NULL))
+        if ((paAllocator->AlignedAlloc == NULL) || (paAllocator->AlignedFree == NULL))
         {
             e.Type = OgExceptionEnumIoExceptionItemInvalidArgument;
             e.InvalidArgument = OgExceptionStructureInvalidArgumentCreate(
-                "pAllocator->AlignedAlloc|AlginedFree", "Argument is null.");
+                "paAllocator->AlignedAlloc|AlginedFree", "Argument is null.");
             return (e);
             mslLayout = LayoutTowBlocksOfAlignedMemory;
         }
@@ -76,11 +76,11 @@ OG_MACRO_EXPORT struct OgExceptionCollectionIoException OgIoStreamMemoryStreamCr
             mslLayout = LayoutSingle;
         }
     }
-    if ((pAllocator->Alloc == NULL) || (pAllocator->Free == NULL))
+    if ((paAllocator->Alloc == NULL) || (paAllocator->Free == NULL))
     {
         e.Type = OgExceptionEnumIoExceptionItemInvalidArgument;
         e.InvalidArgument = OgExceptionStructureInvalidArgumentCreate(
-            "pAllocator->Alloc|Free", "Argument is null.");
+            "paAllocator->Alloc|Free", "Argument is null.");
         return (e);
     }
     switch (mslLayout)
@@ -92,12 +92,13 @@ OG_MACRO_EXPORT struct OgExceptionCollectionIoException OgIoStreamMemoryStreamCr
         case LayoutSingle: {
             size_t uAdditionalDataSize =
                 sizeof(struct OgPrivateIoMemoryStreamAdditionalData) + (size_t)uBufferSize;
-            pmsadAdditionalData = (struct OgPrivateIoMemoryStreamAdditionalData *)pAllocator->Alloc(
-                pAllocator, uAdditionalDataSize);
+            pmsadAdditionalData =
+                (struct OgPrivateIoMemoryStreamAdditionalData *)paAllocator->Alloc(
+                    paAllocator, uAdditionalDataSize);
             if (pmsadAdditionalData == NULL)
             {
-                pAllocator->AlignedFree(pAllocator, pbBuffer);
-                pAllocator->Free(pAllocator, pmsadAdditionalData);
+                paAllocator->AlignedFree(paAllocator, pbBuffer);
+                paAllocator->Free(paAllocator, pmsadAdditionalData);
                 e.Type = OgExceptionEnumIoExceptionItemMemoryException;
                 e.MemoryException = OgExceptionStructureMemoryExceptionCreateOutOfMemory();
                 return e;
@@ -106,13 +107,14 @@ OG_MACRO_EXPORT struct OgExceptionCollectionIoException OgIoStreamMemoryStreamCr
             break;
         }
         case LayoutTowBlocksOfMemory: {
-            pbBuffer = pAllocator->Alloc(pAllocator, (size_t)uBufferSize);
-            pmsadAdditionalData = (struct OgPrivateIoMemoryStreamAdditionalData *)pAllocator->Alloc(
-                pAllocator, sizeof(struct OgPrivateIoMemoryStreamAdditionalData));
+            pbBuffer = paAllocator->Alloc(paAllocator, (size_t)uBufferSize);
+            pmsadAdditionalData =
+                (struct OgPrivateIoMemoryStreamAdditionalData *)paAllocator->Alloc(
+                    paAllocator, sizeof(struct OgPrivateIoMemoryStreamAdditionalData));
             if (pbBuffer == NULL || pmsadAdditionalData == NULL)
             {
-                pAllocator->AlignedFree(pAllocator, pbBuffer);
-                pAllocator->Free(pAllocator, pmsadAdditionalData);
+                paAllocator->AlignedFree(paAllocator, pbBuffer);
+                paAllocator->Free(paAllocator, pmsadAdditionalData);
                 e.Type = OgExceptionEnumIoExceptionItemMemoryException;
                 e.MemoryException = OgExceptionStructureMemoryExceptionCreateOutOfMemory();
                 return e;
@@ -120,14 +122,15 @@ OG_MACRO_EXPORT struct OgExceptionCollectionIoException OgIoStreamMemoryStreamCr
             break;
         }
         case LayoutTowBlocksOfAlignedMemory: {
-            pbBuffer = (OgByte *)pAllocator->AlignedAlloc(
-                pAllocator, sizeof(uBufferSize), (OgUnsignedIntegerSize)iAlignment);
-            pmsadAdditionalData = (struct OgPrivateIoMemoryStreamAdditionalData *)pAllocator->Alloc(
-                pAllocator, sizeof(struct OgPrivateIoMemoryStreamAdditionalData));
+            pbBuffer = (OgByte *)paAllocator->AlignedAlloc(
+                paAllocator, sizeof(uBufferSize), (OgUnsignedIntegerSize)iAlignment);
+            pmsadAdditionalData =
+                (struct OgPrivateIoMemoryStreamAdditionalData *)paAllocator->Alloc(
+                    paAllocator, sizeof(struct OgPrivateIoMemoryStreamAdditionalData));
             if (pbBuffer == NULL || pmsadAdditionalData == NULL)
             {
-                pAllocator->AlignedFree(pAllocator, pbBuffer);
-                pAllocator->Free(pAllocator, pmsadAdditionalData);
+                paAllocator->AlignedFree(paAllocator, pbBuffer);
+                paAllocator->Free(paAllocator, pmsadAdditionalData);
                 e.Type = OgExceptionEnumIoExceptionItemMemoryException;
                 e.MemoryException = OgExceptionStructureMemoryExceptionCreateOutOfMemory();
                 return e;
@@ -145,13 +148,15 @@ OG_MACRO_EXPORT struct OgExceptionCollectionIoException OgIoStreamMemoryStreamCr
     *pStreamOutput = *((struct OgIoStream *)&msStream);
     return e;
 }
-OG_MACRO_EXTERN struct OgExceptionCollectionIoException OgIoStreamMemoryStreamWriteBinary(
+struct OgExceptionCollectionIoException OgIoStreamMemoryStreamWriteBinary(
     struct OgIoStream *pisStream,
     const OgByte *const pbSource,
     OgUnsignedInteger64 uBytesToWrite,
     OgBoolean *const pbEndOfFile)
 {
     struct OgExceptionCollectionIoException e = {};
+    OgBoolean bStreamUseable = OgFalse;
+    OgBoolean bStreamAutoResize = OgFalse;
     if (pisStream == NULL)
     {
         e.Type = OgExceptionEnumIoExceptionItemInvalidArgument;
@@ -180,48 +185,99 @@ OG_MACRO_EXTERN struct OgExceptionCollectionIoException OgIoStreamMemoryStreamWr
             "OgUnsignedInteger64 uBytesToWrite", INT64_MAX, 0, "'uBytesToWrite' is too large.");
         return e;
     }
+    e = OgIoStreamMemoryStreamGetBooleanProperty(
+        pisStream,
+        (OgIoEnumStreamBooleanPropertyItemReachEndOfFile |
+         OgIoEnumStreamBooleanPropertyItemIsClose),
+        OgEnumBooleanOperatorItemOr, &bStreamUseable);
+    if (e.Type != OgExceptionEnumIoExceptionItemNone)
     {
-        OgBoolean bResult = OgFalse;
-        e = OgIoStreamMemoryStreamGetBooleanProperty(
-            pisStream,
-            (OgIoEnumStreamBooleanPropertyItemReachEndOfFile |
-             OgIoEnumStreamBooleanPropertyItemIsClose),
-            OgEnumBooleanOperatorItemOr, &bResult);
-        if (e.Type != OgExceptionEnumIoExceptionItemNone)
-        {
-            return e;
-        }
+        return e;
     }
-    struct OgPrivateIoMemoryStream *pmsMemoryStream = (struct OgPrivateIoMemoryStream *)pisStream;
-    struct OgPrivateIoMemoryStreamAdditionalData *pmsaData = pmsMemoryStream->psmsaData;
-    OgSignedInteger64 iBytesWritten = pmsaData->BytesWritten;
-    OgSignedInteger64 iAvailableMemorySize =
-        (OgSignedInteger64)pmsaData->BufferSize - iBytesWritten;
-    OgSignedInteger64 iBytesToWrite = 0;
-    OgBoolean bEndOfFile = OgFalse;
-    /// NOTE: 如果 pbSource 过长，则截断并返回EOF
-    if (iAvailableMemorySize <= (OgSignedInteger64)uBytesToWrite)
+    if (!bStreamUseable)
     {
-        iBytesToWrite = iAvailableMemorySize;
-        bEndOfFile = OgTrue;
+        e.Type = OgExceptionEnumIoExceptionItemInvalidArgument;
+        e.InvalidArgument = OgExceptionStructureInvalidArgumentCreate(
+            "struct OgIoStream *pisStream",
+            "Stream must not be closed and have reached the end of the file.");
+        return e;
+    }
+    e = OgIoStreamMemoryStreamGetBooleanProperty(
+        pisStream, OgIoEnumStreamBooleanPropertyItemIsClose, OgEnumBooleanOperatorItemOr,
+        &bStreamAutoResize);
+    if (e.Type != OgExceptionEnumIoExceptionItemNone)
+    {
+        return e;
+    }
+    if (bStreamAutoResize)
+    {
+        struct OgPrivateIoMemoryStream *pmsMemoryStream =
+            (struct OgPrivateIoMemoryStream *)pisStream;
+        struct OgPrivateIoMemoryStreamAdditionalData *pmsaData = pmsMemoryStream->psmsaData;
+        OgSignedInteger64 iBytesWritten = pmsaData->BytesWritten;
+        OgSignedInteger64 iAvailableMemorySize =
+            (OgSignedInteger64)pmsaData->BufferSize - iBytesWritten;
+        OgSignedInteger64 iBytesToWrite = 0;
+        OgBoolean bEndOfFile = OgFalse;
+        /// NOTE: 如果 pbSource 过长，则截断并返回EOF
+        if (iAvailableMemorySize <= (OgSignedInteger64)uBytesToWrite)
+        {
+            iBytesToWrite = iAvailableMemorySize;
+            bEndOfFile = OgTrue;
+        }
+        else
+        {
+            iBytesToWrite = (OgSignedInteger64)uBytesToWrite;
+            bEndOfFile = OgFalse;
+        }
+        memcpy((OgPVoid)(pmsaData->pbBuffer + iBytesWritten), pbSource, (size_t)iBytesToWrite);
+        iBytesWritten += iBytesToWrite;
+        pmsaData->BytesWritten = iBytesWritten;
+        *pbEndOfFile = bEndOfFile;
     }
     else
     {
-        iBytesToWrite = (OgSignedInteger64)uBytesToWrite;
-        bEndOfFile = OgFalse;
+        OgExceptionPanic("Not implemented.");
     }
-    memcpy((OgPVoid)(pmsaData->pbBuffer + iBytesWritten), pbSource, (size_t)iBytesToWrite);
-    iBytesWritten += iBytesToWrite;
-    pmsaData->BytesWritten = iBytesWritten;
-    *pbEndOfFile = bEndOfFile;
     return e;
 }
-OG_MACRO_EXTERN struct OgExceptionCollectionIoException OgIoStreamMemoryStreamWrite(
+struct OgExceptionCollectionIoException OgIoStreamMemoryStreamWrite(
     struct OgIoStream *pisStream,
-    OgCharacter *psSourceBuffer,
-    OgUnsignedInteger64 uCharatcterToWrite,
-    OgBoolean *const pbEndOfFile);
-OG_MACRO_EXPORT OgConstantString OgIoStreamMemoryStreamGetStreamType(
+    OgConstantString pcsSource,
+    OgSignedInteger64 iCharatcterToWrite,
+    OgBoolean *const pbEndOfFile)
+{
+    struct OgExceptionCollectionIoException e = {};
+#if defined(_WIN32)
+    /// TODO: finish it in windows.
+#else
+    OgSignedInteger64 iBytesToWrite = 0;
+    if (pcsSource == NULL)
+    {
+        e.Type = OgExceptionEnumIoExceptionItemInvalidArgument;
+        e.InvalidArgument = OgExceptionStructureInvalidArgumentCreate(
+            "OgConstantString pcsSource", "Argument is null.");
+        return e;
+    }
+    if (iCharatcterToWrite >= 0)
+    {
+        iBytesToWrite = iCharatcterToWrite;
+    }
+    else
+    {
+        iBytesToWrite = (OgSignedInteger64)strlen(pcsSource);
+    }
+    return OgIoStreamMemoryStreamWriteBinary(
+        pisStream, (const OgByte *)pcsSource, (OgUnsignedInteger64)iBytesToWrite, pbEndOfFile);
+#endif
+}
+struct OgExceptionCollectionIoException OgIoStreamMemoryStreamFlush(
+    struct OgIoStream *const pisStream, OgBoolean bCleanBuffer)
+{
+    struct OgExceptionCollectionIoException e = {};
+    return e;
+}
+OgConstantString OgIoStreamMemoryStreamGetStreamType(
     void)
 {
     return ("OpenStg.Base.IO.MemoryStream");

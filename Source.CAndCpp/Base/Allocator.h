@@ -5,25 +5,25 @@
 OG_MACRO_C_BLOCK_BEGIN
 
 OG_MACRO_PRIVATE OgPVoid OgPrivateStandardAllocWarp(
-    struct OgAllocator *pAllocator,
+    struct OgAllocator *paAllocator,
     OgUnsignedIntegerSize uSize);
 
 OG_MACRO_PRIVATE OgPVoid OgPrivateStandardAlignedAllocWarp(
-    struct OgAllocator *pAllocator,
+    struct OgAllocator *paAllocator,
     OgUnsignedIntegerSize uMemorySize,
     OgUnsignedIntegerSize uAligned);
 
 OG_MACRO_PRIVATE OgPVoid OgPrivateStandardReallocWarp(
-    struct OgAllocator *pAllocator,
+    struct OgAllocator *paAllocator,
     OgPVoid pvOld,
     OgUnsignedIntegerSize uNewSize);
 
 OG_MACRO_PRIVATE void OgPrivateStandardFreeWarp(
-    struct OgAllocator *pAllocator,
+    struct OgAllocator *paAllocator,
     OgPVoid pv);
 
 OG_MACRO_PRIVATE void OgPrivateStandardAlignedFreeWarp(
-    struct OgAllocator *pAllocator,
+    struct OgAllocator *paAllocator,
     OgPVoid pv);
 OG_MACRO_C_BLOCK_END
 #endif
