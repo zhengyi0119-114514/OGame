@@ -1,4 +1,4 @@
-#include "Array.h"
+#include "Stream.h"
 #include "Exception.h"
 #include "StaticVariable.h"
 #include <OpenSTG/OpenStgBase.h>

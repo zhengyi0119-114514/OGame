@@ -6,9 +6,9 @@
 #if !defined(OPEN_STG_MACRO_BASE_INPUT_AND_OUTPUT_H)
 #include <OpenSTG/OpenStgBase.InputAndOutput.h>
 #endif
-#define OgExceptionStructureOutOfRangeGetMaximumStringLength() 32
-#define OgExceptionStructureOutOfRangeGetMinimumStringLength() 32
-#define OgExceptionDebugInformationGetCallstackSize() 32
+#define OgExceptionStructureOutOfRangeGetMaximumStringLength 32
+#define OgExceptionStructureOutOfRangeGetMinimumStringLength 32
+#define OgExceptionDebugInformationGetCallstackSize 32
 
 OG_MACRO_C_BLOCK_BEGIN
 
@@ -17,7 +17,7 @@ typedef struct OgExceptionDebugInformation
     OgUnsignedInteger64 Line;
     OgConstantString File;
     OgConstantString Function;
-    OgPVoid Callstack[OgExceptionDebugInformationGetCallstackSize()];
+    OgPVoid Callstack[OgExceptionDebugInformationGetCallstackSize];
 } OgExceptionDebugInformation;
 
 typedef struct OgExceptionStructureOutOfRange
@@ -25,8 +25,8 @@ typedef struct OgExceptionStructureOutOfRange
     struct OgExceptionDebugInformation DebugInformation;
     struct OgExceptionInformation *Information;
     OgConstantString Paramenter;
-    OgCharacter MaximumValue[OgExceptionStructureOutOfRangeGetMaximumStringLength()];
-    OgCharacter MinimumValue[OgExceptionStructureOutOfRangeGetMinimumStringLength()];
+    OgCharacter MaximumValue[OgExceptionStructureOutOfRangeGetMaximumStringLength];
+    OgCharacter MinimumValue[OgExceptionStructureOutOfRangeGetMinimumStringLength];
     OgConstantString Description;
 } OgExceptionStructureOutOfRange;
 
@@ -34,12 +34,14 @@ inline OgExceptionStructureOutOfRange OgExceptionStructureOutOfRangeCreateWithIn
     OgConstantString pcsParamenter,
     OgSignedInteger64 iMaximumValue,
     OgSignedInteger64 iMinimumValue,
-    OgConstantString pcsDescription);
+    OgConstantString pcsDescription
+);
 inline OgExceptionStructureOutOfRange OgExceptionStructureOutOfRangeCreate(
     OgConstantString pcsParamenter,
     OgConstantString pcsMaximumValue,
     OgConstantString pcsMinimumValue,
-    OgConstantString pcsDescription);
+    OgConstantString pcsDescription
+);
 OG_MACRO_EXTERN struct OgExceptionInformation *OgExceptionStructureOutOfRangeGetInformation(void);
 
 typedef struct OgExceptionStructureInvalidArgument
@@ -50,9 +52,11 @@ typedef struct OgExceptionStructureInvalidArgument
     OgConstantString Description;
 } OgExceptionStructureInvalidArgument;
 OG_MACRO_EXTERN struct OgExceptionInformation *OgExceptionStructureInvalidArgumentGetInformation(
-    void);
+    void
+);
 inline struct OgExceptionStructureInvalidArgument OgExceptionStructureInvalidArgumentCreate(
-    OgConstantString pcsParamenter, OgConstantString pcsDescription);
+    OgConstantString pcsParamenter, OgConstantString pcsDescription
+);
 
 typedef struct OgExceptionStructureUndefineBehavior
 {
@@ -62,10 +66,12 @@ typedef struct OgExceptionStructureUndefineBehavior
 } OgExceptionStructureUndefineBehavior;
 
 inline struct OgExceptionStructureUndefineBehavior OgExceptionStructureUndefineBehaviorCreate(
-    OgConstantString pcsDescription);
+    OgConstantString pcsDescription
+);
 
 OG_MACRO_EXTERN struct OgExceptionInformation *OgExceptionStructureUndefineBehaviorGetInformation(
-    void);
+    void
+);
 
 typedef struct OgExceptionStructureFormatException
 {
@@ -137,19 +143,22 @@ typedef struct OgExceptionCollectionIoException
 typedef OgExceptionCollectionFormatException (*OgExceptionFunctionDefinitionFormatExceptionMessage)(
     OgPVoid pvExceptionSource,
     OgUnsignedInteger64 uDestinationBufferSize,
-    OgString psDestinationBuffer);
-typedef OgExceptionCollectionFormatException (
-    *OgExceptionFunctionDefinitionGetExceptionMessageLength)(
-    OgPVoid pvExceptionSource, OgUnsignedInteger64 *const puMessageLength);
+    OgString psDestinationBuffer
+);
+typedef OgExceptionCollectionFormatException (*OgExceptionFunctionDefinitionGetExceptionMessageLength)(
+    OgPVoid pvExceptionSource, OgUnsignedInteger64 *const puMessageLength
+);
 typedef OgExceptionCollectionFormatException (*OgExceptionFunctionDefinitionSerialize)(
     OgPVoid pvExceptionSource,
     OgPVoid pvDestinationBuffer,
-    OgUnsignedInteger64 puDestinationBufferSize);
+    OgUnsignedInteger64 puDestinationBufferSize
+);
 typedef OgExceptionCollectionFormatException (*OgExceptionFunctionDefinitionDeserialize)(
     OgPVoid pvDestinationBuffer,
     OgUnsignedInteger64 puDestinationBufferSize,
     OgPVoid pvSourceBuffer,
-    OgUnsignedInteger64 puSourceBufferSize);
+    OgUnsignedInteger64 puSourceBufferSize
+);
 typedef OgConstantString (*OgExceptionFunctionDefinitionGetExceptionName)();
 
 typedef struct OgExceptionInformation
@@ -161,23 +170,13 @@ typedef struct OgExceptionInformation
     OgExceptionFunctionDefinitionGetExceptionName GetExceptionName;
 } OgExceptionInformation;
 
-OG_MACRO_NORETURN OG_MACRO_EXTERN void OgExceptionPanic(OgConstantString pcsDescription);
-
-// #define OgExceptionThrowNothing() OgExceptionCreate(0, NULL, NULL)
-// #define OgExceptionThrowLogicException OgExceptionThrowLogicExceptionV
-// #define OgExceptionThrowOutOfRange OgExceptionThrowOutOfRangeV
-// #define OgExceptionThrowInvalidArgument OgExceptionThrowInvalidArgumentV
-// #define OgExceptionThrowArgumentNull OgExceptionThrowArgumentNullV
-// #define OgExceptionThrowInvalidOperation OgExceptionThrowInvalidOperationV
-// #define OgExceptionThrowFormatException OgExceptionThrowFormatExceptionV
-// #define OgExceptionThrowRuntimeException OgExceptionThrowRuntimeExceptionV
-// #define OgExceptionThrowOutOfMemory OgExceptionThrowOutOfMemoryV
-// #define OgExceptionThrowStackOverflow OgExceptionThrowStackOverflowV
+OG_MACRO_MSVC_DECLSPEC(noreturn) OG_MACRO_NORETURN OG_MACRO_EXTERN void OgExceptionPanic(
+    OgConstantString pcsDescription
+) OG_MACRO_GNU_ATTRIBUTE(__noreturn__);
 
 OG_MACRO_C_BLOCK_END
 
 #if !defined(OPEN_STG_MACRO_BASE_EXCEPTION_STRUCTURES_H)
 #include <OpenSTG/OpenStgBase.Exceptions.Inline.h>
 #endif
-
 #endif

@@ -16,7 +16,7 @@ BreakAfterOpenBracketIf: true
 BreakAfterOpenBracketLoop: true
 BreakAfterOpenBracketSwitch: true
 BreakBeforeCloseBracketBracedList: false
-BreakBeforeCloseBracketFunction: false
+BreakBeforeCloseBracketFunction: true
 BreakBeforeCloseBracketIf: true
 BreakBeforeCloseBracketLoop: true
 BreakBeforeCloseBracketSwitch: false
@@ -51,7 +51,33 @@ BinPackLongBracedList: true
 
 BitFieldColonSpacing: None
 BreakBeforeBraces: Custom
+InsertBraces: true
 
+BreakAfterAttributes: Always
+StatementAttributeLikeMacros:
+  - Q_EMIT
+  - OG_MACRO_EXPORT
+  - OG_MACRO_EXTERN
+
+# WhitespaceSensitiveMacros:
+#   - OG_MACRO_GNU 
+#   - OG_MACRO_MSVC
+
+AttributeMacros:
+  - __capability
+  - __output
+  - __ununsed
+  - OG_MACRO_MSVC(_*_)
+  - OG_MACRO_GNU(__attribute__((*)))
+  - __attribute__((*))
+  - OG_MACRO_MSVC(_In_opt_) 
+  - OG_MACRO_MSVC(_Out_)
+  - OG_MACRO_MSVC(_Out_opt_)
+  - OG_MACRO_MSVC(_Inout_)
+
+# Macros:
+#   - OG_MACRO_MSVC(x)=x
+#   - OG_MACRO_GNU(x)=x
 BraceWrapping:
   AfterCaseLabel: false
   AfterClass: true

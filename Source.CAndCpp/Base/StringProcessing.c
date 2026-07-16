@@ -13,25 +13,40 @@
 #include <string.h>
 #endif
 
-OG_MACRO_EXPORT struct OgExceptionCollectionFormatException OgStringCopy(
-    OgString psDestination,
+struct OgExceptionCollectionFormatException OgStringCopy(
+    OgString const psDestination,
     OgSignedInteger64 iDestinationSize,
-    OgConstantString pcsSource,
-    OgSignedInteger64 iCharatersToCopy)
+    OgConstantString const pcsSource,
+    OgSignedInteger64 iCharatersToCopy
+)
 {
     struct OgExceptionCollectionFormatException e = {};
     if (psDestination == NULL)
     {
         e.Type = OgExceptionEnumFormatingExceptionItemInvalidArgument;
         e.InvalidArgument = OgExceptionStructureInvalidArgumentCreate(
-            "OgString psDestination", "Argument is NULL.");
+            "OgString psDestination", "Argument is NULL."
+        );
         return e;
     }
     if (pcsSource == NULL)
     {
         e.Type = OgExceptionEnumFormatingExceptionItemInvalidArgument;
         e.InvalidArgument = OgExceptionStructureInvalidArgumentCreate(
-            "OgConstantString pcsSource", "Argument is NULL.");
+            "OgConstantString pcsSource", "Argument is NULL."
+        );
+        return e;
+    }
+    if (iDestinationSize == 0)
+    {
+        e.Type = OgExceptionEnumFormatingExceptionItemInvalidArgument;
+        e.InvalidArgument = OgExceptionStructureInvalidArgumentCreate(
+            "OgSignedInteger64 iDestinationSize", "iDestinationSize is zero."
+        );
+        return e;
+    }
+    if (iCharatersToCopy == 0)
+    {
         return e;
     }
     if (iDestinationSize <= 0 && iCharatersToCopy <= 0)
@@ -48,8 +63,8 @@ OG_MACRO_EXPORT struct OgExceptionCollectionFormatException OgStringCopy(
             e.Type = OgExceptionEnumFormatingExceptionItemOutOfRange;
             e.OutOfRange = OgExceptionStructureOutOfRangeCreateWithInteger64(
                 "OgString psDestination,OgSignedInteger64 iDestinationSize", INT64_MAX,
-                (OgSignedInteger64)strlen(pcsSource) + 1,
-                "The string 'psDestination' is to short.");
+                (OgSignedInteger64)strlen(pcsSource) + 1, "The string 'psDestination' is to short."
+            );
             return e;
         }
 #elif OPEN_STG_MACRO_USE_STDC || OPEN_STG_MACRO_USE_LIBSAFEC
@@ -62,15 +77,15 @@ OG_MACRO_EXPORT struct OgExceptionCollectionFormatException OgStringCopy(
     }
     else if (iDestinationSize > 0 && iCharatersToCopy > 0)
     {
-        size_t uRealCharatersToCopy
-            = (size_t)OgPrivateSizeTMin(strlen(pcsSource), (size_t)iCharatersToCopy);
+        size_t uRealCharatersToCopy =
+            (size_t)OgPrivateSizeTMin(strlen(pcsSource), (size_t)iCharatersToCopy);
         if (uRealCharatersToCopy >= (size_t)iDestinationSize)
         {
             e.Type = OgExceptionEnumFormatingExceptionItemOutOfRange;
             e.OutOfRange = OgExceptionStructureOutOfRangeCreateWithInteger64(
                 "OgString psDestination,OgSignedInteger64 iDestinationSize", INT64_MAX,
-                (OgSignedInteger64)uRealCharatersToCopy,
-                "The string 'psDestination' is too short.");
+                (OgSignedInteger64)uRealCharatersToCopy, "The string 'psDestination' is too short."
+            );
             return e;
         }
         strncpy(psDestination, pcsSource, uRealCharatersToCopy);
@@ -81,7 +96,8 @@ OG_MACRO_EXPORT struct OgExceptionCollectionFormatException OgStringConnect(
     OgString psDestination,
     OgSignedInteger64 iDestinationSize,
     OgConstantString pcsSource,
-    OgSignedInteger64 iCharatersToConnect)
+    OgSignedInteger64 iCharatersToConnect
+)
 {
 
     struct OgExceptionCollectionFormatException e = {};
@@ -89,14 +105,28 @@ OG_MACRO_EXPORT struct OgExceptionCollectionFormatException OgStringConnect(
     {
         e.Type = OgExceptionEnumFormatingExceptionItemInvalidArgument;
         e.InvalidArgument = OgExceptionStructureInvalidArgumentCreate(
-            "OgString psDestination", "Argument is NULL.");
+            "OgString psDestination", "Argument is NULL."
+        );
         return e;
     }
     if (pcsSource == NULL)
     {
         e.Type = OgExceptionEnumFormatingExceptionItemInvalidArgument;
         e.InvalidArgument = OgExceptionStructureInvalidArgumentCreate(
-            "OgConstantString pcsSource", "Argument is NULL.");
+            "OgConstantString pcsSource", "Argument is NULL."
+        );
+        return e;
+    }
+    if (iDestinationSize == 0)
+    {
+        e.Type = OgExceptionEnumFormatingExceptionItemInvalidArgument;
+        e.InvalidArgument = OgExceptionStructureInvalidArgumentCreate(
+            "OgSignedInteger64 iDestinationSize", "iDestinationSize is zero."
+        );
+        return e;
+    }
+    if (iCharatersToConnect == 0)
+    {
         return e;
     }
     if (iDestinationSize <= 0 && iCharatersToConnect <= 0)
@@ -114,8 +144,8 @@ OG_MACRO_EXPORT struct OgExceptionCollectionFormatException OgStringConnect(
             e.Type = OgExceptionEnumFormatingExceptionItemOutOfRange;
             e.OutOfRange = OgExceptionStructureOutOfRangeCreateWithInteger64(
                 "OgString psDestination,OgSignedInteger64 iDestinationSize", INT64_MAX,
-                (OgSignedInteger64)strlen(pcsSource) + 1,
-                "The string 'psDestination' is to short.");
+                (OgSignedInteger64)strlen(pcsSource) + 1, "The string 'psDestination' is to short."
+            );
             return e;
         }
 #elif OPEN_STG_MACRO_USE_STDC || OPEN_STG_MACRO_USE_LIBSAFEC
@@ -131,15 +161,16 @@ OG_MACRO_EXPORT struct OgExceptionCollectionFormatException OgStringConnect(
 #if OPEN_STG_MACRO_USE_STDC || OPEN_STG_MACRO_USE_LIBSAFEC
 #else
         size_t uDestinationStringLength = strlen(psDestination);
-        size_t uRealCharatersToConnect
-            = OgPrivateSizeTMin(strlen(pcsSource), (size_t)iCharatersToConnect);
+        size_t uRealCharatersToConnect =
+            OgPrivateSizeTMin(strlen(pcsSource), (size_t)iCharatersToConnect);
         size_t uNewStringLength = uDestinationStringLength + uRealCharatersToConnect;
         if (uNewStringLength >= (size_t)iDestinationSize)
         {
             e.Type = OgExceptionEnumFormatingExceptionItemOutOfRange;
             e.OutOfRange = OgExceptionStructureOutOfRangeCreateWithInteger64(
                 "OgString psDestination,OgSignedInteger64 iDestinationSize", INT64_MAX,
-                (OgSignedInteger64)uNewStringLength, "The string 'psDestination' is to short.");
+                (OgSignedInteger64)uNewStringLength, "The string 'psDestination' is to short."
+            );
             return e;
         }
         strncat(psDestination, pcsSource, uRealCharatersToConnect);

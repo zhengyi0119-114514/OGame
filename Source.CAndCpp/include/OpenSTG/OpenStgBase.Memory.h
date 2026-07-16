@@ -9,15 +9,23 @@ OG_MACRO_C_BLOCK_BEGIN
 
 typedef struct OgAllocator
 {
-    OgPVoid (*Alloc)(struct OgAllocator *paAllocator, OgUnsignedIntegerSize uSize);
+    OgPVoid (*Alloc)(
+        struct OgAllocator *paAllocator,
+        OgUnsignedIntegerSize uSize);
     OgPVoid (*Realloc)(
-        struct OgAllocator *paAllocator, OgPVoid pvOld, OgUnsignedIntegerSize uNewSize);
-    void (*Free)(struct OgAllocator *paAllocator, OgPVoid pMemory);
+        struct OgAllocator *paAllocator,
+        OgPVoid pvOld,
+        OgUnsignedIntegerSize uNewSize);
+    void (*Free)(
+        struct OgAllocator *paAllocator,
+        OgPVoid pMemory);
     OgPVoid (*AlignedAlloc)(
         struct OgAllocator *paAllocator,
         OgUnsignedIntegerSize uSize,
         OgUnsignedIntegerSize uAlignment);
-    void (*AlignedFree)(struct OgAllocator *paAllocator, OgPVoid pMemory);
+    void (*AlignedFree)(
+        struct OgAllocator *paAllocator,
+        OgPVoid pMemory);
     void (*Destroy)(struct OgAllocator *paAllocator);
     OgPVoid AdditionalData;
 } OgAllocator;

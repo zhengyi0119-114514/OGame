@@ -1,61 +1,61 @@
 {
-  "dependencies": [
-    "cjson",
-    "fmt",
-    "icu",
-    "libbson",
-    "libpopt",
-    {
-      "name": "libxml2",
-      "features": [
-        "iconv",
-        "icu"
-      ]
-    },
-    "lua",
-    "pthreads",
-    {
-      "name": "sdl3",
-      "features": [
-        "alsa",
-        "libusb",
-        "vulkan"
-      ]
-    },
-    {
-      "name": "sdl3-image",
-      "features": [
-        "avif",
-        "jpeg",
-        "jxl",
-        "png",
-        "tiff",
-        "webp"
-      ]
-    },
-    {
-      "name": "sdl3-mixer",
-      "features": [
-        "libflac",
-        "libvorbis",
-        "libxmp",
-        "mpg123",
-        "opusfile",
-        "wavpack"
-      ]
-    },
-    {
-      "name": "sdl3-ttf",
-      "features": [
-        "harfbuzz",
-        "svg"
-      ]
-    },
-    {
-      "name": "pcre2",
-      "features": [
-        "jit"
-      ]
-    }
-  ]
+    "dependencies": [
+        "cjson",
+        "fmt",
+        "icu",
+        "libbson",
+        "libpopt",
+        {
+            "name": "libxml2",
+            "features": [
+                "iconv",
+                "icu"
+            ]
+        },
+        "lua",
+        "pthreads",
+        {
+            "name": "sdl3",
+            "features": [
+                "alsa",
+                "libusb",
+                "vulkan"
+            ]
+        },
+        {
+            "name": "sdl3-image",
+            "features": [
+                "avif",
+                "jpeg",
+                "jxl",
+                "png",
+                "tiff",
+                "webp"
+            ]
+        },
+        {
+            "name": "sdl3-mixer",
+            "features": [
+                "libflac",
+                "libvorbis",
+                "libxmp",
+                "mpg123",
+                "opusfile",
+                "wavpack"
+            ]
+        },
+        {
+            "name": "sdl3-ttf",
+            "features": [
+                "harfbuzz",
+                "svg"
+            ]
+        },
+        {
+            "name": "pcre2",
+            "features": [
+                "jit"
+            ]
+        }
+    ]
 }

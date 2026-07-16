@@ -1,6 +1,6 @@
 # LICENSE: MIT
 if(NOT DEFINED __ADD_TARGET_TAG)
-    set(__ADD_TARGET_TAG)
+    set(__ADDTARGET_TAG)
     set(__empty_c_source "${CMAKE_CURRENT_BINARY_DIR}/empty.c")
     include(CheckCompilerFlag)
     include(CheckCCompilerFlag)

@@ -6,8 +6,10 @@
 
 OG_MACRO_PRIVATE OgConstantString OgExceptionStructureOutOfRangeGetExceptionName(void);
 OG_MACRO_EXTERN struct OgExceptionInformation *OgExceptionStructureUndefineBehaviorGetInformation(
-    void);
+    void
+);
 OG_MACRO_PRIVATE OgConstantString OgExceptionStructureInvalidArgumentGetExceptionName(void);
 OG_MACRO_EXTERN struct OgExceptionInformation *OgExceptionStructureInvalidArgumentGetInformation(
-    void);
+    void
+);
 #endif

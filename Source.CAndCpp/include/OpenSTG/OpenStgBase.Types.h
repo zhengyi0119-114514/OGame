@@ -27,11 +27,8 @@ struct OgExceptionStructureOutOfRange;
 struct OgExceptionStructureInvalidArgument;
 struct OgExceptionStructureUndefineBehavior;
 struct OgExceptionStructureFormatException;
-enum OgExceptionStructureMemoryExceptionType;
 struct OgExceptionStructureMemoryException;
-enum OgExceptionEnumFormattingExceptionType;
 struct OgExceptionCollectionFormatException;
-enum OgExceptionEnumIoExceptionType;
 struct OgExceptionCollectionIoException;
 typedef enum OgEnumBitFlagOperator
 {

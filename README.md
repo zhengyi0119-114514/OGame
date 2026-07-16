@@ -69,7 +69,7 @@
 ### ArchLinux / Manjaro / Archlinux(WSL)
 
 ``` bash
-sudo pacman -S icu lua catch2 libxml2 libbsd cjson popt mongo-c-driver
+sudo pacman -S icu lua catch2 libxml2 libbsd cjson popt mongo-c-driver pcre2
 # optional
 sudo pacman -S vulkan-devel libc++ libc++abi gtk4 
 # optional (client)
@@ -81,7 +81,7 @@ sudo pacman -S sdl3 sdl3_{image,ttf,mixer}
 推荐使用CLANG64/UCRT64环境,此处以CLANG64环境为例
 
 ``` bash
-pacman -S mingw-w64-clang-x86_64-{icu,lua,mcfgthread,sdl3,libxml2,cjson}
+pacman -S mingw-w64-clang-x86_64-{icu,lua,mcfgthread{,-libs},sdl3,libxml2,cjson,pcre2}
 pacman -S mingw-w64-clang-x86_64-{catch,mongo-c-driver}
 # optional
 pacman -S mingw-w64-clang-x86_64-{vulkan-devel,gtk4,libdwarf}

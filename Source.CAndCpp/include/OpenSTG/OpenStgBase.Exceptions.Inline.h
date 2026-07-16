@@ -14,7 +14,8 @@ inline OgExceptionStructureOutOfRange OgExceptionStructureOutOfRangeCreate(
     OgConstantString pcsParamenter,
     OgConstantString pcsMaximumValue,
     OgConstantString pcsMinimumValue,
-    OgConstantString pcsDescription)
+    OgConstantString pcsDescription
+)
 {
     OgExceptionStructureOutOfRange e = {};
     e.Information = OgExceptionStructureOutOfRangeGetInformation();
@@ -28,23 +29,31 @@ inline OgExceptionStructureOutOfRange OgExceptionStructureOutOfRangeCreateWithIn
     OgConstantString pcsParamenter,
     OgSignedInteger64 iMaximumValue,
     OgSignedInteger64 iMinimumValue,
-    OgConstantString pcsDescription)
+    OgConstantString pcsDescription
+)
 {
 
     OgExceptionStructureOutOfRange exception = {};
     exception.Information = OgExceptionStructureOutOfRangeGetInformation();
     exception.Paramenter = pcsParamenter;
-    if (snprintf(exception.MaximumValue, sizeof(exception.MaximumValue), "%" PRIx64, iMaximumValue)
-        < 0)
+    if (snprintf(
+            exception.MaximumValue, sizeof(exception.MaximumValue), "%" PRIx64, iMaximumValue
+        ) < 0)
+    {
         OgExceptionPanic("Undefine Behavior.");
-    if (snprintf(exception.MinimumValue, sizeof(exception.MinimumValue), "%" PRIx64, iMinimumValue)
-        < 0)
+    }
+    if (snprintf(
+            exception.MinimumValue, sizeof(exception.MinimumValue), "%" PRIx64, iMinimumValue
+        ) < 0)
+    {
         OgExceptionPanic("Undefine Behavior.");
+    }
     exception.Description = pcsDescription;
     return exception;
 };
 inline struct OgExceptionStructureInvalidArgument OgExceptionStructureInvalidArgumentCreate(
-    OgConstantString pcsParamenter, OgConstantString pcsDescription)
+    OgConstantString pcsParamenter, OgConstantString pcsDescription
+)
 {
     struct OgExceptionStructureInvalidArgument e = {};
     e.Paramenter = pcsParamenter;
@@ -53,6 +62,7 @@ inline struct OgExceptionStructureInvalidArgument OgExceptionStructureInvalidArg
     return e;
 }
 inline struct OgExceptionStructureUndefineBehavior OgExceptionStructureUndefineBehaviorCreate(
-    OgConstantString pcsDescription);
+    OgConstantString pcsDescription
+);
 OG_MACRO_C_BLOCK_END
 #endif

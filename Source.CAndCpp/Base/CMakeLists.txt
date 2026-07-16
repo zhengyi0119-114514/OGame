@@ -1,31 +1,30 @@
 target_include_directories(Base PUBLIC SYSTEM include)
 if("${CMAKE_VERSION}" VERSION_GREATER_EQUAL 3.23)
-target_sources(
-    Base
-    PRIVATE
-        FILE_SET
-        HEADERS
-        FILES
-        Array.h
-        Allocator.h
-        ElectromagneticDotTimer.h
-        Exception.h
-        Module.h
-        InlineFunctions.h
-        Stream.h
-        StringProcessing.h
-        StaticVariable.h
-        Tree.h)
+    target_sources(
+        Base
+        PRIVATE
+            FILE_SET
+            HEADERS
+            FILES
+            ElectromagneticDotTimer.h
+            Exception.h
+            Memory.h
+            Module.h
+            InlineFunctions.h
+            Stream.h
+            StringProcessing.h
+            StaticVariable.h
+            Tree.h)
 endif()
 target_sources(
     Base
     PRIVATE
-        Array.c
-        Allocator.c
         ElectromagneticDotTimer.c
         Exception.OutOfRange.c
         Exception.UndefineBehavior.c
         Exception.Panic.c
+        Memory.Allocator.c
+        Memory.Array.c
         Module.c
         Stream.MemoryStream.c
         Stream.FormatAndWrite.c

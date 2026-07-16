@@ -17,6 +17,7 @@ OG_MACRO_EXTERN struct OgExceptionCollectionIoException OgIoStreamFormatAndWrite
     size_t uStringLength = 0;
     OgBoolean bCanRead = OgFalse;
     // Check argument
+    // 检查参数
     if (pisStream == NULL)
     {
         struct OgExceptionCollectionIoException eReturn = {};

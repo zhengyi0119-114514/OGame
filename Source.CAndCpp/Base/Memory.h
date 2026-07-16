@@ -1,5 +1,4 @@
 #include <OpenSTG/OpenStgBase.h>
-
 #if !defined(OPEN_STG_ALLOCATOR_H)
 #define OPEN_STG_ALLOCATOR_H 1
 OG_MACRO_C_BLOCK_BEGIN
@@ -25,5 +24,9 @@ OG_MACRO_PRIVATE void OgPrivateStandardFreeWarp(
 OG_MACRO_PRIVATE void OgPrivateStandardAlignedFreeWarp(
     struct OgAllocator *paAllocator,
     OgPVoid pv);
+OG_MACRO_PRIVATE void OgPrivateStandardDestroy(struct OgAllocator *paAllocator);
+OG_MACRO_EXPORT struct OgAllocator OgMemoryAllocatorCreateCStandardAllocator();
+OG_MACRO_EXPORT struct OgAllocator *OgMemoryAllocatorGetDefaultAllocator();
+
 OG_MACRO_C_BLOCK_END
 #endif

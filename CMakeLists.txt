@@ -26,8 +26,9 @@ option(OPEN_STG_ENABLE_MCFGTHREAD "Enable mcfgthreaad" FALSE)
 option(OPEN_STG_ENABLE_XDG_DESKTOP_PORTAL "Enable xdg desktop portal(BSD/Linux)." FALSE)
 option(OPEN_STG_ENABLE_DEVELOP_TOOLS "Enable develop component." FALSE)
 option(OPEN_STG_ENABLE_LIBDWARF "Enable libdwarf.(Linux,BSD,Win32)." FALSE)
+option(OPEN_STG_ENABLE_DOWNLOAD_DEPENDENCIES "Download if dependencies miss." TRUE)
 option(OPEN_STG_OPTION_STRING_PROCESSING_AUTO "Choose by CMake script." TRUE)
-
+option(OPEN_STG_OPTION_USE_EXTERN_LINKER "Use the lld/mold/wild linker instead of the default linker." TRUE)
 cmake_dependent_option(
     OPEN_STG_ENABLE_LLVM_AND_CLANG 
     "Enable llvm and clang for generate C code.(DevelopTools)"
@@ -44,18 +45,17 @@ cmake_dependent_option(
 )
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Source.CMake/" "${CMAKE_SOURCE_DIR}")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Source.CMake/FindPackages/" "${CMAKE_SOURCE_DIR}")
 
-include(Source.CMake/SetGlobalProperties.cmake)
-include(Source.CMake/AddTarget.cmake)
-include(Source.CMake/FindPackage.cmake)
-include(Source.CMake/VcltlAndYythunks.cmake)
+include(SetGlobalProperties)
+include(AddTarget)
+include(FindPackage)
+include(VcltlAndYythunks)
 include(GNUInstallDirs)
 include(CheckFunctionExists)
 include(CheckIncludeFile)
 
-__download_and_extract_vcltl("${VCLTL_VERSION}" TRUE TRUE)
-__download_and_extract_yythunk("${YYTHUNKS_VERSION}" TRUE)
-__download_and_extract_yythunk("${YYTHUNKS_VERSION}" FALSE)
+enable_vcltl_and_yythunks()
 
 if(NOT EXISTS "${CMAKE_BINARY_DIR}/include")
     file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/include")
@@ -102,6 +102,7 @@ target_test_and_add_compile_options(
         -Wall
         -Wextra
         -Wno-unused-parameter
+        -Wno-tautological-undefined-compare #启用编译器检查同时手动检查变量
         -Wconversion
         -Wcast-align
         -Wincompatible-function-pointer-types
