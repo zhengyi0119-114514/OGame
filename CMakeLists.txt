@@ -7,9 +7,11 @@ endif()
 
 project(open_stg VERSION 0.1.0)
 
-if(NOT DEFINED OPEN_STG_LOADER_MODULE)
-    if("${CMAKE_SYSTEM_NAME}" MATCHES [=[^(Windows|WindowsPhone|WindowsStore|MSYS)$]=])
-        set(OPEN_STG_LOADER_MODULE "OneProcess")
+if(NOT DEFINED OPEN_STG_LOADER_ARCHITECTURE)
+    message(STATUS "${CMAKE_SYSTEM_NAME}")
+    if(CMAKE_SYSTEM_NAME MATCHES [=[^(Windows|WindowsPhone|WindowsStore|MSYS)$]=])
+        set(OPEN_STG_LOADER_ARCHITECTURE "OneProcess")
+        
     elseif("${UNIX}")
         set(OPEN_STG_LOADER_ARCHITECTURE "MicrokernelLikeArchitecture")
     endif()

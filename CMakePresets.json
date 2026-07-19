@@ -12,7 +12,8 @@
             "generator": "Ninja Multi-Config",
             "cacheVariables": {
                 "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": true
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true,
+                "CMAKE_MAKE_PROGRAM": "ninja"
             }
         },
         {
@@ -33,6 +34,26 @@
             "environment": {
                 "VCPKG_DEFAULT_HOST_TRIPLET": "x64-mingw-dynamic",
                 "VCPKG_DEFAULT_TRIPLET": "x64-mingw-dynamic"
+            }
+        },
+        {
+            "name": "basic-llvm-msvc",
+            "hidden": true,
+            "generator": "Ninja Multi-Config",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "clang-cl",
+                "CMAKE_CXX_COMPILER": "clang-cl",
+                "CMAKE_MAKE_PROGRAM": "ninja",
+                "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/Source.CMake/ToolchainFiles/LlvmMsvcToolchainFile.cmake"
+            }
+        },
+        {
+            "name": "basic-msvc",
+            "hidden": true,
+            "generator": "Visual Studio 18 2026",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "cl.exe",
+                "CMAKE_CXX_COMPILER": "cl.exe"
             }
         },
         {
@@ -62,6 +83,16 @@
                 "OPEN_STG_ENABLE_GAME_SERVER": true,
                 "OPEN_STG_ENABLE_GAME_CLIENT": true
             }
+        },
+        {
+            "name": "basic-options-mingw-defult-all",
+            "hidden": true,
+            "cacheVariables": {
+                "OPEN_STG_ENABLE_MCFGTHREAD": false
+            },
+            "inherits": [
+                "basic-options-msys2-defult-all"
+            ]
         },
         {
             "name": "basic-options-vcpkg-defult-all",
@@ -123,15 +154,23 @@
         },
         {
             "name": "vcpkg-win32-msvc-x64-all",
-            "generator": "Visual Studio 17 2022",
             "binaryDir": "${sourceDir}/build/",
-            "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
-                "CMAKE_C_COMPILER": "cl.exe",
-                "CMAKE_CXX_COMPILER": "cl.exe",
-                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": true
-            }
+            "inherits": [
+                "basic-config",
+                "basic-llvm-msvc",
+                "basic-vcpkg",
+                "basic-options-vcpkg-defult-all"
+            ]
+        },
+        {
+            "name": "vcpkg-win32-mingw-x64-all",
+            "binaryDir": "${sourceDir}/build/",
+            "inherits": [
+                "basic-config",
+                "basic-mingw-w64",
+                "basic-vcpkg",
+                "basic-options-mingw-defult-all"
+            ]
         }
     ],
     "buildPresets": []

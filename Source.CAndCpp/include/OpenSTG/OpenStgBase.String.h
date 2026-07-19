@@ -19,7 +19,8 @@ OG_MACRO_EXTERN struct OgExceptionCollectionFormatException OgStringCopy(
     OgSignedInteger64 iDestinationSize,
     OG_MACRO_MSVC(_In_z_) OgConstantString const pcsSource,
     OgSignedInteger64 iCharatersToCopy
-) OG_MACRO_GNU_ATTRIBUTE(__nonnull__(1, 3));
+) OG_MACRO_GNU_ATTRIBUTE(__nonnull__(1, 3), __nothrow__);
+
 /**
  * @brief Append a copy of the null-terminated byte string pointed to by pcsSource to the end of the
  * null-terminated byte string pointed to by psDestination.The character pcsSource[0] replaces the
@@ -41,7 +42,7 @@ OG_MACRO_EXTERN struct OgExceptionCollectionFormatException OgStringConnect(
     OgSignedInteger64 iDestinationSize,
     OG_MACRO_MSVC(_In_z_) OgConstantString const pcsSource,
     OgSignedInteger64 iCharatersToConnect
-) OG_MACRO_GNU_ATTRIBUTE(__nonnull__(1, 3));
+) OG_MACRO_GNU_ATTRIBUTE(__nonnull__(1, 3), __nothrow__);
 
 #define OgStringGetEmptyString() ""
 

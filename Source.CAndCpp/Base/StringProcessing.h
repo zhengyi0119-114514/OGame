@@ -10,14 +10,14 @@
 OG_MACRO_C_BLOCK_BEGIN
 
 OG_MACRO_EXPORT struct OgExceptionCollectionFormatException OgStringCopy(
-    OgString psDestination,
+    OgString const psDestination,
     OgSignedInteger64 iDestinationSize,
-    OgConstantString pcsSource,
+    OgConstantString const pcsSource,
     OgSignedInteger64 iCharatersToCopy);
 OG_MACRO_EXPORT struct OgExceptionCollectionFormatException OgStringConnect(
-    OgString psDestination,
+    OgString const psDestination,
     OgSignedInteger64 iDestinationSize,
-    OgConstantString pcsSource,
+    OgConstantString const pcsSource,
     OgSignedInteger64 iCharatersToConnect);
 
 OG_MACRO_C_BLOCK_END

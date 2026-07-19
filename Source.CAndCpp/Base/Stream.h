@@ -1,6 +1,6 @@
 #include <OpenSTG/OpenStgBase.InputAndOutput.h>
 #include <assert.h>
-#include <threads.h>
+// #include <windows.h>
 
 #if !defined(OPEN_STG_STREAM_H)
 #define OPEN_STG_STREAM_H 1
@@ -37,71 +37,6 @@ struct OgPrivateIoMemoryStreamAdditionalData
     OgByte *pbBuffer;
     alignas(alignof(OgPointerSizedUnsignedInteger)) OgByte aBuffer[];
 };
-struct OgPrivateIoMemoryStream
-{
-    OgConstantString (*GetStreamType)(void);
-    struct OgExceptionCollectionIoException (*ReadBinary)(
-        struct OgIoStream *const pisStream,
-        OgByte *pbBuffer,
-        OgUnsignedInteger64 uBufferSize,
-        OgUnsignedInteger64 uBytesToRead,
-        OgUnsignedInteger64 *puBytesRead,
-        OgBoolean *const pbEndOfFile
-    );
-    struct OgExceptionCollectionIoException (*Read)(
-        struct OgIoStream *const pisStream,
-        OgCharacter *psDestinationBuffer,
-        OgUnsignedInteger64 uDestinationBufferSize,
-        OgUnsignedInteger64 uBytesRead,
-        OgBoolean *const pbEndOfFile
-    );
-    struct OgExceptionCollectionIoException (*WriteBinary)(
-        struct OgIoStream *pisStream,
-        const OgByte *const pbSource,
-        OgUnsignedInteger64 uBytesToWrite,
-        OgBoolean *const pbEndOfFile
-    );
-    struct OgExceptionCollectionIoException (*Write)(
-        struct OgIoStream *pisStream,
-        OgConstantString pcsSource,
-        OgSignedInteger64 iCharatcterToWrite,
-        OgBoolean *const pbEndOfFile
-    );
-    struct OgExceptionCollectionIoException (*GetBooleanProperty)(
-        const struct OgIoStream *const pcisStream,
-        enum OgIoEnumStreamBooleanProperty sbpProperty,
-        enum OgEnumBitFlagOperator bfoOperator,
-        OgBoolean *const pbOut
-    );
-    struct OgExceptionCollectionIoException (*SetBooleanProperty)(
-        struct OgIoStream *const pcisStream, enum OgIoEnumStreamBooleanProperty sbpProperty
-    );
-    struct OgExceptionCollectionIoException (*GetIntegerProperty)(
-        const struct OgIoStream *const pcisStream,
-        enum OgIoEnumStreamIntegerProperty,
-        OgSignedInteger64 *const piOut
-    );
-    struct OgExceptionCollectionIoException (*SetIntegerProperty)(
-        struct OgIoStream *const pisStream,
-        enum OgIoEnumStreamIntegerProperty,
-        OgUnsignedInteger64 iValue
-    );
-    struct OgExceptionCollectionIoException (*Flush)(
-        struct OgIoStream *const pisStream, OgBoolean bCleanBuffer
-    );
-    void (*Close)(struct OgIoStream *const pisStream);
-    void (*Destroy)(struct OgIoStream *const pisStream);
-    union
-    {
-        OgPVoid AdditionalData;
-        struct OgPrivateIoMemoryStreamAdditionalData *psmsaData;
-    };
-};
-static_assert(
-    sizeof(struct OgIoStream) == sizeof(struct OgPrivateIoMemoryStream),
-    "The size of OgIoMemoryStream structure donot equals the size of OgIoStream structure."
-);
-
 OG_MACRO_EXPORT OgConstantString OgIoStreamMemoryStreamGetStreamType(void);
 OG_MACRO_EXPORT struct OgExceptionCollectionIoException OgIoStreamMemoryStreamCreate(
     struct OgIoStream *const pStreamOutput,

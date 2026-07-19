@@ -50,7 +50,8 @@
 #define OG_MACRO_THREAD_LOCAL __thread
 #else
 static_assert(
-    false, "No thread local support.")
+    false, "No thread local support."
+)
 #endif
 #endif
 #endif

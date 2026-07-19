@@ -82,11 +82,11 @@ sudo pacman -S sdl3 sdl3_{image,ttf,mixer}
 
 ``` bash
 pacman -S mingw-w64-clang-x86_64-{icu,lua,mcfgthread{,-libs},sdl3,libxml2,cjson,pcre2}
-pacman -S mingw-w64-clang-x86_64-{catch,mongo-c-driver}
+pacman -S mingw-w64-clang-x86_64-{catch,mongo-c-driver,libxml2,popt}
 # optional
 pacman -S mingw-w64-clang-x86_64-{vulkan-devel,gtk4,libdwarf}
 # optional (client)
-pacman -S mingw-w64-clang-x86_64-{sdl3{,-{image,ttf,mixer}}}
+pacman -S mingw-w64-clang-x86_64-sdl3{,-{image,ttf,mixer}}
 ```
 
 ## 待定目标

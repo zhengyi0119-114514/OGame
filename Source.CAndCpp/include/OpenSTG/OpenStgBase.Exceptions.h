@@ -171,8 +171,8 @@ typedef struct OgExceptionInformation
 } OgExceptionInformation;
 
 OG_MACRO_MSVC_DECLSPEC(noreturn) OG_MACRO_NORETURN OG_MACRO_EXTERN void OgExceptionPanic(
-    OgConstantString pcsDescription
-) OG_MACRO_GNU_ATTRIBUTE(__noreturn__);
+    OG_MACRO_MSVC(_In_opt_z_) OgConstantString pcsDescription
+) OG_MACRO_GNU_ATTRIBUTE(__noreturn__,__nothrow__);
 
 OG_MACRO_C_BLOCK_END
 

@@ -120,9 +120,6 @@ OG_MACRO_EXTERN struct OgExceptionCollectionIoException OgIoStreamFormatAndWrite
     va_list ptrArgument
 ) OG_MACRO_GNU_ATTRIBUTE(__nonnull__(1, 3));
 
-OG_MACRO_MSVC(
-    __force_inline
-)
 inline struct OgExceptionCollectionIoException OgIoStreamFormatAndWriteText(
     OG_MACRO_MSVC(_Inout_) struct OgIoStream *pisStream,
     OgUnsignedInteger64 uFormatFlag,
@@ -230,7 +227,7 @@ OG_MACRO_EXTERN struct OgExceptionCollectionIoException OgIoStreamMemoryStreamWr
  * stream.
  */
 OG_MACRO_EXTERN struct OgExceptionCollectionIoException OgIoStreamMemoryStreamWrite(
-    OG_MACRO_MSVC(_Inout_) struct OgIoStream *pisStream,
+    OG_MACRO_MSVC(_Inout_) struct OgIoStream *const pisStream,
     OG_MACRO_MSVC(_In_) OgConstantString pcsSource,
     OgSignedInteger64 iCharatctersToWrite,
     OG_MACRO_MSVC(_Out_opt_) OgBoolean *const pbEndOfFile
@@ -257,7 +254,7 @@ OG_MACRO_EXTERN struct OgExceptionCollectionIoException OgIoStreamMemoryStreamSe
     OG_MACRO_MSVC(_Inout_) struct OgIoStream *const pisStream,
     enum OgIoEnumStreamIntegerProperty,
     OgUnsignedInteger64 iValue
-) OG_MACRO_GNU(__attribute__((__nonnull__(1))));
+) OG_MACRO_GNU_ATTRIBUTE(__nonnull__(1));
 
 OG_MACRO_EXTERN struct OgExceptionCollectionIoException OgIoStreamMemoryStreamFlush(
     OG_MACRO_MSVC(_Inout_) struct OgIoStream *const pisStream, OgBoolean bCleanBuffer
