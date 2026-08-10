@@ -3,51 +3,131 @@
 
 #if !defined(OPEN_STG_INLINE_FUNCTIONS_H)
 #define OPEN_STG_INLINE_FUNCTIONS_H 1
-OG_MACRO_C_BLOCK_BEGIN
+OgMacroCBlockBegin
 
-OG_MACRO_ALWAYS_INLINE inline OgSignedInteger64 OgPrivateSignedInteger64Max(
+OgMacroAlwaysInline inline OgSignedInteger64 OgPrivateSignedInteger64Max(
     OgSignedInteger64 lsh, OgSignedInteger64 rsh
 )
 {
     return (lsh <= rsh) ? rsh : lsh;
 }
-OG_MACRO_ALWAYS_INLINE inline OgSignedInteger64 OgPrivateSignedInteger64Min(
+OgMacroAlwaysInline inline OgSignedInteger64 OgPrivateSignedInteger64Min(
     OgSignedInteger64 lsh, OgSignedInteger64 rsh
 )
 {
     return (lsh >= rsh) ? rsh : lsh;
 }
-OG_MACRO_ALWAYS_INLINE inline OgUnsignedInteger64 OgPrivateUnsignedInteger64Max(
+OgMacroAlwaysInline inline OgUnsignedInteger64 OgPrivateUnsignedInteger64Max(
     OgUnsignedInteger64 lsh, OgUnsignedInteger64 rsh
 )
 {
     return (lsh <= rsh) ? rsh : lsh;
 }
-OG_MACRO_ALWAYS_INLINE inline OgUnsignedInteger64 OgPrivateUnsignedInteger64Min(
+OgMacroAlwaysInline inline OgUnsignedInteger64 OgPrivateUnsignedInteger64Min(
     OgUnsignedInteger64 lsh, OgUnsignedInteger64 rsh
 )
 {
     return (lsh >= rsh) ? rsh : lsh;
 }
-OG_MACRO_ALWAYS_INLINE inline size_t OgPrivateSizeT64Max(
+
+OgMacroAlwaysInline inline size_t OgPrivateSizeTMax(
     size_t lsh, size_t rsh
 )
 {
     return (lsh <= rsh) ? rsh : lsh;
 }
-OG_MACRO_ALWAYS_INLINE inline size_t OgPrivateSizeTMin(
+OgMacroAlwaysInline inline size_t OgPrivateSizeTMin(
     size_t lsh, size_t rsh
 )
 {
     return (lsh >= rsh) ? rsh : lsh;
 }
-/// NOTE: 用来包装检查
-OG_MACRO_ALWAYS_INLINE inline OgBoolean OgPrivatePVoidIsNull(
+
+OgMacroAlwaysInline inline OgBoolean OgPrivatePVoidIsNull(
     OgPVoid ptr
 )
 {
     return ptr == NULL;
 }
-#define OgPrivateIsNull(ptr) OgPrivatePVoidIsNull((OgPVoid)(ptr))
-OG_MACRO_C_BLOCK_END
+OgMacroAlwaysInline inline OgBoolean OgPrivateSizeTEqual(
+    size_t lsh, size_t rsh
+)
+{
+    return lsh == rsh;
+}
+OgMacroAlwaysInline inline OgBoolean OgPrivateSSizeTEqual(
+    ssize_t lsh, ssize_t rsh
+)
+{
+    return lsh == rsh;
+}
+OgMacroAlwaysInline inline OgBoolean OgPrivatePointerSizedUnsignedIntegerEqual(
+    OgPointerSizedUnsignedInteger lsh, OgPointerSizedUnsignedInteger rsh
+)
+{
+    return lsh == rsh;
+}
+OgMacroAlwaysInline inline OgBoolean OgPrivatePointerSizedSignedIntegerEqual(
+    OgPointerSizedSignedInteger lsh, OgPointerSizedSignedInteger rsh
+)
+{
+    return lsh == rsh;
+}
+OgMacroAlwaysInline inline OgBoolean OgPrivateSignedInteger64Equal(
+    OgSignedInteger64 lsh, OgSignedInteger64 rsh
+)
+{
+    return lsh == rsh;
+}
+OgMacroAlwaysInline inline OgBoolean OgPrivateUnsignedInteger64Equal(
+    OgUnsignedInteger64 lsh, OgUnsignedInteger64 rsh
+)
+{
+    return lsh == rsh;
+}
+OgMacroAlwaysInline inline OgBoolean OgPrivateSignedInteger32Equal(
+    OgSignedInteger32 lsh, OgSignedInteger32 rsh
+)
+{
+    return lsh == rsh;
+}
+OgMacroAlwaysInline inline OgBoolean OgPrivateUnsignedInteger32Equal(
+    OgUnsignedInteger32 lsh, OgUnsignedInteger32 rsh
+)
+{
+    return lsh == rsh;
+}
+OgMacroAlwaysInline inline OgBoolean OgPrivateSignedInteger16Equal(
+    OgSignedInteger16 lsh, OgSignedInteger16 rsh
+)
+{
+    return lsh == rsh;
+}
+OgMacroAlwaysInline inline OgBoolean OgPrivateUnsignedInteger16Equal(
+    OgUnsignedInteger16 lsh, OgUnsignedInteger16 rsh
+)
+{
+    return lsh == rsh;
+}
+OgMacroAlwaysInline inline OgBoolean OgPrivateSignedInteger8Equal(
+    OgSignedInteger8 lsh, OgSignedInteger8 rsh
+)
+{
+    return lsh == rsh;
+}
+OgMacroAlwaysInline inline OgBoolean OgPrivateUnsignedInteger8Equal(
+    OgUnsignedInteger8 lsh, OgUnsignedInteger8 rsh
+)
+{
+    return lsh == rsh;
+}
+OgMacroAlwaysInline inline OgBoolean OgPrivateStringEqual(
+    OgConstantString const lsh, OgConstantString const rsh
+)
+{
+    return strcmp(lsh, rsh) == 0;
+}
+
+#define OgPrivateIsNull(ptr) OgPrivatePVoidIsNull(OgMacroStaticCast(OgPVoid,ptr))
+OgMacroCBlockEnd
 #endif

@@ -1,4 +1,3 @@
-target_include_directories(Base PUBLIC SYSTEM include)
 if("${CMAKE_VERSION}" VERSION_GREATER_EQUAL 3.23)
     target_sources(
         Base
@@ -31,3 +30,4 @@ target_sources(
         StaticVariable.c
         StringProcessing.c
         Tree.c)
+

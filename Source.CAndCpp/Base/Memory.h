@@ -1,32 +1,37 @@
 #include <OpenSTG/OpenStgBase.h>
 #if !defined(OPEN_STG_ALLOCATOR_H)
 #define OPEN_STG_ALLOCATOR_H 1
-OG_MACRO_C_BLOCK_BEGIN
+OgMacroCBlockBegin
 
-OG_MACRO_PRIVATE OgPVoid OgPrivateStandardAllocWarp(
+OgMacroPrivate OgPVoid OgPrivateStandardAllocWarp(
     struct OgAllocator *paAllocator,
-    OgUnsignedIntegerSize uSize);
+    OgUnsignedIntegerSize uSize
+);
 
-OG_MACRO_PRIVATE OgPVoid OgPrivateStandardAlignedAllocWarp(
+OgMacroPrivate OgPVoid OgPrivateStandardAlignedAllocWarp(
     struct OgAllocator *paAllocator,
     OgUnsignedIntegerSize uMemorySize,
-    OgUnsignedIntegerSize uAligned);
+    OgUnsignedIntegerSize uAligned
+);
 
-OG_MACRO_PRIVATE OgPVoid OgPrivateStandardReallocWarp(
+OgMacroPrivate OgPVoid OgPrivateStandardReallocWarp(
     struct OgAllocator *paAllocator,
     OgPVoid pvOld,
-    OgUnsignedIntegerSize uNewSize);
+    OgUnsignedIntegerSize uNewSize
+);
 
-OG_MACRO_PRIVATE void OgPrivateStandardFreeWarp(
+OgMacroPrivate void OgPrivateStandardFreeWarp(
     struct OgAllocator *paAllocator,
-    OgPVoid pv);
+    OgPVoid pv
+);
 
-OG_MACRO_PRIVATE void OgPrivateStandardAlignedFreeWarp(
+OgMacroPrivate void OgPrivateStandardAlignedFreeWarp(
     struct OgAllocator *paAllocator,
-    OgPVoid pv);
-OG_MACRO_PRIVATE void OgPrivateStandardDestroy(struct OgAllocator *paAllocator);
-OG_MACRO_EXPORT struct OgAllocator OgMemoryAllocatorCreateCStandardAllocator();
-OG_MACRO_EXPORT struct OgAllocator *OgMemoryAllocatorGetDefaultAllocator();
+    OgPVoid pv
+);
+OgMacroPrivate void OgPrivateStandardDestroy(struct OgAllocator *paAllocator);
+OgMacroExport struct OgAllocator *OgMemoryAllocatorCreateCStandardAllocator();
+OgMacroExport struct OgAllocator *OgMemoryAllocatorGetDefaultAllocator();
 
-OG_MACRO_C_BLOCK_END
+OgMacroCBlockEnd
 #endif

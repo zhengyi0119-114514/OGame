@@ -2,7 +2,7 @@
 #include <OpenSTG/OpenStgBase.Types.h>
 #include <OpenSTG/OpenStgBase.Exceptions.h>
 #if !defined(OPEN_STG_MACRO_BASE_MODULE_H)
-OG_MACRO_C_BLOCK_BEGIN
+OgMacroCBlockBegin
 
-OG_MACRO_C_BLOCK_END
+OgMacroCBlockEnd
 #endif

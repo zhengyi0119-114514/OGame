@@ -5,7 +5,7 @@
 #include <OpenSTG/OpenStgBase.Exceptions.h>
 #include <OpenSTG/OpenStgBase.Memory.h>
 
-OG_MACRO_C_BLOCK_BEGIN
+OgMacroCBlockBegin
 
 // NOTE: Base on https://learn.microsoft.com/en-us/dotnet/api/system.io.stream
 typedef enum OgIoEnumStreamBooleanProperty
@@ -103,7 +103,7 @@ typedef enum OgIoEnumSystemStream
     OgIoEnumSystemStreamItemStandardErrorOutput = 3,
 } OgIoEnumSystemStream;
 
-OG_MACRO_EXTERN struct OgIoStream *OgIoStreamGetStandardStream(
+OgMacroExtern struct OgIoStream *OgIoStreamGetStandardStream(
     enum OgIoEnumSystemStream const isessType
 );
 
@@ -113,19 +113,19 @@ typedef enum OgIoEnumFormatAndWriteTextFlags
     // OgIoEnumFormatAndWriteTextFlagsItemDisableSafeOption = 0x00000001,
 } OgIoEnumFormatAndWriteTextFlags;
 
-OG_MACRO_EXTERN struct OgExceptionCollectionIoException OgIoStreamFormatAndWriteTextV(
+OgMacroExtern struct OgExceptionCollectionIoException OgIoStreamFormatAndWriteTextV(
     OgIoStream *pisStream,
     OgUnsignedInteger64 uFormatFlag,
-    OG_MACRO_MSVC(_Printf_format_string_) OgConstantString pcsFormat,
+    OgMacroMsvc(_Printf_format_string_) OgConstantString pcsFormat,
     va_list ptrArgument
-) OG_MACRO_GNU_ATTRIBUTE(__nonnull__(1, 3));
+) OgMacroGnuAttribute(__nonnull__(1, 3));
 
 inline struct OgExceptionCollectionIoException OgIoStreamFormatAndWriteText(
-    OG_MACRO_MSVC(_Inout_) struct OgIoStream *pisStream,
+    OgMacroMsvc(_Inout_) struct OgIoStream *pisStream,
     OgUnsignedInteger64 uFormatFlag,
-    OG_MACRO_MSVC(_Printf_format_string_) OgConstantString pcsFormat,
+    OgMacroMsvc(_Printf_format_string_) OgConstantString pcsFormat,
     ...
-) OG_MACRO_GNU_ATTRIBUTE(__format__(printf, 3, 4), __nonnull__(1, 3), __always_inline__);
+) OgMacroGnuAttribute(__format__(printf, 3, 4), __nonnull__(1, 3), __always_inline__);
 
 typedef enum OgIoEnumMemoryStreamFlag
 {
@@ -141,7 +141,7 @@ typedef enum OgIoEnumMemoryStreamFlag
  * @brief Return the string "OpenStg.Base.IO.MemoryStream".
  * @retval "OpenStg.Base.IO.MemoryStream"
  */
-OG_MACRO_EXTERN OgConstantString OgIoStreamMemoryStreamGetStreamType(void);
+OgMacroExtern OgConstantString OgIoStreamMemoryStreamGetStreamType(void);
 /**
  * @brief Create a stream whose backing is memory.
  *
@@ -153,13 +153,13 @@ OG_MACRO_EXTERN OgConstantString OgIoStreamMemoryStreamGetStreamType(void);
  * multiple if iAlignment.
  * @param iemsfFlag A set of OgIoEnumMemoryStreamFlag flag.
  */
-OG_MACRO_EXTERN struct OgExceptionCollectionIoException OgIoStreamMemoryStreamCreate(
-    OG_MACRO_MSVC(_Out_) struct OgIoStream *const pStreamOutput,
-    OG_MACRO_MSVC(_In_) struct OgAllocator *const paAllocator,
+OgMacroExtern struct OgExceptionCollectionIoException OgIoStreamMemoryStreamCreate(
+    OgMacroMsvc(_Out_) struct OgIoStream *const pStreamOutput,
+    OgMacroMsvc(_In_) struct OgAllocator *const paAllocator,
     OgSignedInteger64 iAlignment,
     OgUnsignedInteger64 uBufferSize,
     enum OgIoEnumMemoryStreamFlag iemsfFlag
-) OG_MACRO_GNU_ATTRIBUTE(__nonnull__(1, 2));
+) OgMacroGnuAttribute(__nonnull__(1, 2));
 /**
  * @brief Read sequence of bytes from current stream.The file position indicator for the stream is
  * advanced by the number of characters written.
@@ -173,14 +173,14 @@ OG_MACRO_EXTERN struct OgExceptionCollectionIoException OgIoStreamMemoryStreamCr
  * @param[out] pbEndOfFile A pointer to a boolean variable that determine whether the end of the
  * stream has Been reached.
  */
-OG_MACRO_EXTERN struct OgExceptionCollectionIoException OgIoStreamMemoryStreamReadBinary(
-    OG_MACRO_MSVC(_Inout_) struct OgIoStream *const pisStream,
-    OG_MACRO_MSVC(_Out_) OgByte *const pbBuffer,
+OgMacroExtern struct OgExceptionCollectionIoException OgIoStreamMemoryStreamReadBinary(
+    OgMacroMsvc(_Inout_) struct OgIoStream *const pisStream,
+    OgMacroMsvc(_Out_) OgByte *const pbBuffer,
     OgUnsignedInteger64 uBufferSize,
     OgUnsignedInteger64 uBytesToRead,
-    OG_MACRO_MSVC(_Out_opt_) OgUnsignedInteger64 *const puBytesRead,
-    OG_MACRO_MSVC(_Out_opt_) OgBoolean *const pbEndOfFile
-) OG_MACRO_GNU_ATTRIBUTE(__nonnull__(1, 2));
+    OgMacroMsvc(_Out_opt_) OgUnsignedInteger64 *const puBytesRead,
+    OgMacroMsvc(_Out_opt_) OgBoolean *const pbEndOfFile
+) OgMacroGnuAttribute(__nonnull__(1, 2));
 /**
  * @brief Read sequence of bytes from current stream.The file position indicator for the stream is
  * advanced by the number of characters written.
@@ -192,13 +192,13 @@ OG_MACRO_EXTERN struct OgExceptionCollectionIoException OgIoStreamMemoryStreamRe
  * @param[out] pbEndOfFile A pointer to a boolean variable that determine whether the end of the
  * stream has been reached.
  */
-OG_MACRO_EXTERN struct OgExceptionCollectionIoException OgIoStreamMemoryStreamRead(
-    OG_MACRO_MSVC(_Inout_) struct OgIoStream *const pisStream,
-    OG_MACRO_MSVC(_Out_) OgCharacter *const psDestinationBuffer,
+OgMacroExtern struct OgExceptionCollectionIoException OgIoStreamMemoryStreamRead(
+    OgMacroMsvc(_Inout_) struct OgIoStream *const pisStream,
+    OgMacroMsvc(_Out_) OgCharacter *const psDestinationBuffer,
     OgUnsignedInteger64 uDestinationBufferSize,
     OgUnsignedInteger64 uCharactersRead,
-    OG_MACRO_MSVC(_Out_opt_) OgBoolean *const pbEndOfFile
-) OG_MACRO_GNU_ATTRIBUTE(__nonnull__(1, 2));
+    OgMacroMsvc(_Out_opt_) OgBoolean *const pbEndOfFile
+) OgMacroGnuAttribute(__nonnull__(1, 2));
 /**
  * @brief Writes a block of bytes to the current stream using data read from stream.
  * The file position indicator for the stream is advanced by the number of characters written.
@@ -209,12 +209,12 @@ OG_MACRO_EXTERN struct OgExceptionCollectionIoException OgIoStreamMemoryStreamRe
  * @param[out] pbEndOfFile A pointer to a Boolean variable that determine whether the end of the
  * stream has been reached.
  */
-OG_MACRO_EXTERN struct OgExceptionCollectionIoException OgIoStreamMemoryStreamWriteBinary(
-    OG_MACRO_MSVC(_Inout_) struct OgIoStream *const pisStream,
-    OG_MACRO_MSVC(_In_) const OgByte *const pbSource,
+OgMacroExtern struct OgExceptionCollectionIoException OgIoStreamMemoryStreamWriteBinary(
+    OgMacroMsvc(_Inout_) struct OgIoStream *const pisStream,
+    OgMacroMsvc(_In_) const OgByte *const pbSource,
     OgUnsignedInteger64 uBytesToWrite,
-    OG_MACRO_MSVC(_Out_opt_) OgBoolean *const pbEndOfFile
-) OG_MACRO_GNU_ATTRIBUTE(__nonnull__(1, 2));
+    OgMacroMsvc(_Out_opt_) OgBoolean *const pbEndOfFile
+) OgMacroGnuAttribute(__nonnull__(1, 2));
 /**
  * @brief Writes a string to the current stream.The file position indicator for the stream is
  * advanced by the number of characters written.
@@ -226,47 +226,47 @@ OG_MACRO_EXTERN struct OgExceptionCollectionIoException OgIoStreamMemoryStreamWr
  * @param[out] pbEndOfFile A pointer to a Boolean variable that determine whether the end of the
  * stream.
  */
-OG_MACRO_EXTERN struct OgExceptionCollectionIoException OgIoStreamMemoryStreamWrite(
-    OG_MACRO_MSVC(_Inout_) struct OgIoStream *const pisStream,
-    OG_MACRO_MSVC(_In_) OgConstantString pcsSource,
+OgMacroExtern struct OgExceptionCollectionIoException OgIoStreamMemoryStreamWrite(
+    OgMacroMsvc(_Inout_) struct OgIoStream *const pisStream,
+    OgMacroMsvc(_In_) OgConstantString pcsSource,
     OgSignedInteger64 iCharatctersToWrite,
-    OG_MACRO_MSVC(_Out_opt_) OgBoolean *const pbEndOfFile
-) OG_MACRO_GNU_ATTRIBUTE(__nonnull__(1, 4));
+    OgMacroMsvc(_Out_opt_) OgBoolean *const pbEndOfFile
+) OgMacroGnuAttribute(__nonnull__(1, 4));
 
-OG_MACRO_EXTERN struct OgExceptionCollectionIoException OgIoStreamMemoryStreamGetBooleanProperty(
-    OG_MACRO_MSVC(_In_) const struct OgIoStream *const pcisStream,
+OgMacroExtern struct OgExceptionCollectionIoException OgIoStreamMemoryStreamGetBooleanProperty(
+    OgMacroMsvc(_In_) const struct OgIoStream *const pcisStream,
     enum OgIoEnumStreamBooleanProperty sbpProperty,
     enum OgEnumBitFlagOperator bfoOperator,
-    OG_MACRO_MSVC(_Out_) OgBoolean *const pbOut
-) OG_MACRO_GNU_ATTRIBUTE(__nonnull__(1, 4));
+    OgMacroMsvc(_Out_) OgBoolean *const pbOut
+) OgMacroGnuAttribute(__nonnull__(1, 4));
 
-OG_MACRO_EXTERN struct OgExceptionCollectionIoException OgIoStreamMemoryStreamSetBooleanProperty(
-    OG_MACRO_MSVC(_Inout_) struct OgIoStream *const pcisStream, enum OgIoEnumStreamBooleanProperty
-) OG_MACRO_GNU_ATTRIBUTE(__nonnull__(1));
+OgMacroExtern struct OgExceptionCollectionIoException OgIoStreamMemoryStreamSetBooleanProperty(
+    OgMacroMsvc(_Inout_) struct OgIoStream *const pcisStream, enum OgIoEnumStreamBooleanProperty
+) OgMacroGnuAttribute(__nonnull__(1));
 
-OG_MACRO_EXTERN struct OgExceptionCollectionIoException OgIoStreamMemoryStreamGetIntegerProperty(
-    OG_MACRO_MSVC(_In_) const struct OgIoStream *const pcisStream,
+OgMacroExtern struct OgExceptionCollectionIoException OgIoStreamMemoryStreamGetIntegerProperty(
+    OgMacroMsvc(_In_) const struct OgIoStream *const pcisStream,
     enum OgIoEnumStreamIntegerProperty,
-    OG_MACRO_MSVC(_Out_) OgSignedInteger64 *const piOut
-) OG_MACRO_GNU_ATTRIBUTE(__nonnull__(1, 3));
+    OgMacroMsvc(_Out_) OgSignedInteger64 *const piOut
+) OgMacroGnuAttribute(__nonnull__(1, 3));
 
-OG_MACRO_EXTERN struct OgExceptionCollectionIoException OgIoStreamMemoryStreamSetIntegerProperty(
-    OG_MACRO_MSVC(_Inout_) struct OgIoStream *const pisStream,
+OgMacroExtern struct OgExceptionCollectionIoException OgIoStreamMemoryStreamSetIntegerProperty(
+    OgMacroMsvc(_Inout_) struct OgIoStream *const pisStream,
     enum OgIoEnumStreamIntegerProperty,
     OgUnsignedInteger64 iValue
-) OG_MACRO_GNU_ATTRIBUTE(__nonnull__(1));
+) OgMacroGnuAttribute(__nonnull__(1));
 
-OG_MACRO_EXTERN struct OgExceptionCollectionIoException OgIoStreamMemoryStreamFlush(
-    OG_MACRO_MSVC(_Inout_) struct OgIoStream *const pisStream, OgBoolean bCleanBuffer
-) OG_MACRO_GNU_ATTRIBUTE(__nonnull__(1));
+OgMacroExtern struct OgExceptionCollectionIoException OgIoStreamMemoryStreamFlush(
+    OgMacroMsvc(_Inout_) struct OgIoStream *const pisStream, OgBoolean bCleanBuffer
+) OgMacroGnuAttribute(__nonnull__(1));
 
-OG_MACRO_EXTERN void OgIoStreamMemoryStreamClose(
+OgMacroExtern void OgIoStreamMemoryStreamClose(
     struct OgIoStream *const pisStream
-) OG_MACRO_GNU_ATTRIBUTE(__nonnull__(1));
+) OgMacroGnuAttribute(__nonnull__(1));
 
-OG_MACRO_EXTERN void OgIoStreamMemoryStreamDestroy(
+OgMacroExtern void OgIoStreamMemoryStreamDestroy(
     struct OgIoStream *const pisStream
-) OG_MACRO_GNU_ATTRIBUTE(__nonnull__(1));
+) OgMacroGnuAttribute(__nonnull__(1));
 
-OG_MACRO_C_BLOCK_END
+OgMacroCBlockEnd
 #endif

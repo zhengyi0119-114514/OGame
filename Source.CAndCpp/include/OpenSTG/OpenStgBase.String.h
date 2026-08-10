@@ -4,7 +4,7 @@
 #define OPEN_STG_MACRO_BASE_STRING_H 1
 #include <OpenSTG/OpenStgBase.Types.h>
 #include <OpenSTG/OpenStgBase.Exceptions.h>
-OG_MACRO_C_BLOCK_BEGIN
+OgMacroCBlockBegin
 
 inline OgBoolean OgStringIsNullOrEmpty(OgConstantString pcsString);
 typedef struct OgStringEx
@@ -14,12 +14,12 @@ typedef struct OgStringEx
     struct OgConstantAllocator *Allocator;
 } OgStringEx;
 
-OG_MACRO_EXTERN struct OgExceptionCollectionFormatException OgStringCopy(
-    OG_MACRO_MSVC(_Out_z_) OgString const psDestination,
-    OgSignedInteger64 iDestinationSize,
-    OG_MACRO_MSVC(_In_z_) OgConstantString const pcsSource,
-    OgSignedInteger64 iCharatersToCopy
-) OG_MACRO_GNU_ATTRIBUTE(__nonnull__(1, 3), __nothrow__);
+OgMacroExtern struct OgExceptionCollectionFormatException OgStringCopy(
+    OgMacroMsvc(_Out_z_) OgString const psDestination,
+    OgSignedIntegerSize iDestinationSize,
+    OgMacroMsvc(_In_z_) OgConstantString const pcsSource,
+    OgSignedIntegerSize iCharatersToCopy
+) OgMacroGnuAttribute(__nonnull__(1, 3), __nothrow__);
 
 /**
  * @brief Append a copy of the null-terminated byte string pointed to by pcsSource to the end of the
@@ -37,16 +37,16 @@ OG_MACRO_EXTERN struct OgExceptionCollectionFormatException OgStringCopy(
  * @param[in] pcsSource Pointer to the null-terminated byte string to copy from.
  * @param iCharatersToConnect Maximum number of character to copy.Default value is -1.
  */
-OG_MACRO_EXTERN struct OgExceptionCollectionFormatException OgStringConnect(
-    OG_MACRO_MSVC(_Inout_z_) OgString const psDestination,
-    OgSignedInteger64 iDestinationSize,
-    OG_MACRO_MSVC(_In_z_) OgConstantString const pcsSource,
-    OgSignedInteger64 iCharatersToConnect
-) OG_MACRO_GNU_ATTRIBUTE(__nonnull__(1, 3), __nothrow__);
+OgMacroExtern struct OgExceptionCollectionFormatException OgStringConnect(
+    OgMacroMsvc(_Inout_z_) OgString const psDestination,
+    OgSignedIntegerSize iDestinationSize,
+    OgMacroMsvc(_In_z_) OgConstantString const pcsSource,
+    OgSignedIntegerSize iCharatersToConnect
+) OgMacroGnuAttribute(__nonnull__(1, 3), __nothrow__);
 
 #define OgStringGetEmptyString() ""
 
-OG_MACRO_C_BLOCK_END
+OgMacroCBlockEnd
 #if !defined(OPEN_STG_MACRO_BASE_STRING_INLINE_H)
 #include <OpenSTG/OpenStgBase.String.Inline.h>
 #endif

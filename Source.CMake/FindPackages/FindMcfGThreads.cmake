@@ -237,10 +237,10 @@ if(NOT McfGThreads_FOUND AND PkgConfig_FOUND)
     pkg_check_modules(PkgConfigMcfGThreads mcfgthread)
     if(PkgConfigMcfGThreads_FOUND)
         set(McfGThreads_INCLUDE_DIRS "${PkgConfigMcfGThreads_INCLUDE_DIRS}")
-        set(McfGThreads_LOCATION "")
+        set(McfGThreads_LOCATION "${PkgConfigMcfGThreads_LIBRARIES}")
         set(McfGThreads_LIBRARIES "${PkgConfigMcfGThreads_LIBRARIES}")
-        set(McfGThreads_MINIMAL_LIBRARIES "")
-        set(McfGThreads_MINIMAL_LOCATION "")
+        set(McfGThreads_MINIMAL_LIBRARIES)
+        set(McfGThreads_MINIMAL_LOCATION)
         set(McfGThreads_FOUND TRUE)
     endif()
 endif()
@@ -261,12 +261,10 @@ elseif(PkgConfigMcfGThreads_VERSION VERSION_GREATER 0)
 endif()
 
 if(McfGThreads_LIBRARIES
-   AND McfGThreads_MINIMAL_LIBRARIES
    AND McfGThreads_INCLUDE_DIRS
    AND McfGThreads_LOCATION
-   AND McfGThreads_MINIMAL_LOCATION
    AND McfGThreads_PkgConfig_DIRECTORY)
-    # message("${McfGThreads_MINIMAL_LIBRARIES}:${McfGThreads_MINIMAL_LOCATION}")
+    message("${McfGThreads_MINIMAL_LIBRARIES}:${McfGThreads_MINIMAL_LOCATION}")
     set(McfGThreads_FOUND TRUE)
     add_library(McfGThreads::McfGThreads SHARED IMPORTED GLOBAL)
     set_target_properties(
@@ -276,7 +274,7 @@ if(McfGThreads_LIBRARIES
             IMPORTED_LOCATION "${McfGThreads_LOCATION}"
             INTERFACE_LINK_LIBRARIES "ntdll"
             INTERFACE_INCLUDE_DIRECTORIES "${McfGThreads_INCLUDE_DIRS}")
-    if(McfGThreads_MINIMAL_LIBRARIES)
+    if(McfGThreads_MINIMAL_LIBRARIES AND McfGThreads_MINIMAL_LOCATION)
         add_library(McfGThreads::Minimal SHARED IMPORTED GLOBAL)
         set_target_properties(
             McfGThreads::Minimal

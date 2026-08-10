@@ -8,7 +8,7 @@
 #include <OpenSTG/OpenStgBase.Exceptions.h>
 #endif
 
-OG_MACRO_C_BLOCK_BEGIN
+OgMacroCBlockBegin
 
 inline OgExceptionStructureOutOfRange OgExceptionStructureOutOfRangeCreate(
     OgConstantString pcsParamenter,
@@ -52,7 +52,8 @@ inline OgExceptionStructureOutOfRange OgExceptionStructureOutOfRangeCreateWithIn
     return exception;
 };
 inline struct OgExceptionStructureInvalidArgument OgExceptionStructureInvalidArgumentCreate(
-    OgConstantString pcsParamenter, OgConstantString pcsDescription
+    OgConstantString pcsParamenter,
+    OgConstantString pcsDescription
 )
 {
     struct OgExceptionStructureInvalidArgument e = {};
@@ -64,5 +65,5 @@ inline struct OgExceptionStructureInvalidArgument OgExceptionStructureInvalidArg
 inline struct OgExceptionStructureUndefineBehavior OgExceptionStructureUndefineBehaviorCreate(
     OgConstantString pcsDescription
 );
-OG_MACRO_C_BLOCK_END
+OgMacroCBlockEnd
 #endif

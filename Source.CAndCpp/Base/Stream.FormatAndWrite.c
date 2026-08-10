@@ -3,12 +3,14 @@
 #include <OpenSTG/OpenStgBase.Memory.h>
 #include <pcre2.h>
 #include "Stream.h"
+#include "InlineFunctions.h"
 
-OG_MACRO_EXTERN struct OgExceptionCollectionIoException OgIoStreamFormatAndWriteTextV(
+OgMacroExtern struct OgExceptionCollectionIoException OgIoStreamFormatAndWriteTextV(
     OgIoStream *pisStream,
     OgUnsignedInteger64 uFormatFlag,
     OgConstantString pcsFormat,
-    va_list ptrArgument)
+    va_list ptrArgument
+)
 {
     struct OgExceptionCollectionIoException e = {};
     OgString psBuffer = NULL;
@@ -18,7 +20,7 @@ OG_MACRO_EXTERN struct OgExceptionCollectionIoException OgIoStreamFormatAndWrite
     OgBoolean bCanRead = OgFalse;
     // Check argument
     // 检查参数
-    if (pisStream == NULL)
+    if (OgPrivateIsNull(pisStream))
     {
         struct OgExceptionCollectionIoException eReturn = {};
         eReturn.Type = OgExceptionEnumIoExceptionItemInvalidArgument;
@@ -28,7 +30,8 @@ OG_MACRO_EXTERN struct OgExceptionCollectionIoException OgIoStreamFormatAndWrite
     }
     e = pisStream->GetBooleanProperty(
         pisStream, OgIoEnumStreamBooleanPropertyItemSupportReading, OgEnumBooleanOperatorItemOr,
-        &bCanRead);
+        &bCanRead
+    );
     switch (e.Type)
     {
         case OgExceptionEnumIoExceptionItemMemoryException:
@@ -47,15 +50,26 @@ OG_MACRO_EXTERN struct OgExceptionCollectionIoException OgIoStreamFormatAndWrite
     {
         e.Type = OgExceptionEnumIoExceptionItemInvalidArgument;
         e.InvalidArgument = OgExceptionStructureInvalidArgumentCreate(
-            "OgIoStream *pisStream", "Stream must be readable.");
+            "OgIoStream *pisStream", "Stream must be readable."
+        );
         return (e);
     }
-    if (pcsFormat == NULL)
+    if (pisStream->Write != NULL)
+
+    {
+        e.Type = OgExceptionEnumIoExceptionItemInvalidArgument;
+        e.InvalidArgument = OgExceptionStructureInvalidArgumentCreate(
+            "OgIoStream *pisStream", "Stream must be readable."
+        );
+        return (e);
+    }
+    if (OgPrivateIsNull(pcsFormat))
     {
         OgExceptionCollectionIoException eReturn = {};
         eReturn.Type = OgExceptionEnumIoExceptionItemInvalidArgument;
         eReturn.InvalidArgument = OgExceptionStructureInvalidArgumentCreate(
-            "OgConstantString pcsFormat", "Argument is null.");
+            "OgConstantString pcsFormat", "Argument is null."
+        );
         return (eReturn);
     }
     iResult = vsnprintf(NULL, 0, pcsFormat, ptrArgument);

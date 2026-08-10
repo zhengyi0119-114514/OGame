@@ -2,7 +2,7 @@
 
 #if !defined(OPEN_STG_STATIC_VARIABLE_H)
 #define OPEN_STG_STATIC_VARIABLE_H
-OG_MACRO_C_BLOCK_BEGIN
+OgMacroCBlockBegin
 
-OG_MACRO_C_BLOCK_END
+OgMacroCBlockEnd
 #endif

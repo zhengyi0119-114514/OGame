@@ -8,7 +8,7 @@ Checks: >
   performance-*
   misc-*,
   cert-*,
-  -bugprone-assignment-in-if-condition
-  -cppcoreguidelines-avoid-non-const-global-variables
+  -bugprone-assignment-in-if-condition,
+  -cppcoreguidelines-avoid-non-const-global-variables,
   -clang-diagnostic-tautological-pointer-compare
 

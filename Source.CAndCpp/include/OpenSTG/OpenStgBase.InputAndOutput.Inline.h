@@ -1,11 +1,15 @@
 #if !defined(OPEN_STG_MACRO_BASE_INPUT_AND_OUTPUT_INLINE_H)
 #define OPEN_STG_MACRO_BASE_INPUT_AND_OUTPUT_INLINE_H
 #include <OpenSTG/OpenStgBase.InputAndOutput.h>
-OG_MACRO_C_BLOCK_BEGIN
+OgMacroCBlockBegin
 
-inline struct OgExceptionCollectionIoException OgIoStreamFormatAndWriteText(
-    OgIoStream *pisStream, OgUnsignedInteger64 uFormatFlag, OgConstantString pcsFormat, ...
-)
+    OgMacroAlwaysInline inline struct OgExceptionCollectionIoException
+    OgIoStreamFormatAndWriteText(
+        OgIoStream *pisStream,
+        OgUnsignedInteger64 uFormatFlag,
+        OgConstantString pcsFormat,
+        ...
+    )
 {
     va_list ptrArgumentList;
     va_start(ptrArgumentList, pcsFormat);
@@ -15,5 +19,5 @@ inline struct OgExceptionCollectionIoException OgIoStreamFormatAndWriteText(
     return e;
 }
 
-OG_MACRO_C_BLOCK_END
+OgMacroCBlockEnd
 #endif

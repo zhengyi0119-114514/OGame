@@ -6,5 +6,4 @@ if(NOT ("${CMAKE_HOST_SYSTEM_NAME}" MATCHES [=[^(Windows(Phone|Store)?|MSYS$]=])
 else()
     set(CMAKE_C_COMPILER "x86_64-w64-mingw32-cc")
     set(CMAKE_CXX_COMPILER "x86_64-w64-mingw32-c++")
-
 endif()

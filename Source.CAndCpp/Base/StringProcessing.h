@@ -7,18 +7,20 @@
 
 #if !defined(OPEN_STG_STRING_PROCESSING_H)
 #define OPEN_STG_STRING_PROCESSING_H 1
-OG_MACRO_C_BLOCK_BEGIN
+OgMacroCBlockBegin
 
-OG_MACRO_EXPORT struct OgExceptionCollectionFormatException OgStringCopy(
+OgMacroExport struct OgExceptionCollectionFormatException OgStringCopy(
     OgString const psDestination,
-    OgSignedInteger64 iDestinationSize,
+    OgSignedIntegerSize iDestinationSize,
     OgConstantString const pcsSource,
-    OgSignedInteger64 iCharatersToCopy);
-OG_MACRO_EXPORT struct OgExceptionCollectionFormatException OgStringConnect(
+    OgSignedIntegerSize iCharatersToCopy
+);
+OgMacroExport struct OgExceptionCollectionFormatException OgStringConnect(
     OgString const psDestination,
-    OgSignedInteger64 iDestinationSize,
+    OgSignedIntegerSize iDestinationSize,
     OgConstantString const pcsSource,
-    OgSignedInteger64 iCharatersToConnect);
+    OgSignedIntegerSize iCharatersToConnect
+);
 
-OG_MACRO_C_BLOCK_END
+OgMacroCBlockEnd
 #endif

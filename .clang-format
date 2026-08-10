@@ -9,6 +9,15 @@ AlignAfterOpenBracket: AlwaysBreak
 AlignOperands: DontAlign
 AlignArrayOfStructures: Left
 AlignEscapedNewlines: DontAlign
+AllowAllArgumentsOnNextLine: true
+AllowAllConstructorInitializersOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortEnumsOnASingleLine: false
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
 PenaltyReturnTypeOnItsOwnLine: 1024
 PenaltyBreakBeforeFirstCallParameter: 0
 BreakAfterOpenBracketFunction: true
@@ -19,12 +28,14 @@ BreakBeforeCloseBracketBracedList: false
 BreakBeforeCloseBracketFunction: true
 BreakBeforeCloseBracketIf: true
 BreakBeforeCloseBracketLoop: true
-BreakBeforeCloseBracketSwitch: false
+BreakBeforeCloseBracketSwitch: true
 BreakFunctionDefinitionParameters: true
 BracedInitializerIndentWidth: 4
-ContinuationIndentWidth: 4
-AllowAllArgumentsOnNextLine: false
 # BreakBeforeBinaryOperators: All
+
+PackConstructorInitializers: CurrentLine
+ConstructorInitializerIndentWidth: 4
+ContinuationIndentWidth: 4
 
 BreakAfterReturnType: None
 UseTab: Never
@@ -43,37 +54,41 @@ SortIncludes:
   Enabled: false
 # PackParameters:
 #   BinPackParametersStyle: OnePerLine
-PackConstructorInitializers: BinPack
 BreakBinaryOperations: OnePerLine
-BinPackParameters: OnePerLine
 BinPackArguments: true
+BinPackParameters: AlwaysOnePerLine
 BinPackLongBracedList: true
-
 BitFieldColonSpacing: None
 BreakBeforeBraces: Custom
 InsertBraces: true
 
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+
 BreakAfterAttributes: Always
+StatementMacros:
+  - OgMacroCBlockBegin 
+  - OgMacroCBlockEnd 
+
 StatementAttributeLikeMacros:
   - Q_EMIT
-  - OG_MACRO_EXPORT
-  - OG_MACRO_EXTERN
+  - OgMacroExport
+  - OgMacroExtern
 
-# WhitespaceSensitiveMacros:
-#   - OG_MACRO_GNU 
-#   - OG_MACRO_MSVC
+WhitespaceSensitiveMacros:
+  - OgMacroGNU 
+  - OgMacroMsvc
 
 AttributeMacros:
   - __capability
   - __output
   - __ununsed
-  - OG_MACRO_MSVC(_*_)
-  - OG_MACRO_GNU(__attribute__((*)))
+  - OgMacroGNU(__attribute__((*)))
+  - OgMacroMsvc(_*_) 
   - __attribute__((*))
-  - OG_MACRO_MSVC(_In_opt_) 
-  - OG_MACRO_MSVC(_Out_)
-  - OG_MACRO_MSVC(_Out_opt_)
-  - OG_MACRO_MSVC(_Inout_)
+  - OgMacroExport
+  - OgMacroExtern
+  - OgMacroThreadLocal 
+  - OgMacroAlwaysInline 
 
 # Macros:
 #   - OG_MACRO_MSVC(x)=x

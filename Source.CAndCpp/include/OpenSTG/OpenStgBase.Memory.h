@@ -5,32 +5,38 @@
 
 #include <OpenSTG/OpenStgBase.Exceptions.h>
 
-OG_MACRO_C_BLOCK_BEGIN
+OgMacroCBlockBegin
 
 typedef struct OgAllocator
 {
     OgPVoid (*Alloc)(
         struct OgAllocator *paAllocator,
-        OgUnsignedIntegerSize uSize);
+        OgUnsignedIntegerSize uSize
+    );
     OgPVoid (*Realloc)(
         struct OgAllocator *paAllocator,
         OgPVoid pvOld,
-        OgUnsignedIntegerSize uNewSize);
+        OgUnsignedIntegerSize uNewSize
+    );
     void (*Free)(
         struct OgAllocator *paAllocator,
-        OgPVoid pMemory);
+        OgPVoid pMemory
+    );
     OgPVoid (*AlignedAlloc)(
         struct OgAllocator *paAllocator,
         OgUnsignedIntegerSize uSize,
-        OgUnsignedIntegerSize uAlignment);
+        OgUnsignedIntegerSize uAlignment
+    );
     void (*AlignedFree)(
         struct OgAllocator *paAllocator,
-        OgPVoid pMemory);
+        OgPVoid pMemory
+    );
     void (*Destroy)(struct OgAllocator *paAllocator);
     OgPVoid AdditionalData;
 } OgAllocator;
-OG_MACRO_EXTERN struct OgAllocator OgMemoryAllocatorCreateCStandardAllocator();
-OG_MACRO_EXTERN struct OgAllocator *OgMemoryAllocatorGetDefaultAllocator();
 
-OG_MACRO_C_BLOCK_END
+OgMacroExtern struct OgAllocator *OgMemoryAllocatorCreateCStandardAllocator();
+OgMacroExtern struct OgAllocator *OgMemoryAllocatorGetDefaultAllocator();
+
+OgMacroCBlockEnd
 #endif

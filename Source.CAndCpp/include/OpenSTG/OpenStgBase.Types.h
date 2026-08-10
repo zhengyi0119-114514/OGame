@@ -11,9 +11,7 @@
 #if !defined(OPEN_STG_MACRO_BASE_MEMORY_H)
 #define OPEN_STG_MACRO_BASE_MEMORY_H 1
 #include <OpenSTG/OpenStgBase.Macro.h>
-OG_MACRO_C_BLOCK_BEGIN
-
-#define OgConstantSignedInteger64SelectAll() UINT64_C(-1)
+OgMacroCBlockBegin
 
 struct OgModule;
 struct OgDynamicArray;
@@ -41,6 +39,7 @@ struct OgAllocator;
 struct OgIoStteam;
 
 typedef const char OgConstantCharacter, *OgConstantString;
+typedef const char *OgConstantString;
 typedef char OgCharacter, *OgString;
 typedef signed char OgSignedCharater;
 typedef unsigned char OgUnsignedCharater;
@@ -60,9 +59,25 @@ typedef void *OgPVoid;
 
 typedef uint8_t OgBoolean, Og8BitBoolean;
 typedef uint32_t Og32BitBoolean;
-#define OgTrue true
 #define OgFalse false
-#define OPEN_STG_MODULE_REGISTERED_NAME "IceThorn.OpenStg.Base.SB"
+#define OgTrue true
+#define OgBooleanFalse UINT8_C(0)
+#define OgBooleanTrue UINT8_C(1)
+#define Og8BitBooleanFalse UINT8_C(0)
+#define Og8BitBooleanTrue UINT8_C(1)
+#define Og32BitBooleanFalse UINT32_C(0)
+#define Og32BitBooleanTrue UINT32_C(1)
 
-OG_MACRO_C_BLOCK_END
+#define OgMacroSignedInteger8Constant(Value) INT8_C(Value)
+#define OgMacroUnsignedInteger8Constant(Value) UINT8_C(Value)
+#define OgMacroSignedInteger16Constant(Value) INT16_C(Value)
+#define OgMacroUnsignedInteger16Constant(Value) UINT16_C(Value)
+#define OgMacroSignedInteger32Constant(Value) INT32_C(Value)
+#define OgMacroUnsignedInteger32Constant(Value) UINT32_C(Value)
+#define OgMacroSignedInteger64Constant(Value) INT64_C(Value)
+#define OgMacroUnsignedInteger64Constant(Value) UINT64_C(Value)
+#define OgMacroSignedIntegerSizeConstant(Value) INT64_C(Value)
+#define OgMacroUnsignedIntegerSizeConstant(Value) UINT64_C(Value)
+
+OgMacroCBlockEnd
 #endif

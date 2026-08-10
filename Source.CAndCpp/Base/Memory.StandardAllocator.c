@@ -1,7 +1,8 @@
 #include "Memory.h"
 
 OgPVoid OgPrivateStandardAllocWarp(
-    struct OgAllocator *paAllocator, OgUnsignedIntegerSize uSize
+    struct OgAllocator *paAllocator,
+    OgUnsignedIntegerSize uSize
 )
 {
     OgPVoid pvMemory = malloc(uSize);
@@ -25,7 +26,9 @@ OgPVoid OgPrivateStandardAlignedAllocWarp(
     return pvMemory;
 }
 OgPVoid OgPrivateStandardReallocWarp(
-    struct OgAllocator *paAllocator, OgPVoid pvOld, OgUnsignedIntegerSize uNewSize
+    struct OgAllocator *paAllocator,
+    OgPVoid pvOld,
+    OgUnsignedIntegerSize uNewSize
 )
 {
     if (uNewSize == 0)
@@ -36,13 +39,15 @@ OgPVoid OgPrivateStandardReallocWarp(
     return realloc(pvOld, uNewSize);
 }
 void OgPrivateStandardFreeWarp(
-    struct OgAllocator *paAllocator, OgPVoid pv
+    struct OgAllocator *paAllocator,
+    OgPVoid pv
 )
 {
     free(pv);
 }
 void OgPrivateStandardAlignedFreeWarp(
-    struct OgAllocator *paAllocator, OgPVoid pv
+    struct OgAllocator *paAllocator,
+    OgPVoid pv
 )
 {
 #if defined(_WIN32)
@@ -51,17 +56,17 @@ void OgPrivateStandardAlignedFreeWarp(
     free(pv);
 #endif
 }
-OgAllocator OgMemoryAllocatorCreateCStandardAllocator()
+static struct OgAllocator s_aStandardAllocator = {
+    OgPrivateStandardAllocWarp,
+    OgPrivateStandardReallocWarp,
+    OgPrivateStandardFreeWarp,
+    OgPrivateStandardAlignedAllocWarp,
+    OgPrivateStandardAlignedFreeWarp,
+    OgPrivateStandardDestroy,
+    NULL};
+struct OgAllocator *OgMemoryAllocatorCreateCStandardAllocator()
 {
-    const OgAllocator a = {
-        OgPrivateStandardAllocWarp,
-        OgPrivateStandardReallocWarp,
-        OgPrivateStandardFreeWarp,
-        OgPrivateStandardAlignedAllocWarp,
-        OgPrivateStandardAlignedFreeWarp,
-        OgPrivateStandardDestroy,
-        NULL};
-    return a;
+    return &s_aStandardAllocator;
 }
 void OgPrivateStandardDestroy(
     struct OgAllocator *paAllocator

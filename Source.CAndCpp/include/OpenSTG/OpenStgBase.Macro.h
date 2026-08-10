@@ -1,72 +1,72 @@
-#if !defined(OPEN_STG_MACRO_BASE__MACRO_H)
+#if !defined(OPEN_STG_MACRO_BASE_MACRO_H)
 #define OPEN_STG_MACRO_BASE_MACRO_H 1
-
-#if OPEN_STG_MACRO_IS_WINDOWS
-#define OG_MACRO_EXTERN __deslspec(dllimport)
-#define OG_MACRO_EXPORT __declspec(dllexport)
-#else
-#define OG_MACRO_EXTERN extern
-#define OG_MACRO_EXPORT
-#endif
 #if defined(_MSC_VER)
-#define OG_MACRO_FUNCTION __FUNCSIG__
-#define OG_MACRO_PRIVATE
-#define OG_MACRO_THREAD_LOCAL __declspec(thread)
-#define OG_MACRO_ALWAYS_INLINE __forceinline
-#define OG_MACRO_MSVC(content) content
-#define OG_MACRO_MSVC_DECLSPEC(content) __declspec(content)
-#define OG_MACRO_GNU(content)
-#define OG_MACRO_GNU_ATTRIBUTE(...)
+// MSVC style
+#define OgMacroExtern __deslspec(dllimport)
+#define OgMacroExport __declspec(dllexport)
+#define OgMacroFunction __FUNCSIG__
+#define OgMacroPrivate
+#define OgMacroThreadLocal __declspec(thread)
+#define OgMacroAlwaysInline __forceinline
+#define OgMacroMsvc(Content) Content
+#define OgMacroMsvcDeclspec(Content) __declspec(Content)
+#define OgMacroGnu(Content)
+#define OgMacroGnuAttribute(...)
+#define OgMacroThreadLocal __declspec(thread)
+#define OgMacroNoreturn __declspec(noreturn)
+#elif defined(__GNUC__) || defined(__llvm__) || defined(__clang__)
+#define OgMacroExtern extern
+#define OgMacroExport __attribute__(())
+#define OgMacroPrivate __attribute__((__visibility__("hidden")))
+#define OgMacroAlwaysInline __attribute__((__always_inline__))
+#define OgMacroFunction __PRETTY_FUNCTION__
+#define OgMacroMsvc(content)
+#define OgMacroMsvcDeclspec(content)
+#define OgMacroGnu(content) content
+#define OgMacroGnuAttribute(...) __attribute__((__VA_ARGS__))
+#define OgMacroThreadLocal __thread
+#define OgMacroNoreturn __attribute__((__noreturn__))
 #else
-#if defined(__GNUC__) || defined(__llvm__) || defined(__clang__)
-#define OG_MACRO_PRIVATE __attribute__((__visibility__("hidden")))
-#define OG_MACRO_ALWAYS_INLINE __attribute__((__always_inline__))
-#define OG_MACRO_FUNCTION __PRETTY_FUNCTION__
-#define OG_MACRO_MSVC(content)
-#define OG_MACRO_MSVC_DECLSPEC(content)
-#define OG_MACRO_GNU(content) content
-#define OG_MACRO_GNU_ATTRIBUTE(...) __attribute__((__VA_ARGS__))
+#define OgMacroExtern extern
+#define OgMacroExport __attribute__((__visibility__("default")))
+#define OgMacroFunction __func__
+#define OgMacroPrivate
+#define OgMacroMsvc(content)
+#define OgMacroMsvcDeclspec(content)
+#define OgMacroGnu(content)
+#define OgMacroGnuAttribute(...)
+#if (__STDC_VERSION__ >= 202311L && !defined(__STDC_NO_THREADS__))
+#define OgMacroThreadLocal thread_local
+#elif (__STDC_VERSION__ >= 201112L && !defined(__STDC_NO_THREADS__))
+#define OgMacroThreadLocal _Thread_local
+#elif (__cplusplus >= 200806L)
+#define OgMacroThreadLocal thread_local
+#endif
+#if (__STDC_VERSION__ >= 202311L)
+#define OgMacroNoreturn [[noreturn]]
+#elif (__STDC_VERSION__ >= 201112L)
+#define OgMacroNoreturn _Noreturn
 #else
-#define OG_MACRO_FUNCTION __FUNCTION__
-#define OG_MACRO_PRIVATE
-#define OG_MACRO_MSVC(content)
-#define OG_MACRO_MSVC_DECLSPEC(content)
-#define OG_MACRO_GNU(content)
-#define OG_MACRO_GNU_ATTRIBUTE(...)
-#endif
-#if __STDC_VERSION__ >= 201112L && __STDC_VERSION__ < 202311L
-#include <stdnoreturn.h>
-#define OG_MACRO_NORETURN noreturn
-#else
-#define OG_MACRO_NORETURN
-#endif
-
-#if (defined(__cplusplus) && __cplusplus >= 201103L) || (__STDC_VERSION__ >= 202311L)
-#define OG_MACRO_THREAD_LOCAL thread_local
-#elif __STDC_VERSION__ >= 201112L
-#define OG_MACRO_THREAD_LOCAL _Thread_local
-#else
-#if (defined(__GNUC__))
-#define OG_MACRO_THREAD_LOCAL __thread
-#else
-static_assert(
-    false, "No thread local support."
-)
+#define OgMacroNoreturn
 #endif
 #endif
-#endif
-
 #if defined __cplusplus
-#define OG_MACRO_C(content)
-#define OG_MACRO_CPP(content) content
-#define OG_MACRO_C_BLOCK_BEGIN \
+#define OgMacroC(Content)
+#define OgMacroCPP(Content) Content
+#define OgMacroCBlockBegin \
     extern "C" \
     {
-#define OG_MACRO_C_BLOCK_END }
+#define OgMacroCBlockEnd }
+#define OgMacroStaticCast(Type, Value) static_cast<Type>((Value))
+#define OgMacroConstantCast(Type, Value) const_cast<Type>((Value))
+#define OgMacroDymanicCast(Type, Value) dymanic_cast<Type>((Value))
 #else
-#define OG_MACRO_C(content) content
-#define OG_MACRO_CPP(content)
-#define OG_MACRO_C_BLOCK_BEGIN
-#define OG_MACRO_C_BLOCK_END
+#define OgMacroC(content) content
+#define OgMacroCPP(content)
+#define OgMacroCBlockBegin
+#define OgMacroCBlockEnd
+#define OgMacroStaticCast(Type, Value) ((Type)(Value))
+#define OgMacroConstantCast(Type, Value) ((Type)(Value))
+#define OgMacroDymanicCast(Type, Value) ((Type)(Value))
 #endif
 #endif

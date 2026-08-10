@@ -5,14 +5,7 @@
 
 #if !defined(OPEN_STG_MODULE_H)
 #define OPEN_STG_MODULE_H 1
-OG_MACRO_C_BLOCK_BEGIN
+OgMacroCBlockBegin
 
-OG_MACRO_EXTERN OgException OgModuleRegister(const struct OgModule *pcModule);
-OG_MACRO_EXTERN OgException OgModuleGetRegisteredModule(
-    OgConstantString pcsModuleRegisteredName,
-    const struct OgModule **pOutput);
-OG_MACRO_EXTERN OgException OgModuleFree(const OgConstantString pcsModuleRegisteredName);
-OG_MACRO_EXTERN OgException OgModuleLoad(const OgConstantString pcsModulePath);
-
-OG_MACRO_C_BLOCK_END
+OgMacroCBlockEnd
 #endif
