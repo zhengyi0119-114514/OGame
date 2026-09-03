@@ -70,7 +70,6 @@ StatementMacros:
   - OgMacroCBlockEnd 
 
 StatementAttributeLikeMacros:
-  - Q_EMIT
   - OgMacroExport
   - OgMacroExtern
 

@@ -1,14 +1,13 @@
 Checks: >
-  -*
+  -*,
   clang-analyzer-*,
-  bugprone-*,
-  -bugprone-easily-swappable-parameters,
-  -performance-*,
+  # bugprone-*,
+  performance-*,
   cppcoreguidelines-*,
   performance-*
   misc-*,
   cert-*,
   -bugprone-assignment-in-if-condition,
-  -cppcoreguidelines-avoid-non-const-global-variables,
-  -clang-diagnostic-tautological-pointer-compare
+  -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,
+  clang-analyzer-core.NullDereference
 

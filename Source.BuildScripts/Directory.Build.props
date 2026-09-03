@@ -3,26 +3,18 @@
     <ItemGroup Condition="'$(MSBuildProjectExtension)' == '.vcxproj'">
         <ProjectCapability Include="PackageReferences"/>
     </ItemGroup>
-    <PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.csproj' Or '$(MSBuildProjectExtension)' == '.fsproj' Or '$(MSBuildProjectExtension)' == '.vbproj'">
-        <OutDir>$(MSBuildThisFileDirectory)build\$(Configuration)\</OutDir>
-        <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)build\Dotnet\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-        <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-        <UseCommonOutputDirectory>true</UseCommonOutputDirectory>
-    </PropertyGroup>
     <PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.vcxproj'">
         <NuGetTargetMoniker Condition="'$(NuGetTargetMoniker)' == ''">native,Version=v0.0</NuGetTargetMoniker>
         <RuntimeIdentifiers Condition="'$(RuntimeIdentifiers)' == ''">win;win-x86;win-x64;win-arm;win-arm64</RuntimeIdentifiers>
         <WindowsTargetPlatformMinVersion Condition="'$(WindowsTargetPlatformMinVersion)' == ''">6.2.9200.0</WindowsTargetPlatformMinVersion>
-        <--
+        <!-- 注释说明：
             所有可能值：
-            5.1.2600.0 - Windows XP 
-            SDL3理论上兼容
-            5.2.3790.0 = Windows XP x64  / WindowsServer 2003
-            6.0.6000.0 - Windows Vista 
-            6.2.9200.0 - Windows 7
-            10.0.10240.0 - Windows 10
-            10.0.19041.0
+             5.1.2600.0 - Windows XP //SDL3理论上兼容
+             5.2.3790.0 = Windows XP x64  / WindowsServer 2003
+             6.0.6000.0 - Windows Vista 
+             6.2.9200.0 - Windows 7
+             10.0.10240.0 - Windows 10
+             10.0.19041.0
         -->
     </PropertyGroup>
     <ItemGroup Condition="'$(MSBuildProjectExtension)' == '.vcxproj'">
